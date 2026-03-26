@@ -1938,10 +1938,9 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3 sentences, 반�
               className="anim-fade-up mb-8 max-w-145 text-[15px] leading-relaxed text-gray-400"
               style={{ animationDelay: "100ms" }}
             >
-              {t(
-                "성분 분석부터 피부 일지, 트러블 추적까지 —\n다 해주는 내 피부 메이트 💜",
-                "Analysis, diary, trouble tracking — your all-in-one skin mate 💜"
-              )}
+              {t("성분 분석부터 피부 일지, 트러블 추적까지 —", "Analysis, diary, trouble tracking —")}
+              <br />
+              {t("다 해주는 내 피부 메이트 💜", "your all-in-one skin mate 💜")}
             </p>
 
             {/* ── 순환 구조: 스킨딧 루프 ── */}
