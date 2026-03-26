@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, Suspense } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -63,7 +63,15 @@ function NavBar() {
 }
 
 /* ── Write Page ── */
-export default function DiaryWritePage() {
+export default function DiaryWritePageWrapper() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center"><div className="h-8 w-8 rounded-full border-3 border-purple-200 border-t-purple-500 animate-spin" /></div>}>
+      <DiaryWritePage />
+    </Suspense>
+  );
+}
+
+function DiaryWritePage() {
   const { status } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
