@@ -5,7 +5,17 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [".next/**", "!.next/cache/**"]
+      "outputs": [".next/**", "!.next/cache/**"],
+      "env": [
+        "ANTHROPIC_API_KEY",
+        "DATABASE_URL",
+        "NEXTAUTH_SECRET",
+        "GOOGLE_CLIENT_ID",
+        "GOOGLE_CLIENT_SECRET",
+        "KAKAO_CLIENT_ID",
+        "KAKAO_CLIENT_SECRET",
+        "MFDS_API_KEY"
+      ]
     },
     "lint": {
       "dependsOn": ["^lint"]
