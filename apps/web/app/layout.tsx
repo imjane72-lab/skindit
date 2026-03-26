@@ -3,8 +3,13 @@ import Providers from "@/components/providers"
 import "./globals.css"
 
 export const metadata = {
-  title: "Skindit — AI 피부 타입별 성분 분석",
-  description: "AI-powered skincare ingredient analysis by skin type",
+  title: "skindit — 바르기 전에 check~ 내 피부를 아는 AI 스킨 메이트",
+  description: "성분 분석, 피부 일지, 트러블 원인 추적까지. 쓸수록 나를 알아가는 AI 피부 메이트 skindit 💜",
+  openGraph: {
+    title: "skindit — 바르기 전에 check~ 내 피부를 아는 AI 스킨 메이트",
+    description: "성분 분석, 피부 일지, 트러블 원인 추적까지. 쓸수록 나를 알아가는 AI 피부 메이트 💜",
+    siteName: "skindit",
+  },
 }
 
 const jakarta = Plus_Jakarta_Sans({
