@@ -1,0 +1,173 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── NextAuth Required Models ───
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String  @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// ─── Domain Models ───
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime? @map("email_verified")
+  image         String?
+  role          String    @default("user") // "user" | "admin"
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  accounts           Account[]
+  sessions           Session[]
+  skinProfile        SkinProfile?
+  analysisHistory    AnalysisHistory[]
+  skinDiary          SkinDiary[]
+  creditBalance      CreditBalance?
+  creditTransactions CreditTransaction[]
+  chatMessages       ChatMessage[]
+
+  @@map("users")
+}
+
+enum SkinType {
+  DRY
+  OILY
+  COMBINATION
+  SENSITIVE
+  NORMAL
+}
+
+model SkinProfile {
+  id        String   @id @default(cuid())
+  userId    String   @unique @map("user_id")
+  skinTypes String[] @map("skin_types")
+  concerns  String[]
+  note      String?  @db.Text
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("skin_profiles")
+}
+
+enum AnalysisType {
+  SINGLE
+  ROUTINE
+}
+
+model AnalysisHistory {
+  id          String       @id @default(cuid())
+  userId      String       @map("user_id")
+  type        AnalysisType
+  ingredients String       @db.Text
+  concerns    String[]
+  score       Int
+  resultJson  Json         @map("result_json")
+  lang        String       @default("ko") @db.VarChar(5)
+  createdAt   DateTime     @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@map("analysis_history")
+}
+
+model SkinDiary {
+  id          String   @id @default(cuid())
+  userId      String   @map("user_id")
+  date        DateTime @default(now())
+  condition   String   // "good" | "normal" | "bad"
+  products    String[] // product names used that day
+  note        String?  @db.Text
+  troubles    String[] // e.g. ["redness", "acne", "dryness"]
+  foods       String[] // e.g. ["매운 음식", "유제품", "술"]
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, date(sort: Desc)])
+  @@map("skin_diary")
+}
+
+model CreditBalance {
+  id        String   @id @default(cuid())
+  userId    String   @unique @map("user_id")
+  credits   Int      @default(0)
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("credit_balances")
+}
+
+model CreditTransaction {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  amount    Int      // positive = charge, negative = usage
+  type      String   // "charge" | "analysis" | "chat" | "report"
+  note      String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@map("credit_transactions")
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  role      String   // "user" | "assistant"
+  content   String   @db.Text
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@map("chat_messages")
+}

@@ -10,8 +10,6 @@
     "typecheck": "turbo typecheck"
   },
   "devDependencies": {
-    "@workspace/eslint-config": "workspace:*",
-    "@workspace/typescript-config": "workspace:*",
     "prettier": "^3.8.1",
     "prettier-plugin-tailwindcss": "^0.7.2",
     "turbo": "^2.8.8",
@@ -20,5 +18,11 @@
   "packageManager": "pnpm@9.0.6",
   "engines": {
     "node": ">=20"
+  },
+  "dependencies": {
+    "playwright": "^1.58.2",
+    "puppeteer": "^24.40.0",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
   }
 }

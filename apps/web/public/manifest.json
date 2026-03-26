@@ -1,0 +1,16 @@
+{
+  "name": "skindit - AI 피부 성분 분석",
+  "short_name": "skindit",
+  "description": "바르기 전에 check~ AI가 분석해주는 나만의 스킨 메이트",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#b39ddb",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
+    }
+  ]
+}
