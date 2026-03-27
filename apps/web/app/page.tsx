@@ -1900,7 +1900,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3 sentences, 반�
                   </span>
                   <br />
                   <span className="font-display font-extrabold tracking-tight text-gray-900">
-                    성분 해석해줄게
+                    해석해줄게
                   </span>
                 </>
               ) : (
@@ -1931,9 +1931,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3 sentences, 반�
               className="anim-fade-up mb-8 max-w-145 text-[15px] leading-relaxed text-gray-400"
               style={{ animationDelay: "100ms" }}
             >
-              {t("언제 성분표 하나하나 검색해,", "Why search ingredients one by one?")}
-              <br />
-              {t("skindit이 네 피부타입으로 성분 해석해줄게", "skindit interprets them for your skin type")}
+              {t("사진 한 장이면 끝 — AI 성분 분석, 피부 매칭, 조합 경고까지", "One photo — AI analysis, skin matching, and combo warnings")}
             </p>
 
             {/* ── 순환 구조: 스킨딧 루프 ── */}
