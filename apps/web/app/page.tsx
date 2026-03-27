@@ -1885,37 +1885,30 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3 sentences, 반�
               {lang === "ko" ? (
                 <>
                   <span className="font-display font-extrabold tracking-tight text-gray-900">
-                    바르기 전에
+                    내 피부에 맞는 성분,
                   </span>
                   <br />
+                  <span className="font-display font-extrabold tracking-tight text-gray-900">
+                    AI가{" "}
+                  </span>
                   <span className="font-accent gradient-text font-medium tracking-normal italic">
-                    check~
+                    3초 만에
                   </span>
-                  <br />
                   <span className="font-display font-extrabold tracking-tight text-gray-900">
-                    좋은 성분이
-                  </span>
-                  <br />
-                  <span className="font-display font-extrabold tracking-tight text-gray-900">
-                    나한테 다 좋은 건 아니니까
+                    {" "}분석해줘
                   </span>
                 </>
               ) : (
                 <>
+                  <span className="font-display font-extrabold tracking-tight text-gray-900">
+                    Your ingredients,
+                  </span>
+                  <br />
+                  <span className="font-display font-extrabold tracking-tight text-gray-900">
+                    analyzed by AI{" "}
+                  </span>
                   <span className="font-accent gradient-text font-medium tracking-normal italic">
-                    Check~
-                  </span>
-                  <span className="font-display font-extrabold tracking-tight text-gray-900">
-                    {" "}
-                    before
-                  </span>
-                  <br />
-                  <span className="font-display font-extrabold tracking-tight text-gray-900">
-                    Good ingredients
-                  </span>
-                  <br />
-                  <span className="font-display font-extrabold tracking-tight text-gray-900">
-                    aren't always good for you
+                    in 3 seconds
                   </span>
                 </>
               )}
@@ -1925,9 +1918,9 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3 sentences, 반�
               className="anim-fade-up mb-8 max-w-145 text-[15px] leading-relaxed text-gray-400"
               style={{ animationDelay: "100ms" }}
             >
-              {t("성분 분석부터 피부 일지, 트러블 추적까지 —", "Analysis, diary, trouble tracking —")}
+              {t("사진 한 장이면 끝. 성분 분석, 피부 타입 매칭, 조합 경고까지", "One photo is all it takes. Ingredient analysis, skin type matching, combo warnings")}
               <br />
-              {t("다 해주는 내 피부 메이트 💜", "your all-in-one skin mate 💜")}
+              {t("skindit이 다 알려줄게.", "skindit tells you everything.")}
             </p>
 
             {/* ── 순환 구조: 스킨딧 루프 ── */}
@@ -3214,7 +3207,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3 sentences, 반�
               </div>
             </div>
             <div className="border-t border-gray-100 pt-4 text-[10px] text-gray-300">
-              <p>© 2026 skindit. {t("바르기 전에 check~ 내 피부를 아는 AI 스킨 메이트", "Check before you apply~ AI skin mate that knows you")}</p>
+              <p>© 2026 skindit. {t("내 피부에 맞는 성분, AI가 분석해줘", "Your ingredients, analyzed by AI")}</p>
             </div>
           </div>
         </footer>

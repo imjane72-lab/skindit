@@ -24,6 +24,7 @@ const nextAuth = NextAuth({
   },
   pages: {
     signIn: "/auth/signin",
+    error: "/auth/signin",
   },
   callbacks: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -2,10 +2,14 @@
 
 import { signIn } from "next-auth/react";
 import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
-export default function SignInPage() {
+function SignInContent() {
   const [loading, setLoading] = useState<string | null>(null);
   const [lang, setLang] = useState("ko");
+  const searchParams = useSearchParams();
+  const error = searchParams.get("error");
   useEffect(() => { setLang(localStorage.getItem("skindit_lang") || "ko"); }, []);
   const t = (ko: string, en: string) => lang === "ko" ? ko : en;
 
@@ -52,12 +56,20 @@ export default function SignInPage() {
           <h1 className="font-[family-name:var(--font-display)] text-xl font-extrabold text-gray-900 mb-2">
             {t("로그인", "Sign In")}
           </h1>
-          <p className="text-sm text-gray-400 leading-relaxed">
-            {t("소셜 계정으로 바로 시작해~", "Get started with your social account~")}
-          </p>
-          <p className="text-xs text-gray-300 mt-1">
-            Sign in with your social account
-          </p>
+          {error ? (
+            <p className="text-sm text-rose-500 leading-relaxed">
+              {t("로그인 중 문제가 발생했어요. 다시 시도해줘!", "Something went wrong. Please try again!")}
+            </p>
+          ) : (
+            <>
+              <p className="text-sm text-gray-400 leading-relaxed">
+                {t("소셜 계정으로 바로 시작해~", "Get started with your social account~")}
+              </p>
+              <p className="text-xs text-gray-300 mt-1">
+                Sign in with your social account
+              </p>
+            </>
+          )}
         </div>
 
         {/* Social buttons */}
@@ -128,5 +140,13 @@ export default function SignInPage() {
         </a>
       </div>
     </div>
+  );
+}
+
+export default function SignInPage() {
+  return (
+    <Suspense>
+      <SignInContent />
+    </Suspense>
   );
 }
