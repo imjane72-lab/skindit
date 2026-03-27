@@ -256,9 +256,9 @@ function Md({ children }: { children: string }) {
       {lines.map((line, li) => {
         const trimmed = line.trim()
         if (!trimmed) return <br key={li} />
-        // ## or # headers → bold section title (no # shown)
-        if (trimmed.startsWith("## ") || trimmed.startsWith("# ")) {
-          const text = trimmed.replace(/^#+\s*/, "")
+        // Any line starting with # → bold title (remove all # symbols)
+        if (/^#{1,3}\s/.test(trimmed)) {
+          const text = trimmed.replace(/^#{1,3}\s*/, "")
           return <p key={li} className="mt-3 mb-1 text-sm font-extrabold text-gray-800">{text}</p>
         }
         // Bullet lists
