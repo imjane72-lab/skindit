@@ -59,50 +59,47 @@ export async function POST(req: NextRequest) {
   const body = await req.json();
   const { system, user } = body as { system: string; user: string };
 
-  // 식약처 공공데이터 연동 — 성분명 추출 후 공식 데이터 조회
-  let mfdsContext = "";
-  try {
-    let names: string[] = [];
+  // 성분명 추출
+  let names: string[] = [];
+  if (user.includes("Ingredients") || user.includes("성분")) {
+    const ingredientLine = user.split(/Ingredients?:|\n성분/).pop() || user;
+    names = ingredientLine
+      .replace(/(\d),(\d)/g, "$1COMMA$2")
+      .split(",")
+      .map(s => s.replace(/COMMA/g, ",").trim())
+      .filter(s => s.length > 1 && /[가-힣a-zA-Z]/.test(s))
+      .slice(0, 10);
+  } else {
+    const knownPatterns = /나이아신아마이드|레티놀|판테놀|히알루론산|세라마이드|비타민C|비타민E|알부틴|아데노신|글리세린|살리실산|글리콜산|아스코빅|토코페롤|펩타이드|티트리|알란토인|센텔라|병풀|스쿠알란|징크옥사이드|부틸렌글라이콜/g;
+    const matches = user.match(knownPatterns);
+    if (matches) names = [...new Set(matches)].slice(0, 5);
+  }
 
-    if (user.includes("Ingredients") || user.includes("성분")) {
-      // 성분 분석 모드: Ingredients: 뒤의 성분 목록
-      const ingredientLine = user.split(/Ingredients?:|\n성분/).pop() || user;
-      names = ingredientLine
-        .replace(/(\d),(\d)/g, "$1COMMA$2")
-        .split(",")
-        .map(s => s.replace(/COMMA/g, ",").trim())
-        .filter(s => s.length > 1 && /[가-힣a-zA-Z]/.test(s))
-        .slice(0, 10);
-    } else {
-      // 채팅 모드: 알려진 성분명 키워드 감지
-      const knownPatterns = /나이아신아마이드|레티놀|판테놀|히알루론산|세라마이드|비타민C|비타민E|알부틴|아데노신|글리세린|살리실산|글리콜산|아스코빅|토코페롤|펩타이드|티트리|알란토인|센텔라|병풀|스쿠알란|징크옥사이드|부틸렌글라이콜/g;
-      const matches = user.match(knownPatterns);
-      if (matches) names = [...new Set(matches)].slice(0, 5);
-    }
+  // MFDS API + AI 호출을 병렬 실행 (속도 향상)
+  const mfdsPromise = names.length > 0
+    ? getMfdsContext(names).catch(() => "")
+    : Promise.resolve("");
 
-    if (names.length > 0) {
-      mfdsContext = await getMfdsContext(names);
-    }
-  } catch { /* 식약처 API 실패해도 분석은 진행 */ }
-
-  const reqBody = JSON.stringify({
-    model: "claude-haiku-4-5-20251001",
-    max_tokens: 4096,
-    system,
-    messages: [{ role: "user", content: user + mfdsContext }],
-  });
   const reqHeaders = {
     "Content-Type": "application/json",
     "x-api-key": apiKey,
     "anthropic-version": "2023-06-01",
   };
 
+  // MFDS 결과를 기다리면서 동시에 AI도 호출 준비
+  const mfdsContext = await mfdsPromise;
+
   // 최대 2회 재시도 (500/529 에러 시)
   for (let attempt = 0; attempt < 3; attempt++) {
     const res = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: reqHeaders,
-      body: reqBody,
+      body: JSON.stringify({
+        model: "claude-haiku-4-5-20251001",
+        max_tokens: 4096,
+        system,
+        messages: [{ role: "user", content: user + mfdsContext }],
+      }),
     });
 
     const data = await res.json();
