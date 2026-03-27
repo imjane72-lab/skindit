@@ -1923,27 +1923,27 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3 sentences, 반�
               className="anim-fade-up mt-14 mb-6"
               style={{ animationDelay: "140ms" }}
             >
-              <div className="relative overflow-hidden rounded-2xl border border-purple-100 bg-white p-6 shadow-sm">
-                <p className="mb-5 text-center text-sm font-bold text-gray-800">
+              <div className="rounded-2xl border border-purple-200 bg-white p-7 shadow-md">
+                <p className="mb-6 text-center text-lg font-extrabold text-gray-900">
                   {t("쓸수록 나를 알아가는 스킨딧", "skindit learns you over time")}
                 </p>
-                <div className="grid grid-cols-4 gap-3">
+                <div className="grid grid-cols-2 gap-4">
                   {[
                     { icon: "🔬", label: t("분석", "Analyze"), sub: t("성분 바로 분석", "Instant analysis"), bg: "bg-blue-50 border-blue-200" },
                     { icon: "📔", label: t("기록", "Record"), sub: t("피부 변화 기록", "Track changes"), bg: "bg-pink-50 border-pink-200" },
                     { icon: "📊", label: t("발견", "Discover"), sub: t("트러블 원인 발견", "Find causes"), bg: "bg-emerald-50 border-emerald-200" },
                     { icon: "💬", label: t("상담", "Consult"), sub: t("1:1 AI 상담", "1:1 AI consult"), bg: "bg-purple-50 border-purple-200" },
                   ].map((step, i) => (
-                    <div key={i} className="flex flex-col items-center gap-2">
-                      <div className={`flex h-14 w-14 items-center justify-center rounded-2xl border text-2xl ${step.bg}`}>
-                        {step.icon}
+                    <div key={i} className={`flex items-center gap-3 rounded-xl border p-4 ${step.bg}`}>
+                      <span className="text-3xl">{step.icon}</span>
+                      <div>
+                        <p className="text-[15px] font-extrabold text-gray-900">{step.label}</p>
+                        <p className="text-sm text-gray-600">{step.sub}</p>
                       </div>
-                      <span className="text-sm font-bold text-gray-800">{step.label}</span>
-                      <span className="text-center text-[11px] leading-tight text-gray-500">{step.sub}</span>
                     </div>
                   ))}
                 </div>
-                <p className="mt-4 text-center text-xs font-medium text-purple-500">
+                <p className="mt-5 text-center text-sm font-bold text-purple-600">
                   {t("기록할수록 더 정확해져요", "Gets smarter with your data")}
                 </p>
               </div>
