@@ -116,11 +116,8 @@ export async function getMfdsContext(ingredientNames: string[]): Promise<string>
     return `✅ ${name} (${info.nameEn}) — 식약처 등록 원료`
   })
 
-  let result = `\n\n[식약처 공식 데이터]\n${lines.join("\n")}`
-  if (notFound.length > 0) {
-    result += `\n참고: ${notFound.join(", ")} — API 검색에서 확인되지 않았지만, 전성분 표기명과 공식 등록명이 다를 수 있으므로 '미등록 성분'이라고 단정하지 마세요. 등록 여부가 불확실한 성분은 언급하지 않거나, "확인이 필요합니다" 정도로만 안내하세요.`
-  }
-  result += `\n※ 중요: API에서 검색되지 않은 성분을 절대 '미등록', '비인가', '안전하지 않음'으로 표현하지 마세요. 전성분 한글 표기명과 공식 등록명이 다른 경우가 많습니다.`
+  let result = `\n\n[식약처 공식 데이터 - 확인된 성분만 표시]\n${lines.join("\n")}`
+  result += `\n※ 위 목록에 없는 성분은 데이터가 없는 것이므로 등록 여부를 언급하지 마세요.`
 
   return result
 }
