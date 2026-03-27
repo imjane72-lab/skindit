@@ -1884,47 +1884,42 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3 sentences, 반�
             >
               {lang === "ko" ? (
                 <>
-                  <span className="font-display font-extrabold tracking-tight text-gray-900">
-                    언제 성분표
-                  </span>
-                  <br />
-                  <span className="font-display font-extrabold tracking-tight text-gray-900">
-                    하나하나 검색해,
-                  </span>
-                  <br />
                   <span className="font-accent gradient-text font-medium tracking-normal italic">
                     10만 개 성분 데이터
                   </span>
                   <span className="font-display font-extrabold tracking-tight text-gray-900">
-                    로
+                    {" "}기반,
                   </span>
                   <br />
                   <span className="font-accent gradient-text font-medium tracking-normal italic">
                     skindit
                   </span>
                   <span className="font-display font-extrabold tracking-tight text-gray-900">
-                    이 해석해줄게
+                    이 네 피부타입으로
+                  </span>
+                  <br />
+                  <span className="font-display font-extrabold tracking-tight text-gray-900">
+                    해석해줄게
                   </span>
                 </>
               ) : (
                 <>
                   <span className="font-display font-extrabold tracking-tight text-gray-900">
-                    Why search ingredients
+                    Powered by{" "}
                   </span>
-                  <br />
-                  <span className="font-display font-extrabold tracking-tight text-gray-900">
-                    one by one?
+                  <span className="font-accent gradient-text font-medium tracking-normal italic">
+                    100K+ ingredients
                   </span>
                   <br />
                   <span className="font-accent gradient-text font-medium tracking-normal italic">
                     skindit
                   </span>
                   <span className="font-display font-extrabold tracking-tight text-gray-900">
-                    {" "}analyzes with
+                    {" "}reads them
                   </span>
                   <br />
-                  <span className="font-accent gradient-text font-medium tracking-normal italic">
-                    100K+ ingredient data
+                  <span className="font-display font-extrabold tracking-tight text-gray-900">
+                    for your skin type
                   </span>
                 </>
               )}
@@ -1974,31 +1969,9 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3 sentences, 반�
 
             {/* ── 기능 카드 ── */}
             <div
-              className="anim-fade-up flex flex-col gap-2.5"
+              className="anim-fade-up grid grid-cols-3 gap-2.5"
               style={{ animationDelay: "180ms" }}
             >
-              {/* 성분 분석 - 메인 CTA (full width) */}
-              <a
-                href="#analyze"
-                onClick={(e) => { e.preventDefault(); document.getElementById("tab-single")?.scrollIntoView({ behavior: "smooth" }) }}
-                className="group relative overflow-hidden rounded-2xl border-2 border-purple-200 bg-gradient-to-r from-purple-50 to-pink-50 p-5 no-underline shadow-md transition-all hover:-translate-y-0.5 hover:border-purple-400 hover:shadow-lg"
-              >
-                <div className="absolute top-0 right-0 h-16 w-16 translate-x-1/3 -translate-y-1/3 rounded-full bg-purple-100/50" />
-                <div className="flex items-center gap-4">
-                  <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500 to-pink-400 text-2xl shadow-sm">
-                    <span className="text-white">🔬</span>
-                  </div>
-                  <div>
-                    <p className="text-[15px] font-extrabold text-gray-900">
-                      {t("성분 바로 분석하기", "Analyze Ingredients Now")}
-                    </p>
-                    <p className="mt-0.5 text-xs text-gray-400">
-                      {t("사진 찍거나 성분 붙여넣기 - 3초면 끝", "Photo or paste — done in 3 seconds")}
-                    </p>
-                  </div>
-                </div>
-              </a>
-              <div className="grid grid-cols-3 gap-2.5">
               <a
                 href="/chat"
                 className="group relative overflow-hidden rounded-2xl border border-purple-100 bg-white p-4 no-underline shadow-sm transition-all hover:-translate-y-0.5 hover:border-purple-300 hover:shadow-md"
@@ -2038,7 +2011,6 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3 sentences, 반�
                   {t("트러블 원인 발견", "Find causes")}
                 </p>
               </a>
-              </div>
             </div>
 
           </div>
