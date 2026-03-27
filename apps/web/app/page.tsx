@@ -1923,76 +1923,33 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3 sentences, 반�
               className="anim-fade-up mt-14 mb-6"
               style={{ animationDelay: "140ms" }}
             >
-              <div className="rounded-2xl border border-purple-200 bg-white p-7 shadow-md">
-                <p className="mb-6 text-center text-lg font-extrabold text-gray-900">
-                  {t("쓸수록 나를 알아가는 스킨딧", "skindit learns you over time")}
-                </p>
-                <div className="grid grid-cols-2 gap-4">
-                  {[
-                    { icon: "🔬", label: t("분석", "Analyze"), sub: t("성분 바로 분석", "Instant analysis"), bg: "bg-blue-50 border-blue-200" },
-                    { icon: "📔", label: t("기록", "Record"), sub: t("피부 변화 기록", "Track changes"), bg: "bg-pink-50 border-pink-200" },
-                    { icon: "📊", label: t("발견", "Discover"), sub: t("트러블 원인 발견", "Find causes"), bg: "bg-emerald-50 border-emerald-200" },
-                    { icon: "💬", label: t("상담", "Consult"), sub: t("1:1 AI 상담", "1:1 AI consult"), bg: "bg-purple-50 border-purple-200" },
-                  ].map((step, i) => (
-                    <div key={i} className={`flex items-center gap-3 rounded-xl border p-4 ${step.bg}`}>
-                      <span className="text-3xl">{step.icon}</span>
-                      <div>
-                        <p className="text-[15px] font-extrabold text-gray-900">{step.label}</p>
-                        <p className="text-sm text-gray-600">{step.sub}</p>
-                      </div>
+              <p className="mb-2 text-center text-lg font-extrabold text-gray-900">
+                {t("쓸수록 나를 알아가는 스킨딧", "skindit learns you over time")}
+              </p>
+              <p className="mb-6 text-center text-sm text-gray-500">
+                {t("분석 → 기록 → 발견 → 상담, 이 흐름이 반복될수록 정확해져요", "Analyze → Record → Discover → Consult — gets smarter each cycle")}
+              </p>
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  { icon: "🔬", label: t("분석", "Analyze"), sub: t("성분 바로 분석", "Instant analysis"), bg: "bg-blue-50", href: "#analyze", scroll: true },
+                  { icon: "📔", label: t("기록", "Record"), sub: t("피부 변화 기록", "Track changes"), bg: "bg-pink-50", href: "/diary", scroll: false },
+                  { icon: "📊", label: t("발견", "Discover"), sub: t("트러블 원인 발견", "Find causes"), bg: "bg-emerald-50", href: "/diary/report", scroll: false },
+                  { icon: "💬", label: t("상담", "Consult"), sub: t("1:1 AI 상담", "1:1 AI consult"), bg: "bg-purple-50", href: "/chat", scroll: false },
+                ].map((step, i) => (
+                  <a
+                    key={i}
+                    href={step.href}
+                    onClick={step.scroll ? (e: React.MouseEvent) => { e.preventDefault(); document.getElementById("tab-single")?.scrollIntoView({ behavior: "smooth" }) } : undefined}
+                    className={`flex items-center gap-3 rounded-2xl ${step.bg} p-4 no-underline transition-all hover:-translate-y-0.5 hover:shadow-md`}
+                  >
+                    <span className="text-3xl">{step.icon}</span>
+                    <div>
+                      <p className="text-[15px] font-extrabold text-gray-900">{step.label}</p>
+                      <p className="text-sm text-gray-600">{step.sub}</p>
                     </div>
-                  ))}
-                </div>
-                <p className="mt-5 text-center text-sm font-bold text-purple-600">
-                  {t("기록할수록 더 정확해져요", "Gets smarter with your data")}
-                </p>
+                  </a>
+                ))}
               </div>
-            </div>
-
-            {/* ── 기능 카드 ── */}
-            <div
-              className="anim-fade-up grid grid-cols-3 gap-2.5"
-              style={{ animationDelay: "180ms" }}
-            >
-              <a
-                href="/chat"
-                className="group relative overflow-hidden rounded-2xl border border-purple-100 bg-white p-4 no-underline shadow-sm transition-all hover:-translate-y-0.5 hover:border-purple-300 hover:shadow-md"
-              >
-                <div className="absolute top-0 right-0 h-12 w-12 translate-x-1/3 -translate-y-1/3 rounded-full bg-purple-50" />
-                <span className="mb-1.5 block text-xl">💬</span>
-                <p className="text-[12px] font-bold text-gray-800">
-                  {t("1:1 AI 상담", "AI Consult")}
-                </p>
-                <p className="mt-0.5 text-[10px] leading-snug text-gray-400">
-                  {t("고민 뭐든 물어보세요", "Ask anything")}
-                </p>
-              </a>
-              <a
-                href="/diary"
-                className="group relative overflow-hidden rounded-2xl border border-pink-100 bg-white p-4 no-underline shadow-sm transition-all hover:-translate-y-0.5 hover:border-pink-300 hover:shadow-md"
-              >
-                <div className="absolute top-0 right-0 h-12 w-12 translate-x-1/3 -translate-y-1/3 rounded-full bg-pink-50" />
-                <span className="mb-1.5 block text-xl">📔</span>
-                <p className="text-[12px] font-bold text-gray-800">
-                  {t("피부 일지", "Diary")}
-                </p>
-                <p className="mt-0.5 text-[10px] leading-snug text-gray-400">
-                  {t("피부 변화 기록", "Track changes")}
-                </p>
-              </a>
-              <a
-                href="/diary/report"
-                className="group relative overflow-hidden rounded-2xl border border-emerald-100 bg-white p-4 no-underline shadow-sm transition-all hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-md"
-              >
-                <div className="absolute top-0 right-0 h-12 w-12 translate-x-1/3 -translate-y-1/3 rounded-full bg-emerald-50" />
-                <span className="mb-1.5 block text-xl">📊</span>
-                <p className="text-[12px] font-bold text-gray-800">
-                  {t("피부 리포트", "Report")}
-                </p>
-                <p className="mt-0.5 text-[10px] leading-snug text-gray-400">
-                  {t("트러블 원인 발견", "Find causes")}
-                </p>
-              </a>
             </div>
 
           </div>
