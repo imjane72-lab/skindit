@@ -1939,7 +1939,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3 sentences, ë°˜ì¡
                   <a
                     key={i}
                     href={step.href}
-                    onClick={step.scroll ? (e: React.MouseEvent) => { e.preventDefault(); document.getElementById("tab-single")?.scrollIntoView({ behavior: "smooth" }) } : undefined}
+                    onClick={step.scroll ? (e: React.MouseEvent) => { e.preventDefault(); document.getElementById("analysis-tabs")?.scrollIntoView({ behavior: "smooth" }) } : undefined}
                     className={`flex items-center gap-3 rounded-2xl ${step.bg} p-4 no-underline transition-all hover:-translate-y-0.5 hover:shadow-md`}
                   >
                     <span className="text-3xl">{step.icon}</span>
@@ -1960,7 +1960,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3 sentences, ë°˜ì¡
       <main className="px-6 pt-10 pb-32">
         {/* Tabs */}
         {phase === "setup" && (
-          <div className="mb-8 flex gap-1 rounded-2xl bg-gray-100/80 p-1">
+          <div id="analysis-tabs" className="mb-8 flex gap-1 rounded-2xl bg-gray-100/80 p-1">
             {[
               {
                 id: "single",
