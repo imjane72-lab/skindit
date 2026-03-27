@@ -427,10 +427,11 @@ export default function DiaryReportPage() {
                     onClick={() => {
                       const title = `skindit 피부 리포트`
                       const text = `${reportData?.summary || ""}\n\n${(reportData?.recommendations || []).join("\n")}`.trim()
+                      const shareUrl = `${SITE_URL}/diary/report`
                       if (navigator.share) {
-                        navigator.share({ title, text, url: SITE_URL }).catch(() => {})
+                        navigator.share({ title, text, url: shareUrl }).catch(() => {})
                       } else {
-                        navigator.clipboard.writeText(`${title}\n${text}\n${SITE_URL}`)
+                        navigator.clipboard.writeText(`${title}\n${text}\n${shareUrl}`)
                         alert("리포트 복사했어! 친구한테 보내줘~")
                       }
                     }}

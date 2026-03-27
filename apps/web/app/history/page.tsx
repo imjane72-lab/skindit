@@ -756,10 +756,11 @@ export default function HistoryPage() {
                               const verdict = String(item.resultJson?.verdict || "")
                               const title = displayType === "compare" ? "skindit 성분 비교 결과" : `skindit 분석 결과: ${item.score}점`
                               const text = `${comment}\n${verdict}`.trim()
+                              const shareUrl = `${SITE_URL}/history`
                               if (navigator.share) {
-                                navigator.share({ title, text, url: SITE_URL }).catch(() => {})
+                                navigator.share({ title, text, url: shareUrl }).catch(() => {})
                               } else {
-                                navigator.clipboard.writeText(`${title}\n${text}\n${SITE_URL}`)
+                                navigator.clipboard.writeText(`${title}\n${text}\n${shareUrl}`)
                                 alert("결과 복사했어! 친구한테 보내줘~")
                               }
                             }}
