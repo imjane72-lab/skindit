@@ -3,11 +3,11 @@ import Providers from "@/components/providers"
 import "./globals.css"
 
 export const metadata = {
-  title: "skindit — 바르기 전에 check~ 내 피부를 아는 AI 스킨 메이트",
-  description: "성분 분석, 피부 일지, 트러블 원인 추적까지. 쓸수록 나를 알아가는 AI 피부 메이트 skindit 💜",
+  title: "skindit — AI 피부 타입별 성분 분석",
+  description: "10만 개 성분 데이터 기반, 사진 한 장으로 성분 해석부터 조합 경고까지. AI 피부 분석 서비스 skindit",
   openGraph: {
-    title: "skindit — 바르기 전에 check~ 내 피부를 아는 AI 스킨 메이트",
-    description: "성분 분석, 피부 일지, 트러블 원인 추적까지. 쓸수록 나를 알아가는 AI 피부 메이트 💜",
+    title: "skindit — AI 피부 타입별 성분 분석",
+    description: "10만 개 성분 데이터 기반, 사진 한 장으로 성분 해석부터 조합 경고까지. AI 피부 분석 서비스 skindit",
     siteName: "skindit",
   },
 }
