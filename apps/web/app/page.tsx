@@ -2049,30 +2049,6 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3 sentences, 반�
               </a>
             </div>
 
-            {/* ── 분석 기능 태그 ── */}
-            <div
-              className="anim-fade-up mt-4"
-              style={{ animationDelay: "220ms" }}
-            >
-              <p className="mb-2.5 text-center text-xs font-bold text-gray-400">
-                {t("👇 아래에서 바로 분석해보세요~", "👇 Try analyzing below~")}
-              </p>
-              <div className="flex flex-wrap justify-center gap-1.5">
-                {[
-                  { label: t("단일 분석", "Single"), icon: "💊" },
-                  { label: t("루틴 체크", "Routine"), icon: "🧴" },
-                  { label: t("성분 비교", "Compare"), icon: "⚖️" },
-                  { label: t("사진 스캔", "Photo"), icon: "📷" },
-                ].map((f, i) => (
-                  <span
-                    key={i}
-                    className="inline-flex items-center gap-1 rounded-full bg-gray-100/60 px-2.5 py-1 text-[11px] font-medium text-gray-400"
-                  >
-                    <span>{f.icon}</span> {f.label}
-                  </span>
-                ))}
-              </div>
-            </div>
           </div>
         </div>
       )}
