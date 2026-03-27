@@ -510,7 +510,7 @@ function ConcernCard({
   const bg = CONCERN_BG[index % CONCERN_BG.length]
   return (
     <div
-      className={`max-w-48.75 min-w-42.5 shrink-0 bg-linear-to-br ${bg} anim-pop-in rounded-2xl border border-white/60 p-4 shadow-sm backdrop-blur-sm`}
+      className={`max-w-72 min-w-60 shrink-0 bg-linear-to-br ${bg} anim-pop-in rounded-2xl border border-white/60 p-5 shadow-sm backdrop-blur-sm`}
       style={{ animationDelay: `${delay}ms` }}
     >
       <div className="mb-3 flex items-center justify-between">
@@ -521,8 +521,8 @@ function ConcernCard({
           {scoreLabel(score, lang)}
         </span>
       </div>
-      <div className="mb-1 text-xs font-bold text-gray-800">{concern}</div>
-      <p className="text-[11px] leading-relaxed text-gray-500"><Md>{comment}</Md></p>
+      <div className="mb-1.5 text-sm font-bold text-gray-900">{concern}</div>
+      <p className="text-[13px] leading-relaxed text-gray-700"><Md>{comment}</Md></p>
     </div>
   )
 }
@@ -808,7 +808,7 @@ function SingleResult({
       {res.concern_analysis && res.concern_analysis.length > 0 && (
         <div className="mb-5">
           <div className="mb-3 flex items-center gap-2.5">
-            <span className="text-[10px] font-bold tracking-widest whitespace-nowrap text-gray-400 uppercase">
+            <span className="text-xs font-bold tracking-widest whitespace-nowrap text-gray-700 uppercase">
               {t("피부 고민별 분석", "By Concern")}
             </span>
             <div className="h-px flex-1 bg-linear-to-r from-gray-200 to-transparent" />
