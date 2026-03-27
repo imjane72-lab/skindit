@@ -85,26 +85,39 @@ export async function POST(req: NextRequest) {
     }
   } catch { /* 식약처 API 실패해도 분석은 진행 */ }
 
-  const res = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-api-key": apiKey,
-      "anthropic-version": "2023-06-01",
-    },
-    body: JSON.stringify({
-      model: "claude-haiku-4-5-20251001",
-      max_tokens: 4096,
-      system,
-      messages: [{ role: "user", content: user + mfdsContext }],
-    }),
+  const reqBody = JSON.stringify({
+    model: "claude-haiku-4-5-20251001",
+    max_tokens: 4096,
+    system,
+    messages: [{ role: "user", content: user + mfdsContext }],
   });
+  const reqHeaders = {
+    "Content-Type": "application/json",
+    "x-api-key": apiKey,
+    "anthropic-version": "2023-06-01",
+  };
 
-  const data = await res.json();
+  // 최대 2회 재시도 (500/529 에러 시)
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: reqHeaders,
+      body: reqBody,
+    });
 
-  if (data.error) {
-    return NextResponse.json({ error: data.error }, { status: 400 });
+    const data = await res.json();
+
+    if (data.error) {
+      const status = res.status;
+      if ((status >= 500 || status === 429) && attempt < 2) {
+        await new Promise(r => setTimeout(r, 1500 * (attempt + 1)));
+        continue;
+      }
+      return NextResponse.json({ error: data.error }, { status: 400 });
+    }
+
+    return NextResponse.json(data);
   }
 
-  return NextResponse.json(data);
+  return NextResponse.json({ error: { message: "서버 연결 실패. 잠시 후 다시 시도해주세요." } }, { status: 500 });
 }
