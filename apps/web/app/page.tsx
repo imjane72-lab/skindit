@@ -1006,7 +1006,13 @@ export default function Page() {
     if (typeof window !== "undefined") return localStorage.getItem("skindit_lang") || "ko"
     return "ko"
   })
-  const [tab, setTab] = useState("single")
+  const [tab, setTab] = useState(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search)
+      return params.get("tab") || "single"
+    }
+    return "single"
+  })
   const [phase, setPhase] = useState("setup")
   const [restored, setRestored] = useState(false)
 
@@ -1574,7 +1580,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3 sentences, 반�
   const analyzeSingle = () => {
     if (status === "unauthenticated") {
       savePending("single")
-      signIn(undefined, { callbackUrl: window.location.href })
+      signIn(undefined, { callbackUrl: `${window.location.pathname}?tab=single` })
       return
     }
     setLastIngs(ings)
@@ -1585,7 +1591,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3 sentences, 반�
   const analyzeRoutine = () => {
     if (status === "unauthenticated") {
       savePending("routine")
-      signIn(undefined, { callbackUrl: window.location.href })
+      signIn(undefined, { callbackUrl: `${window.location.pathname}?tab=routine` })
       return
     }
     setLastProducts([...products])
@@ -1594,7 +1600,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3 sentences, 반�
 
   const analyzeCompare = () => {
     if (status === "unauthenticated") {
-      signIn(undefined, { callbackUrl: window.location.href })
+      signIn(undefined, { callbackUrl: `${window.location.pathname}?tab=compare` })
       return
     }
     runCompareAnalysis(lang, compareA, compareB)
@@ -1906,7 +1912,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3 sentences, 반�
 
             {/* 설명 문구 (중간) */}
             <p
-              className="anim-fade-up mb-8 max-w-145 text-[15px] leading-relaxed text-gray-400"
+              className="anim-fade-up mb-8 max-w-145 text-[17px] font-medium leading-relaxed text-gray-700"
               style={{ animationDelay: "100ms" }}
             >
               {t("사진 한 장으로 성분 해석부터 조합 경고까지!", "From ingredient analysis to combo warnings — just one photo!")}
@@ -1917,33 +1923,29 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3 sentences, 반�
               className="anim-fade-up mt-14 mb-6"
               style={{ animationDelay: "140ms" }}
             >
-              <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-purple-50/80 via-white to-pink-50/60 p-5">
-                <div className="absolute -top-6 -right-6 h-20 w-20 rounded-full bg-purple-100/40" />
-                <div className="absolute -bottom-4 -left-4 h-16 w-16 rounded-full bg-pink-100/30" />
-                <div className="relative">
-                  <p className="mb-4 text-center text-xs font-bold text-purple-500">
-                    {t("쓸수록 나를 알아가는 스킨딧", "skindit learns you over time")}
-                  </p>
-                  <div className="flex items-start justify-between gap-0.5">
-                    {[
-                      { icon: "🔬", label: t("분석", "Analyze"), sub: t("성분 바로 분석", "Instant analysis"), color: "from-blue-100 to-sky-50 border-blue-200" },
-                      { icon: "📔", label: t("기록", "Record"), sub: t("피부 변화 기록", "Track changes"), color: "from-pink-100 to-rose-50 border-pink-200" },
-                      { icon: "📊", label: t("발견", "Discover"), sub: t("트러블 원인 발견", "Find causes"), color: "from-emerald-100 to-green-50 border-emerald-200" },
-                      { icon: "💬", label: t("상담", "Consult"), sub: t("1:1 AI 상담", "1:1 AI consult"), color: "from-purple-100 to-violet-50 border-purple-200" },
-                    ].map((step, i) => (
-                      <div key={i} className="flex flex-1 flex-col items-center gap-1.5">
-                        <div className={`flex h-12 w-12 items-center justify-center rounded-2xl border bg-linear-to-br ${step.color} text-xl shadow-sm`}>
-                          {step.icon}
-                        </div>
-                        <span className="text-xs font-extrabold text-gray-700">{step.label}</span>
-                        <span className="text-center text-[10px] leading-tight text-gray-400">{step.sub}</span>
+              <div className="relative overflow-hidden rounded-2xl border border-purple-100 bg-white p-6 shadow-sm">
+                <p className="mb-5 text-center text-sm font-bold text-gray-800">
+                  {t("쓸수록 나를 알아가는 스킨딧", "skindit learns you over time")}
+                </p>
+                <div className="grid grid-cols-4 gap-3">
+                  {[
+                    { icon: "🔬", label: t("분석", "Analyze"), sub: t("성분 바로 분석", "Instant analysis"), bg: "bg-blue-50 border-blue-200" },
+                    { icon: "📔", label: t("기록", "Record"), sub: t("피부 변화 기록", "Track changes"), bg: "bg-pink-50 border-pink-200" },
+                    { icon: "📊", label: t("발견", "Discover"), sub: t("트러블 원인 발견", "Find causes"), bg: "bg-emerald-50 border-emerald-200" },
+                    { icon: "💬", label: t("상담", "Consult"), sub: t("1:1 AI 상담", "1:1 AI consult"), bg: "bg-purple-50 border-purple-200" },
+                  ].map((step, i) => (
+                    <div key={i} className="flex flex-col items-center gap-2">
+                      <div className={`flex h-14 w-14 items-center justify-center rounded-2xl border text-2xl ${step.bg}`}>
+                        {step.icon}
                       </div>
-                    ))}
-                  </div>
-                  <div className="mt-3 flex items-center justify-center">
-                    <span className="text-[11px] font-medium text-purple-400">{t("기록할수록 더 정확해져요", "Gets smarter with your data")}</span>
-                  </div>
+                      <span className="text-sm font-bold text-gray-800">{step.label}</span>
+                      <span className="text-center text-[11px] leading-tight text-gray-500">{step.sub}</span>
+                    </div>
+                  ))}
                 </div>
+                <p className="mt-4 text-center text-xs font-medium text-purple-500">
+                  {t("기록할수록 더 정확해져요", "Gets smarter with your data")}
+                </p>
               </div>
             </div>
 
