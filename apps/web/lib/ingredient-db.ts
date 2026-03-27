@@ -74,7 +74,7 @@ export const INGREDIENT_DB: Record<string, IngredientInfo> = {
     timing: "아침/저녁 모두 가능. 자극이 거의 없는 안정적인 성분입니다.",
     cautionCombos: [],
     synergy: ["레티놀 (자극 완화 + 톤업)", "비타민C (톤업 시너지 — 함께 써도 안전)", "히알루론산 (수분 + 장벽)"],
-    tips: ["2~5% 농도면 대부분의 피부에 충분해요.", "비타민C와 함께 못 쓴다는 건 오래된 오해입니다. 같이 써도 됩니다."],
+    tips: ["2~5% 농도면 대부분의 피부에 충분해요.", "비타민C와 같이 사용해도 문제없어요."],
     effectTimeline: "피지 조절 1~2주, 톤업 4~8주",
     rating: 5,
     bestFor: "모공, 피지, 칙칙한 피부, 장벽 손상, 전 피부 타입",
@@ -400,24 +400,27 @@ ${info.tips.map(t => `- ${t}`).join("\n")}
  */
 export function getIngredientContext(names: string[]): string {
   const matched: string[] = []
+  const seen = new Set<string>()
 
-  for (const name of names) {
-    // DB에서 한글 이름 또는 영문 이름으로 매칭
+  for (const name of names.slice(0, 20)) {
+    if (name.length < 2) continue
     const entry = Object.values(INGREDIENT_DB).find(
       (info) =>
         info.name === name ||
         info.nameEn.toLowerCase() === name.toLowerCase() ||
-        name.includes(info.name) ||
-        info.name.includes(name)
+        (name.length >= 3 && name.includes(info.name)) ||
+        (info.name.length >= 3 && info.name.includes(name))
     )
-    if (entry) {
+    if (entry && !seen.has(entry.name)) {
+      seen.add(entry.name)
       const combos = entry.cautionCombos.length > 0
         ? entry.cautionCombos.join(", ")
         : "없음"
       matched.push(
-        `[${entry.name}] 작용: ${entry.action} | 시간: ${entry.timing} | 주의콤보: ${combos} | 시너지: ${entry.synergy.join(", ")}`
+        `[${entry.name}] 주의콤보: ${combos} | 시너지: ${entry.synergy.slice(0, 2).join(", ")}`
       )
     }
+    if (matched.length >= 5) break
   }
 
   if (matched.length === 0) return ""
