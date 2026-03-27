@@ -1885,30 +1885,43 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3 sentences, 반�
               {lang === "ko" ? (
                 <>
                   <span className="font-display font-extrabold tracking-tight text-gray-900">
-                    내 피부에 맞는 성분,
+                    언제 성분표
                   </span>
                   <br />
                   <span className="font-display font-extrabold tracking-tight text-gray-900">
-                    AI가{" "}
+                    하나하나 검색해,
                   </span>
+                  <br />
                   <span className="font-accent gradient-text font-medium tracking-normal italic">
-                    3초 만에
+                    skindit
                   </span>
                   <span className="font-display font-extrabold tracking-tight text-gray-900">
-                    {" "}분석해줘
+                    이 네 피부타입으로
+                  </span>
+                  <br />
+                  <span className="font-display font-extrabold tracking-tight text-gray-900">
+                    성분 해석해줄게
                   </span>
                 </>
               ) : (
                 <>
                   <span className="font-display font-extrabold tracking-tight text-gray-900">
-                    Your ingredients,
+                    Why search ingredients
                   </span>
                   <br />
                   <span className="font-display font-extrabold tracking-tight text-gray-900">
-                    analyzed by AI{" "}
+                    one by one?
                   </span>
+                  <br />
                   <span className="font-accent gradient-text font-medium tracking-normal italic">
-                    in 3 seconds
+                    skindit
+                  </span>
+                  <span className="font-display font-extrabold tracking-tight text-gray-900">
+                    {" "}reads them
+                  </span>
+                  <br />
+                  <span className="font-display font-extrabold tracking-tight text-gray-900">
+                    for your skin type
                   </span>
                 </>
               )}
