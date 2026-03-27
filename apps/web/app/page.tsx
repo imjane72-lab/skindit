@@ -1070,8 +1070,6 @@ export default function Page() {
   const [deferredPrompt, setDeferredPrompt] = useState<Event | null>(null)
 
   useEffect(() => {
-    const dismissed = sessionStorage.getItem("skindit_pwa_dismissed")
-    if (dismissed) return
     const handler = (e: Event) => {
       e.preventDefault()
       setDeferredPrompt(e)
@@ -1091,17 +1089,15 @@ export default function Page() {
     } else {
       // iOS Safari — 설치 방법 안내
       alert(lang === "ko"
-        ? "홈 화면에 추가하는 방법:\n\n1. 하단 공유 버튼 (□↑) 탭\n2. '홈 화면에 추가' 선택\n3. 추가 완료!\n\n* Safari에서만 가능해요"
-        : "How to add to Home Screen:\n\n1. Tap Share button (□↑) at bottom\n2. Select 'Add to Home Screen'\n3. Done!\n\n* Only available in Safari"
+        ? "📱 홈 화면에 추가하는 방법\n\n1. Safari로 열기\n2. 공유 버튼 (□↑) 열기\n3. '홈 화면에 추가' 클릭!\n\n완료!"
+        : "📱 Add to Home Screen\n\n1. Open in Safari\n2. Tap Share button (□↑)\n3. Tap 'Add to Home Screen'!\n\nDone!"
       )
     }
     setShowPwaBanner(false)
-    sessionStorage.setItem("skindit_pwa_dismissed", "1")
   }
 
   const dismissPwa = () => {
     setShowPwaBanner(false)
-    sessionStorage.setItem("skindit_pwa_dismissed", "1")
   }
 
   // Camera scan (OCR)
@@ -1157,16 +1153,18 @@ export default function Page() {
     setTrendLoading(true)
     try {
       const raw = await callAIText(
-        `스킨케어 성분 전문가. 반존대. ${lang === "ko" ? "한국어" : "English"}. 간결하게.`,
-        `"${name}" 성분 가이드. 각 항목 1-2줄로 짧게:
+        `스킨케어 성분 전문가. 반존대. ${lang === "ko" ? "한국어" : "English"}. 데이터에 있는 내용만.`,
+        `"${name}" 성분 완전 가이드. 각 항목 2-3줄로 구체적으로:
 
-**작용** 피부에서 하는 일
-**사용 시간** 아침/저녁 + 이유
-**금지 콤보** 같이 쓰면 안 되는 성분 2개
-**시너지** 같이 쓰면 좋은 성분 2개
-**초보자 팁** 주의사항 2개
-**효과 시기** 몇 주?
-**추천 강도** ★(1-5) + 이유 1줄`
+**작용 원리** 피부에서 정확히 어떻게 작용하는지 메커니즘 설명
+**사용 시간** 아침/저녁 + 과학적 이유 (예: 자외선 민감성, 세포 재생 주기 등)
+**금지 콤보** 같이 쓰면 안 되는 성분 2-3개 + 왜 안 되는지 이유
+**시너지 콤보** 같이 쓰면 효과 배가되는 성분 2-3개 + 이유
+**농도 가이드** 초보자 적정 농도, 고급자 농도
+**사용 꿀팁** 실전에서 바로 쓸 수 있는 팁 3개
+**효과 시기** 즉각 효과 vs 장기 효과 각각
+**추천 강도** ★(1-5) + 추천 이유 2줄
+**이런 분께 추천** 어떤 피부 타입/고민에 가장 좋은지`
       )
       setTrendInfo((p) => ({ ...p, [id]: raw }))
     } catch {
@@ -1398,7 +1396,8 @@ JSON only. Schema:{"summary":"3-4 sentences, 두 제품 핵심 비교 + 같이 �
     const sys = `너는 skindit 언니야. 아주 친한 언니가 동생한테 알려주듯이 말해줘. 입력된 성분만 분석, 지어내기 금지.
 ⚠️ 절대 규칙: 데이터에 있는 성분만 언급. 등록 여부 데이터가 없으면 등록 여부를 아예 언급하지 마세요.
 
-말투 예시: "이 성분 진짜 좋아요~ 꾸준히 쓰면 달라져요!", "레티놀 들어있네? 이건 꼭 저녁에만 바르세요! 아침에 바르면 자외선에 오히려 역효과예요", "알코올이 좀 신경 쓰이네... 민감하면 빼는 게 나을 수도 있어요"
+말투 예시: "이 성분 진짜 좋아요. 꾸준히 쓰면 달라져요!", "레티놀 들어있네요? 이건 꼭 저녁에만 바르세요! 아침에 바르면 자외선에 오히려 역효과예요", "알코올이 좀 신경 쓰이네요. 민감하면 빼는 게 나을 수도 있어요"
+~ 물결표시는 최소한으로 사용하세요. 자연스러운 존댓말로.
 
 각 성분에 대해 다음을 포함해서 꿀팁을 설명해줘:
 - 이 성분이 피부에서 하는 일 (작용 메커니즘 1줄)
@@ -1959,6 +1958,74 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3 sentences, 반�
 
       {/* ── MAIN ── */}
       <main className="px-6 pt-10 pb-32">
+        {/* ── TRENDING INGREDIENTS ── */}
+        {phase === "setup" && (
+          <div className="mb-8">
+            <p className="mb-3 flex items-center gap-1.5 text-sm font-bold text-gray-800">
+              <span className="text-base">🧬</span>
+              {t("요즘 뜨는 성분", "Trending Ingredients")}
+            </p>
+            <div className="hide-scrollbar -mx-1 flex gap-2 overflow-x-auto px-1 pb-2">
+              {TRENDING.map((tr) => (
+                <button
+                  key={tr.id}
+                  onClick={() =>
+                    loadTrendInfo(tr.id, lang === "ko" ? tr.ko : tr.en)
+                  }
+                  className={`flex shrink-0 items-center gap-1.5 rounded-full border px-3.5 py-2 text-xs font-semibold transition-all ${
+                    trendOpen === tr.id
+                      ? "bg-linear-to-r " +
+                        tr.gradient +
+                        " border-purple-200 shadow-sm"
+                      : "border-gray-200 bg-white text-gray-500 hover:border-purple-200 hover:bg-gray-50"
+                  }`}
+                >
+                  <span>{tr.icon}</span>
+                  {lang === "ko" ? tr.ko : tr.en}
+                </button>
+              ))}
+            </div>
+            {trendOpen && (
+              <div className="anim-fade-up mt-3 rounded-2xl border border-purple-100/60 bg-linear-to-br from-purple-50/50 to-pink-50/30 p-4">
+                <div className="mb-2 flex items-center gap-2">
+                  <span className="text-lg">
+                    {TRENDING.find((t) => t.id === trendOpen)?.icon}
+                  </span>
+                  <span className="text-sm font-bold text-gray-800">
+                    {lang === "ko"
+                      ? TRENDING.find((t) => t.id === trendOpen)?.ko
+                      : TRENDING.find((t) => t.id === trendOpen)?.en}
+                  </span>
+                </div>
+                {trendLoading ? (
+                  <div className="flex items-center gap-2 text-xs text-gray-400">
+                    <span
+                      className="inline-block h-3.5 w-3.5 rounded-full border-2 border-purple-200 border-t-purple-500"
+                      style={{ animation: "spin 1s linear infinite" }}
+                    />
+                    {t("알아보는 중...", "Loading...")}
+                  </div>
+                ) : (
+                  <p className="text-xs leading-relaxed whitespace-pre-line text-gray-600">
+                    {(trendInfo[trendOpen] || "")
+                      .replace(/^#{1,3}\s*/gm, "")
+                      .split(/(\*\*[^*]+\*\*)/)
+                      .map((part, i) =>
+                        part.startsWith("**") && part.endsWith("**") ? (
+                          <strong key={i} className="font-bold text-gray-800">
+                            {part.slice(2, -2)}
+                          </strong>
+                        ) : (
+                          part
+                        )
+                      )}
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Tabs */}
         {phase === "setup" && (
           <div id="analysis-tabs" className="mb-8 flex gap-1 rounded-2xl bg-gray-100/80 p-1">
@@ -2419,74 +2486,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3 sentences, 반�
           </div>
         )}
 
-        {/* ── TRENDING INGREDIENTS (setup phase only) ── */}
-        {phase === "setup" && (
-          <div className="mt-12 mb-4">
-            <div className="mb-8 h-px bg-linear-to-r from-transparent via-gray-200 to-transparent" />
-            <p className="mb-3 flex items-center gap-1.5 text-sm font-bold text-gray-800">
-              <span className="text-base">🧬</span>
-              {t("요즘 뜨는 성분", "Trending Ingredients")}
-            </p>
-            <div className="hide-scrollbar -mx-1 flex gap-2 overflow-x-auto px-1 pb-2">
-              {TRENDING.map((tr) => (
-                <button
-                  key={tr.id}
-                  onClick={() =>
-                    loadTrendInfo(tr.id, lang === "ko" ? tr.ko : tr.en)
-                  }
-                  className={`flex shrink-0 items-center gap-1.5 rounded-full border px-3.5 py-2 text-xs font-semibold transition-all ${
-                    trendOpen === tr.id
-                      ? "bg-linear-to-r " +
-                        tr.gradient +
-                        " border-purple-200 shadow-sm"
-                      : "border-gray-200 bg-white text-gray-500 hover:border-purple-200 hover:bg-gray-50"
-                  }`}
-                >
-                  <span>{tr.icon}</span>
-                  {lang === "ko" ? tr.ko : tr.en}
-                </button>
-              ))}
-            </div>
-            {trendOpen && (
-              <div className="anim-fade-up mt-3 rounded-2xl border border-purple-100/60 bg-linear-to-br from-purple-50/50 to-pink-50/30 p-4">
-                <div className="mb-2 flex items-center gap-2">
-                  <span className="text-lg">
-                    {TRENDING.find((t) => t.id === trendOpen)?.icon}
-                  </span>
-                  <span className="text-sm font-bold text-gray-800">
-                    {lang === "ko"
-                      ? TRENDING.find((t) => t.id === trendOpen)?.ko
-                      : TRENDING.find((t) => t.id === trendOpen)?.en}
-                  </span>
-                </div>
-                {trendLoading ? (
-                  <div className="flex items-center gap-2 text-xs text-gray-400">
-                    <span
-                      className="inline-block h-3.5 w-3.5 rounded-full border-2 border-purple-200 border-t-purple-500"
-                      style={{ animation: "spin 1s linear infinite" }}
-                    />
-                    {t("알아보는 중...", "Loading explanation...")}
-                  </div>
-                ) : (
-                  <p className="text-xs leading-relaxed whitespace-pre-line text-gray-600">
-                    {(trendInfo[trendOpen] || "")
-                      .replace(/^#{1,3}\s*/gm, "")
-                      .split(/(\*\*[^*]+\*\*)/)
-                      .map((part, i) =>
-                        part.startsWith("**") && part.endsWith("**") ? (
-                          <strong key={i} className="font-bold text-gray-800">
-                            {part.slice(2, -2)}
-                          </strong>
-                        ) : (
-                          part
-                        )
-                      )}
-                  </p>
-                )}
-              </div>
-            )}
-          </div>
-        )}
+        {/* trending moved above tabs */}
 
         {/* ── LOADING ── */}
         {phase === "loading" && (
@@ -3089,12 +3089,12 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3 sentences, 반�
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-xs font-bold text-gray-800">
-                {t("홈 화면에 skindit 추가하기", "Add skindit to Home Screen")}
+                {t("📱 홈 화면에 skindit 추가하기", "📱 Add skindit to Home Screen")}
               </p>
               <p className="text-[10px] text-gray-400">
                 {t(
-                  "Safari 공유(□↑) → 홈 화면에 추가",
-                  "Safari Share (□↑) → Add to Home Screen"
+                  "Safari → 공유(□↑) → 홈 화면에 추가",
+                  "Safari → Share (□↑) → Add to Home Screen"
                 )}
               </p>
             </div>
