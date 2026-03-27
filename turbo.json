@@ -14,7 +14,8 @@
         "GOOGLE_CLIENT_SECRET",
         "KAKAO_CLIENT_ID",
         "KAKAO_CLIENT_SECRET",
-        "MFDS_API_KEY"
+        "MFDS_API_KEY",
+        "NEXTAUTH_URL"
       ]
     },
     "lint": {
