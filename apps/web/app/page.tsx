@@ -257,7 +257,7 @@ function Md({ children }: { children: string }) {
         const trimmed = line.trim()
         if (!trimmed) return <br key={li} />
         // Any line starting with # → bold title (remove all # symbols)
-        if (/^#{1,3}\s/.test(trimmed)) {
+        if (/^#{1,3}/.test(trimmed)) {
           const text = trimmed.replace(/^#{1,3}\s*/, "")
           return <p key={li} className="mt-3 mb-1 text-sm font-extrabold text-gray-800">{text}</p>
         }
@@ -2547,11 +2547,12 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3 sentences, 반�
                 ) : (
                   <p className="text-xs leading-relaxed whitespace-pre-line text-gray-600">
                     {(trendInfo[trendOpen] || "")
+                      .replace(/^#{1,3}\s*/gm, "")
                       .split(/(\*\*[^*]+\*\*)/)
                       .map((part, i) =>
                         part.startsWith("**") && part.endsWith("**") ? (
                           <strong key={i} className="font-bold text-gray-800">
-                            {part.slice(2, -2)}
+                            ✨ {part.slice(2, -2)} ✨
                           </strong>
                         ) : (
                           part
