@@ -28,10 +28,13 @@ export interface MfdsIngredient {
 export async function searchIngredient(name: string): Promise<MfdsIngredient | null> {
   if (!MFDS_KEY) return null
   try {
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), 2000) // 2초 타임아웃
     const res = await fetch(
       `${BASE_URL}/CsmtcsIngdCpntInfoService01/getCsmtcsIngdCpntInfoService01?serviceKey=${encodeURIComponent(MFDS_KEY)}&type=json&numOfRows=5&INGR_KOR_NAME=${encodeURIComponent(name)}`,
-      { next: { revalidate: 86400 } } // 24시간 캐시
+      { next: { revalidate: 86400 }, signal: controller.signal }
     )
+    clearTimeout(timeout)
     if (!res.ok) return null
     const data = await res.json()
     const items = data?.body?.items
@@ -107,7 +110,6 @@ export async function batchCheckIngredients(ingredientNames: string[]): Promise<
 export async function getMfdsContext(ingredientNames: string[]): Promise<string> {
   const data = await batchCheckIngredients(ingredientNames)
   const verified = Object.keys(data)
-  const notFound = ingredientNames.filter(n => !data[n]).slice(0, 5)
 
   if (verified.length === 0) return ""
 
