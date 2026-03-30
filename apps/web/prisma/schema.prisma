@@ -9,15 +9,16 @@ datasource db {
 
 // ─── NextAuth Required Models ───
 
+/// OAuth 계정 정보 (Google, Kakao 등 소셜 로그인 연동)
 model Account {
   id                String  @id @default(cuid())
   userId            String  @map("user_id")
-  type              String
-  provider          String
-  providerAccountId String  @map("provider_account_id")
+  type              String /// OAuth 타입 (oauth, oidc 등)
+  provider          String /// 프로바이더명 (google, kakao)
+  providerAccountId String  @map("provider_account_id") /// 프로바이더 측 고유 ID
   refresh_token     String? @db.Text
   access_token      String? @db.Text
-  expires_at        Int?
+  expires_at        Int? /// 토큰 만료 시간 (Unix timestamp)
   token_type        String?
   scope             String?
   id_token          String? @db.Text
@@ -29,17 +30,19 @@ model Account {
   @@map("accounts")
 }
 
+/// 활성 세션 (Database 세션 전략)
 model Session {
   id           String   @id @default(cuid())
   sessionToken String   @unique @map("session_token")
   userId       String   @map("user_id")
-  expires      DateTime
+  expires      DateTime /// 세션 만료 시각
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("sessions")
 }
 
+/// 이메일 인증 토큰 (NextAuth 기본 모델, 현재 미사용 — OAuth만 사용)
 model VerificationToken {
   identifier String
   token      String   @unique
@@ -51,42 +54,45 @@ model VerificationToken {
 
 // ─── Domain Models ───
 
+/// 사용자 (NextAuth User + 커스텀 필드)
 model User {
   id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
+  name          String? /// 표시 이름
+  email         String?   @unique /// 이메일 (OAuth에서 자동 수집)
   emailVerified DateTime? @map("email_verified")
-  image         String?
-  role          String    @default("user") // "user" | "admin"
+  image         String? /// 프로필 이미지 URL
+  role          String    @default("user") /// "user" | "admin" — 역할 기반 접근 제어
   createdAt     DateTime  @default(now()) @map("created_at")
   updatedAt     DateTime  @updatedAt @map("updated_at")
 
   accounts           Account[]
   sessions           Session[]
-  skinProfile        SkinProfile?
-  analysisHistory    AnalysisHistory[]
-  skinDiary          SkinDiary[]
-  creditBalance      CreditBalance?
-  creditTransactions CreditTransaction[]
-  chatMessages       ChatMessage[]
+  skinProfile        SkinProfile? /// 1:1 피부 프로필
+  analysisHistory    AnalysisHistory[] /// 성분 분석 기록
+  skinDiary          SkinDiary[] /// 피부 일지
+  creditBalance      CreditBalance? /// 1:1 크레딧 잔액
+  creditTransactions CreditTransaction[] /// 크레딧 사용/충전 이력
+  chatMessages       ChatMessage[] /// AI 상담 대화
 
   @@map("users")
 }
 
+/// 피부 타입 열거형
 enum SkinType {
-  DRY
-  OILY
-  COMBINATION
-  SENSITIVE
-  NORMAL
+  DRY /// 건성
+  OILY /// 지성
+  COMBINATION /// 복합성
+  SENSITIVE /// 민감성
+  NORMAL /// 중성
 }
 
+/// 사용자 피부 프로필 (1:1)
 model SkinProfile {
   id        String   @id @default(cuid())
   userId    String   @unique @map("user_id")
-  skinTypes String[] @map("skin_types")
-  concerns  String[]
-  note      String?  @db.Text
+  skinTypes String[] @map("skin_types") /// 복수 선택 가능 (예: ["OILY", "SENSITIVE"])
+  concerns  String[] /// 피부 고민 (예: ["acne", "redness", "pores"])
+  note      String?  @db.Text /// 사용자 메모 (예: "레티놀 자극 있음")
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
 
@@ -95,49 +101,53 @@ model SkinProfile {
   @@map("skin_profiles")
 }
 
+/// 분석 유형 열거형
 enum AnalysisType {
-  SINGLE
-  ROUTINE
+  SINGLE /// 단일 제품 분석
+  ROUTINE /// 루틴 궁합 분석
 }
 
+/// 성분 분석 기록 — 분석 결과를 JSON으로 저장하여 스키마 변경 없이 확장 가능
 model AnalysisHistory {
   id          String       @id @default(cuid())
   userId      String       @map("user_id")
-  type        AnalysisType
-  ingredients String       @db.Text
-  concerns    String[]
-  score       Int
-  resultJson  Json         @map("result_json")
-  lang        String       @default("ko") @db.VarChar(5)
+  type        AnalysisType /// SINGLE(단일) | ROUTINE(루틴)
+  ingredients String       @db.Text /// 분석한 전성분 원문
+  concerns    String[] /// 선택한 피부 고민 목록
+  score       Int /// 종합 점수 (0-100)
+  resultJson  Json         @map("result_json") /// AI 분석 결과 전체 (JSON)
+  lang        String       @default("ko") @db.VarChar(5) /// 분석 언어 (ko/en)
   createdAt   DateTime     @default(now()) @map("created_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([userId, createdAt(sort: Desc)])
+  @@index([userId, createdAt(sort: Desc)]) /// 사용자별 최신순 조회 최적화
   @@map("analysis_history")
 }
 
+/// 피부 일지 — 매일 피부 상태, 사용 제품, 트러블, 식단 기록
 model SkinDiary {
   id          String   @id @default(cuid())
   userId      String   @map("user_id")
-  date        DateTime @default(now())
-  condition   String   // "good" | "normal" | "bad"
-  products    String[] // product names used that day
-  note        String?  @db.Text
-  troubles    String[] // e.g. ["redness", "acne", "dryness"]
-  foods       String[] // e.g. ["매운 음식", "유제품", "술"]
+  date        DateTime @default(now()) /// 기록 날짜
+  condition   String /// "good" | "normal" | "bad"
+  products    String[] /// 사용한 제품명 목록
+  note        String?  @db.Text /// 추가 메모
+  troubles    String[] /// 트러블 목록 (예: ["redness", "acne", "dryness"])
+  foods       String[] /// 식단 (예: ["매운 음식", "유제품", "술"])
   createdAt   DateTime @default(now()) @map("created_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([userId, date(sort: Desc)])
+  @@index([userId, date(sort: Desc)]) /// 사용자별 날짜순 조회 최적화
   @@map("skin_diary")
 }
 
+/// 크레딧 잔액 (1:1) — 현재 보유 크레딧
 model CreditBalance {
   id        String   @id @default(cuid())
   userId    String   @unique @map("user_id")
-  credits   Int      @default(0)
+  credits   Int      @default(0) /// 현재 크레딧 (0 이상)
   updatedAt DateTime @updatedAt @map("updated_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -145,29 +155,31 @@ model CreditBalance {
   @@map("credit_balances")
 }
 
+/// 크레딧 거래 내역 — 충전(+) 및 사용(-) 이력 추적
 model CreditTransaction {
   id        String   @id @default(cuid())
   userId    String   @map("user_id")
-  amount    Int      // positive = charge, negative = usage
-  type      String   // "charge" | "analysis" | "chat" | "report"
-  note      String?
+  amount    Int /// 양수 = 충전, 음수 = 사용
+  type      String /// "charge" | "analysis" | "chat" | "report"
+  note      String? /// 거래 메모 (예: "100크레딧 패키지 충전")
   createdAt DateTime @default(now()) @map("created_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([userId, createdAt(sort: Desc)])
+  @@index([userId, createdAt(sort: Desc)]) /// 사용자별 최신 거래순 조회
   @@map("credit_transactions")
 }
 
+/// AI 상담 채팅 메시지
 model ChatMessage {
   id        String   @id @default(cuid())
   userId    String   @map("user_id")
-  role      String   // "user" | "assistant"
-  content   String   @db.Text
+  role      String /// "user" | "assistant"
+  content   String   @db.Text /// 메시지 내용
   createdAt DateTime @default(now()) @map("created_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([userId, createdAt(sort: Desc)])
+  @@index([userId, createdAt(sort: Desc)]) /// 사용자별 대화 순서 최적화
   @@map("chat_messages")
 }
