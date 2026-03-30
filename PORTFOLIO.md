@@ -403,6 +403,93 @@ Kakao({
 
 ---
 
+### 6-11. 제품명 검색 기능의 정확도 문제 → 기능 폐기 결정
+
+**배경**: 초기에 "제품 이름만 입력하면 전성분을 자동으로 가져오는" 기능을 구현. Puppeteer로 웹 검색 → HTML 스크래핑 → 성분 추출 파이프라인.
+
+**문제**:
+1. 같은 제품명이라도 **리뉴얼 전/후 성분이 다른 경우** 잘못된 성분을 가져옴
+2. 검색 결과에서 **다른 브랜드의 유사한 이름 제품**이 걸리는 경우 발생
+3. 스크래핑 대상 사이트 구조가 바뀌면 **파싱이 깨지는** 유지보수 문제
+4. Puppeteer 서버리스 환경에서 **Cold Start가 5~10초** 걸려 UX 저하
+
+**결정**: 정확하지 않은 데이터를 제공하는 것보다 **기능을 폐기하는 것이 낫다**고 판단. API 라우트, Swagger 문서, 프론트 UI 모두 삭제.
+
+**대안**: OCR(사진 촬영) + 직접 붙여넣기 2가지 입력 방식으로 대체. 사용자가 직접 입력하므로 **데이터 정확도 100%**.
+
+**교훈**: "있으면 좋은 기능"이라도 **정확도가 보장되지 않으면 오히려 서비스 신뢰도를 떨어뜨린다**. 특히 성분 분석처럼 건강과 관련된 서비스에서는 부정확한 데이터가 치명적. 기능을 빼는 것도 중요한 제품 결정.
+
+---
+
+### 6-12. Next.js Suspense 경계 누락으로 프리렌더 실패
+
+**문제**: `diary/write` 페이지에서 `useSearchParams()` 사용 시 빌드 에러 발생
+```
+useSearchParams() should be wrapped in a suspense boundary at page "/diary/write"
+```
+
+**원인**: Next.js App Router에서 `useSearchParams()`는 클라이언트 전용 훅이므로, 정적 프리렌더 시 값을 알 수 없어 Suspense 경계가 필수
+
+**해결**: 컴포넌트를 `<Suspense>`로 감싸서 프리렌더와 클라이언트 하이드레이션을 분리
+```tsx
+export default function Page() {
+  return (
+    <Suspense>
+      <DiaryWriteContent />
+    </Suspense>
+  );
+}
+```
+
+**교훈**: Next.js App Router에서 URL 파라미터를 읽는 훅(`useSearchParams`, `usePathname`)은 반드시 Suspense 경계 안에서 사용해야 한다. 로컬 dev에서는 에러가 안 나지만 **빌드 시에만 발생**하는 함정.
+
+---
+
+### 6-13. 공유 URL이 항상 메인으로 연결되는 문제
+
+**문제**: 분석 결과를 공유하면 URL이 항상 `skindit-web.vercel.app` (메인)으로 연결. 루틴 분석 결과를 공유해도, 비교 결과를 공유해도, 기록 페이지에서 공유해도 전부 메인으로 이동.
+
+**원인**: 모든 공유 함수에서 `SITE_URL` (메인 URL)을 하드코딩으로 사용
+
+**해결**: 각 공유 위치에 맞는 URL 생성
+```typescript
+// 메인 분석 결과 → 탭 정보 포함
+const shareUrl = `${SITE_URL}?tab=single`
+// 루틴 결과
+const shareUrl = `${SITE_URL}?tab=routine`
+// 히스토리 페이지
+const shareUrl = `${SITE_URL}/history`
+// 리포트 페이지
+const shareUrl = `${SITE_URL}/diary/report`
+```
+페이지 로드 시 URL의 `tab` 파라미터를 읽어 해당 탭으로 자동 이동하도록 구현.
+
+**교훈**: 공유 기능은 "어떤 화면을 공유하는지"가 URL에 정확히 반영되어야 한다. **딥링크**가 안 되면 공유 기능의 의미가 없음.
+
+---
+
+### 6-14. 비로그인 사용자의 분석 후 로그인 시 컨텍스트 유실
+
+**문제**: 비로그인 상태에서 성분을 입력하고 "분석하기"를 누르면 로그인 페이지로 이동. 로그인 후 메인으로 돌아오지만, **입력했던 성분과 선택한 탭이 전부 사라짐**.
+
+**원인**: `signIn()` 호출 시 `callbackUrl`이 단순 메인 URL이라 탭/입력 상태가 보존되지 않음
+
+**해결**: 2단계 접근
+1. **탭 상태 보존**: `callbackUrl`에 탭 파라미터 포함
+```typescript
+signIn(undefined, { callbackUrl: `${window.location.pathname}?tab=single` })
+```
+2. **입력 데이터 보존**: `sessionStorage`에 입력 데이터 저장 → 로그인 후 복원
+```typescript
+const savePending = (type: string) => {
+  sessionStorage.setItem("skindit_pending", JSON.stringify({ type, data }))
+}
+```
+
+**교훈**: 로그인 리다이렉트는 단순히 "어디로 돌아갈지"뿐 아니라 **"무엇을 하고 있었는지"도 복원**해야 진짜 좋은 UX.
+
+---
+
 ## 7. 성능 최적화
 
 ### API 호출 병렬화
