@@ -113,6 +113,12 @@ export default function PricingPage() {
             </p>
           </div>
 
+          {/* ── 현재 무료 배너 ── */}
+          <div className="mb-6 rounded-2xl bg-emerald-50 border border-emerald-200 p-4 text-center anim-fade-up" style={{ animationDelay: "0.03s" }}>
+            <p className="text-sm font-bold text-emerald-700">현재 모든 기능 무료로 이용 가능합니다</p>
+            <p className="text-xs text-emerald-500 mt-1">프로 플랜은 추후 오픈 예정이에요</p>
+          </div>
+
           {/* ── Pricing Cards ── */}
           <div className="grid grid-cols-2 gap-3 mb-10 anim-fade-up" style={{ animationDelay: "0.05s" }}>
             {/* FREE Card */}
