@@ -424,5 +424,5 @@ export function getIngredientContext(names: string[]): string {
   }
 
   if (matched.length === 0) return ""
-  return `\n\n[검증된 성분 데이터 — 이 정보를 기반으로 답하세요]\n${matched.join("\n")}`
+  return `\n\n[검증된 성분 데이터 — 이 데이터에 있는 내용만 사용하세요. 여기에 없는 성분 효능/부작용은 "확인이 필요합니다"로 답하세요]\n${matched.join("\n")}`
 }

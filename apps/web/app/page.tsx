@@ -250,8 +250,9 @@ export default function Page() {
     textB: string
   ) => {
     setPhase("loading")
-    const sys = `skindit 성분 비교. 입력 성분만 비교, 지어내기 금지, 데이터에 없으면 언급 금지. 친근한 존댓말.
-규칙: 제품 단위로 꿀팁(아침/저녁, 사용 순서, 시너지). 주의 콤보는 검증된 것만. 추측 금지. 같은제형이면 하나만 추천.
+    const sys = `skindit 성분 비교. 친근한 존댓말.
+규칙: 입력 성분+제공된 데이터만 사용. 데이터에 없으면 "확인이 필요합니다". 제품 단위 꿀팁(아침/저녁, 순서, 시너지). 주의 콤보는 검증된 것만. 같은제형이면 하나만 추천.
+가드레일: 답변의 모든 내용이 제공된 컨텍스트에 포함되어 있는지 자체 검증. 컨텍스트에 없으면 언급 금지.
 JSON only. Schema:{"summary":"2-3줄","shared":[max 5,{"name":"","inA":true,"inB":true,"note":""}],"only_a":[max 5,{"name":"","inA":true,"inB":false,"note":""}],"only_b":[max 5,{"name":"","inA":false,"inB":true,"note":""}],"forbidden_combos":[max 2,{"ingredients":"","reason":""}],"recommendation":"2-3줄","usage_guide":{"best_time":"A:시간+이유, B:시간+이유, 순서","effect_timeline":"","beginner_tips":["3개"]},"verdict":"★(1-5)+근거 2줄"}. ${useLang === "ko" ? "한국어" : "English"}.`
     const skinContext =
       profileSkinTypes.length > 0
@@ -403,9 +404,11 @@ JSON only. Schema:{"summary":"2-3줄","shared":[max 5,{"name":"","inA":true,"inB
       .map((id) => CONCERNS.find((c) => c.id === id))
       .map((c) => (c ? tl(useLang, c.ko, c.en) : ""))
       .join(", ")
-    const sys = `skindit 성분 분석. 입력 성분만 분석, 지어내기 금지, 데이터에 없으면 언급 금지. 친근한 존댓말.
-규칙: 주의 콤보는 검증된 것만(AHA+레티놀 등). 추측 금지. "절대 금지" 대신 "분리 사용 권장". 불활성 성분에 없는 성질 만들지 마. 효과 시기는 임상 근거 기준만. concern_analysis에 선택한 고민 전부 포함.
-JSON only. Schema:{"overall_score":0-100,"overall_comment":"2-3줄","concern_analysis":[선택 고민 전부,{"concern":"","score":0-100,"comment":"2-3줄"}],"star_ingredients":[max 5,{"name":"","benefit":"","best_time":"","synergy":[]}],"watch_out":[{"name":"","reason":"","alternative":""}],"forbidden_combos":[max 3,{"ingredients":"","reason":""}],"usage_guide":{"best_time":"","effect_timeline":"","beginner_tips":["3개"]},"safety_ratings":[max 8,{"name":"","score":1-10,"note":""}],"verdict":"★(1-5)+근거 2줄"}. safety:1=safe,10=hazard. ${useLang === "ko" ? "한국어" : "English"}.`
+    const sys = `skindit 성분 분석. 친근한 존댓말.
+규칙: 입력 성분+제공된 데이터만 사용. 데이터에 없으면 "확인이 필요합니다"로 답변. 추측/지어내기 금지. 주의 콤보는 검증된 것만. "절대 금지" 대신 "분리 사용 권장". concern_analysis에 선택한 고민 전부 포함.
+출처: [검증된 성분 데이터]가 제공되면 해당 데이터 기반임을 표시. 예: "식약처 등록 성분이에요", "검증된 데이터 기준으로..."
+가드레일: 답변 전 자체 검증 — 모든 내용이 제공된 컨텍스트에 포함되어 있는지 확인. 컨텍스트에 없는 성분 효능/부작용은 언급 금지.
+JSON only. Schema:{"overall_score":0-100,"overall_comment":"2-3줄","concern_analysis":[선택 고민 전부,{"concern":"","score":0-100,"comment":"2-3줄"}],"star_ingredients":[max 5,{"name":"","benefit":"","best_time":"","synergy":[],"source":"검증됨|일반"}],"watch_out":[{"name":"","reason":"","alternative":""}],"forbidden_combos":[max 3,{"ingredients":"","reason":""}],"usage_guide":{"best_time":"","effect_timeline":"","beginner_tips":["3개"]},"safety_ratings":[max 8,{"name":"","score":1-10,"note":""}],"verdict":"★(1-5)+근거 2줄"}. safety:1=safe,10=hazard. ${useLang === "ko" ? "한국어" : "English"}.`
     const skinContext =
       profileSkinTypes.length > 0
         ? `\n⚠️ 이 사용자의 피부 타입: ${profileSkinTypes.join(", ")} — 이 피부 타입 기준으로 분석해주세요! 예: 민감성이면 자극 성분 더 엄격하게, 지성이면 유분 많은 성분 주의`
@@ -461,8 +464,9 @@ JSON only. Schema:{"overall_score":0-100,"overall_comment":"2-3줄","concern_ana
     const list = filled
       .map((p, i) => `[${p.name || `Product${i + 1}`}]: ${p.ingredients}`)
       .join("\n\n")
-    const sys = `skindit 루틴 분석. 입력 성분만 분석, 지어내기 금지, 데이터에 없으면 언급 금지. 친근한 존댓말.
-규칙: 같은제형 겹침=점수↓(40~60), 다른제형=OK(70~85), 상호보완=80~90. 주의 콤보는 검증된 것만. 추측 금지. "절대 금지" 대신 "분리 사용 권장".
+    const sys = `skindit 루틴 분석. 친근한 존댓말.
+규칙: 입력 성분+제공된 데이터만 사용. 데이터에 없으면 "확인이 필요합니다". 같은제형 겹침=점수↓(40~60), 다른제형=OK(70~85), 상호보완=80~90. 주의 콤보는 검증된 것만. "절대 금지" 대신 "분리 사용 권장".
+가드레일: 답변의 모든 내용이 제공된 컨텍스트에 포함되어 있는지 자체 검증. 컨텍스트에 없으면 언급 금지.
 JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":[max 3,{"ingredients":[""],"products":[""],"severity":"high|medium|low","reason":""}],"synergies":[max 3,{"ingredients":[""],"products":[""],"reason":""}],"order_suggestion":["순서"],"recommendations":[max 3,"팁"],"timeline":[{"product":"","timing":"morning|evening|both","reason":""}],"usage_guide":{"effect_timeline":"","beginner_tips":["2-3개"]},"verdict":"★(1-5)+근거 2줄"}. ${useLang === "ko" ? "한국어" : "English"}.`
     const skinContext =
       profileSkinTypes.length > 0
