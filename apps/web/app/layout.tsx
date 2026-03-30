@@ -4,10 +4,10 @@ import "./globals.css"
 
 export const metadata = {
   title: "skindit — AI 피부 타입별 성분 분석",
-  description: "10만 개 성분 데이터 기반, 사진 한 장으로 성분 해석부터 조합 경고까지. AI 피부 분석 서비스 skindit",
+  description: "2만 개+ 성분 데이터 기반, 사진 한 장으로 성분 해석부터 조합 경고까지. AI 피부 분석 서비스 skindit",
   openGraph: {
     title: "skindit — AI 피부 타입별 성분 분석",
-    description: "10만 개 성분 데이터 기반, 사진 한 장으로 성분 해석부터 조합 경고까지. AI 피부 분석 서비스 skindit",
+    description: "2만 개+ 성분 데이터 기반, 사진 한 장으로 성분 해석부터 조합 경고까지. AI 피부 분석 서비스 skindit",
     siteName: "skindit",
   },
 }
