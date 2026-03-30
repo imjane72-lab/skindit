@@ -1,9 +1,9 @@
 "use client"
 
-import ScoreHero from "@/components/ScoreHero"
-import Pill from "@/components/Pill"
-import SevBadge from "@/components/SevBadge"
-import Md from "@/components/Md"
+import ScoreHero from "@/components/analysis/ScoreHero"
+import Pill from "@/components/analysis/Pill"
+import SevBadge from "@/components/analysis/SevBadge"
+import Md from "@/components/ui/Md"
 import { SITE_URL } from "@/lib/constants"
 import { scoreLabel } from "@/lib/score-utils"
 import type { RoutineRes } from "@/types/analysis"

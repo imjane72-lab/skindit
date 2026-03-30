@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import Md from "@/components/Md"
+import Md from "@/components/ui/Md"
 
 export default function Pill({
   name,

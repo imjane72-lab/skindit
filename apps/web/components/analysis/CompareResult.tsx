@@ -1,6 +1,6 @@
 "use client"
 
-import Md from "@/components/Md"
+import Md from "@/components/ui/Md"
 import { SITE_URL } from "@/lib/constants"
 import type { CompareRes } from "@/types/analysis"
 
