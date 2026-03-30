@@ -72,7 +72,7 @@ function FullResultView({ item, displayType }: { item: HistoryItem; displayType:
           <Section icon="🫧" title="피부 고민별 분석" color="bg-gray-50/80">
             <div className="hide-scrollbar -mx-1 flex gap-2.5 overflow-x-auto px-1 pb-1">
               {concernAnalysis.map((c, i) => (
-                <div key={i} className="min-w-[200px] max-w-[220px] shrink-0 rounded-xl border border-gray-100 bg-white p-3.5">
+                <div key={i} className="min-w-50 max-w-55 shrink-0 rounded-xl border border-gray-100 bg-white p-3.5">
                   <div className="mb-1.5 flex items-center justify-between">
                     <span className="text-sm font-bold text-gray-800">{c.concern}</span>
                     <span className={`rounded-full px-2 py-0.5 text-xs font-bold ${c.score >= 80 ? "bg-emerald-50 text-emerald-600" : c.score >= 60 ? "bg-amber-50 text-amber-600" : "bg-rose-50 text-rose-600"}`}>{c.score}점</span>

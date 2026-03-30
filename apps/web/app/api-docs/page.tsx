@@ -43,7 +43,7 @@ export default function ApiDocsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-[900px] mx-auto px-6 py-12">
+      <div className="max-w-225 mx-auto px-6 py-12">
         {/* Header */}
         <div className="mb-10">
           <div className="flex items-center gap-3 mb-3">
@@ -80,7 +80,7 @@ export default function ApiDocsPage() {
                     onClick={() => setOpenPath(isOpen ? null : key)}
                     className="w-full flex items-center gap-3 px-5 py-3.5 text-left bg-transparent border-none"
                   >
-                    <span className={`${METHOD_COLORS[method] || "bg-gray-500"} text-white text-[10px] font-bold uppercase px-2.5 py-1 rounded-md min-w-[52px] text-center`}>
+                    <span className={`${METHOD_COLORS[method] || "bg-gray-500"} text-white text-[10px] font-bold uppercase px-2.5 py-1 rounded-md min-w-13 text-center`}>
                       {method}
                     </span>
                     <code className="text-sm font-semibold text-gray-800 flex-1">{path}</code>
