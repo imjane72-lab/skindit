@@ -6,10 +6,10 @@ import { getTrendingCache, getIngredientContext } from "@/lib/ingredient-db"
 import { callAI, callAIText } from "@/lib/api"
 import { CONCERNS, TRENDING, SAMPLE_S_KO, SAMPLE_S_EN, SAMPLE_R } from "@/constants/skin-data"
 import type { SingleRes, RoutineRes, CompareRes, Product, ConcernAnalysis } from "@/types/analysis"
-import { SingleResult } from "@/components/analysis"
-import { RoutineResult } from "@/components/analysis"
-import { CompareResult } from "@/components/analysis"
-import { ErrState } from "@/components/ui"
+import SingleResult from "@/components/analysis/SingleResult"
+import RoutineResult from "@/components/analysis/RoutineResult"
+import CompareResult from "@/components/analysis/CompareResult"
+import ErrState from "@/components/ui/ErrState"
 
 /* ════════════════════════════════════
    ROOT APP

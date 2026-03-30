@@ -1,6 +1,6 @@
 "use client"
 
-import { Counter } from "@/components/ui"
+import Counter from "@/components/ui/Counter"
 import { scoreHex, scoreColor } from "@/lib/score-utils"
 
 export default function ScoreRing({

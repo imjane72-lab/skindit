@@ -1,8 +1,0 @@
-export { default as SingleResult } from "./SingleResult"
-export { default as RoutineResult } from "./RoutineResult"
-export { default as CompareResult } from "./CompareResult"
-export { default as ScoreHero } from "./ScoreHero"
-export { default as ConcernCard } from "./ConcernCard"
-export { default as Pill } from "./Pill"
-export { default as SafetyChart } from "./SafetyChart"
-export { default as SevBadge } from "./SevBadge"
