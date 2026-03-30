@@ -137,7 +137,7 @@ export default function AdminPage() {
   if (error) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <div className="max-w-[640px] mx-auto bg-white min-h-screen shadow-xl relative overflow-hidden">
+        <div className="max-w-160 mx-auto bg-white min-h-screen shadow-xl relative overflow-hidden">
           <NavBar />
           <div className="px-6 py-8 text-center">
             <p className="text-sm text-red-500">{error}</p>
@@ -149,7 +149,7 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-[640px] mx-auto bg-white min-h-screen shadow-xl relative overflow-hidden">
+      <div className="max-w-160 mx-auto bg-white min-h-screen shadow-xl relative overflow-hidden">
         <NavBar />
 
         <div className="px-6 py-8 pb-24">

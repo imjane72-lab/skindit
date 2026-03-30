@@ -9,8 +9,8 @@ function NavBar() {
   return (
     <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-2xl border-b border-gray-100/80 h-14 px-6 flex items-center justify-between">
       <button onClick={() => router.push("/")} className="flex items-center gap-3 bg-transparent border-none p-0">
-        <div className="w-9 h-9 rounded-2xl bg-gradient-to-br from-pastel-lavender-dark via-purple-400 to-pastel-rose-dark flex items-center justify-center shadow-md relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-t from-white/10 to-transparent" />
+        <div className="w-9 h-9 rounded-2xl bg-linear-to-br from-pastel-lavender-dark via-purple-400 to-pastel-rose-dark flex items-center justify-center shadow-md relative overflow-hidden">
+          <div className="absolute inset-0 bg-linear-to-t from-white/10 to-transparent" />
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="relative">
             <circle cx="11" cy="11" r="6" stroke="white" strokeWidth="2" strokeOpacity="0.9" />
             <path d="M16 16L20 20" stroke="white" strokeWidth="2" strokeLinecap="round" strokeOpacity="0.9" />
@@ -20,8 +20,8 @@ function NavBar() {
           </svg>
         </div>
         <div className="flex items-baseline gap-0.5">
-          <span className="font-[family-name:var(--font-display)] text-[17px] font-extrabold text-gray-900 tracking-tight">skin</span>
-          <span className="font-[family-name:var(--font-accent)] text-[17px] font-semibold italic text-transparent bg-clip-text bg-gradient-to-r from-pastel-lavender-dark to-pastel-rose-dark">dit</span>
+          <span className="font-display text-[17px] font-extrabold text-gray-900 tracking-tight">skin</span>
+          <span className="font-accent text-[17px] font-semibold italic text-transparent bg-clip-text bg-linear-to-r from-pastel-lavender-dark to-pastel-rose-dark">dit</span>
         </div>
       </button>
       <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Pricing</span>
@@ -62,12 +62,12 @@ function CreditPackage({
       onClick={onSelect}
       className={`flex-1 rounded-2xl p-4 text-center border-2 transition-all duration-200 hover:shadow-md ${
         selected
-          ? "border-purple-400 bg-gradient-to-b from-purple-50 to-white shadow-md ring-2 ring-purple-200"
+          ? "border-purple-400 bg-linear-to-b from-purple-50 to-white shadow-md ring-2 ring-purple-200"
           : "border-gray-200 bg-white hover:border-purple-200"
       }`}
     >
       {badge && (
-        <span className="inline-block text-[10px] font-bold text-white bg-gradient-to-r from-purple-500 to-pink-400 px-2.5 py-0.5 rounded-full mb-2">
+        <span className="inline-block text-[10px] font-bold text-white bg-linear-to-r from-purple-500 to-pink-400 px-2.5 py-0.5 rounded-full mb-2">
           {badge}
         </span>
       )}
@@ -98,13 +98,13 @@ export default function PricingPage() {
   const t = (ko: string, en: string) => lang === "ko" ? ko : en;
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-[640px] mx-auto bg-white min-h-screen shadow-xl relative overflow-hidden">
+      <div className="max-w-160 mx-auto bg-white min-h-screen shadow-xl relative overflow-hidden">
         <NavBar />
 
         <div className="px-6 py-8 pb-24">
           {/* ── Hero ── */}
           <div className="text-center mb-10 anim-fade-up">
-            <h1 className="font-[family-name:var(--font-display)] text-2xl font-extrabold text-gray-900 mb-2">
+            <h1 className="font-display text-2xl font-extrabold text-gray-900 mb-2">
               {t("스킨딧이랑 하면 달라져~", "It changes with skindit~")}
             </h1>
             <p className="text-sm text-gray-400 leading-relaxed">
@@ -148,10 +148,10 @@ export default function PricingPage() {
             </div>
 
             {/* PRO Card */}
-            <div className="rounded-2xl border-2 border-purple-300 bg-gradient-to-b from-purple-50/80 to-white p-5 flex flex-col relative">
+            <div className="rounded-2xl border-2 border-purple-300 bg-linear-to-b from-purple-50/80 to-white p-5 flex flex-col relative">
               {/* Badge */}
               <div className="absolute -top-3 right-4">
-                <span className="inline-flex items-center gap-1 text-[10px] font-bold text-white bg-gradient-to-r from-purple-500 to-pink-400 px-3 py-1 rounded-full shadow-md">
+                <span className="inline-flex items-center gap-1 text-[10px] font-bold text-white bg-linear-to-r from-purple-500 to-pink-400 px-3 py-1 rounded-full shadow-md">
                   추천
                 </span>
               </div>
@@ -185,7 +185,7 @@ export default function PricingPage() {
                   const el = document.getElementById("credit-packages");
                   el?.scrollIntoView({ behavior: "smooth" });
                 }}
-                className="mt-5 w-full h-10 rounded-xl bg-gradient-to-r from-purple-500 via-purple-400 to-pink-400 text-white text-sm font-bold shadow-lg shadow-purple-200/50 hover:shadow-xl hover:shadow-purple-300/50 transition-all duration-300"
+                className="mt-5 w-full h-10 rounded-xl bg-linear-to-r from-purple-500 via-purple-400 to-pink-400 text-white text-sm font-bold shadow-lg shadow-purple-200/50 hover:shadow-xl hover:shadow-purple-300/50 transition-all duration-300"
               >
                 {t("크레딧 충전하기", "Buy Credits")}
               </button>
@@ -194,7 +194,7 @@ export default function PricingPage() {
 
           {/* ── Credit Packages ── */}
           <section id="credit-packages" className="mb-10 anim-fade-up" style={{ animationDelay: "0.1s" }}>
-            <h2 className="font-[family-name:var(--font-display)] text-lg font-extrabold text-gray-900 mb-4 text-center">
+            <h2 className="font-display text-lg font-extrabold text-gray-900 mb-4 text-center">
               {t("크레딧 패키지", "Credit Packages")}
             </h2>
             <div className="flex gap-3">
@@ -206,7 +206,7 @@ export default function PricingPage() {
 
           {/* ── Credit Usage Table ── */}
           <section className="mb-10 anim-fade-up" style={{ animationDelay: "0.15s" }}>
-            <h2 className="font-[family-name:var(--font-display)] text-lg font-extrabold text-gray-900 mb-4 text-center">
+            <h2 className="font-display text-lg font-extrabold text-gray-900 mb-4 text-center">
               {t("크레딧 사용량", "Credit Usage")}
             </h2>
             <div className="glass-card rounded-2xl p-5">

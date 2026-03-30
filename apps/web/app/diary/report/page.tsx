@@ -53,7 +53,7 @@ function NavBar() {
             <path d="M15 18l-6-6 6-6" />
           </svg>
         </div>
-        <span className="font-[family-name:var(--font-display)] text-sm font-bold text-gray-700">돌아가기</span>
+        <span className="font-display text-sm font-bold text-gray-700">돌아가기</span>
       </button>
       <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Report</span>
     </nav>
@@ -133,7 +133,7 @@ export default function DiaryReportPage() {
   if (status === "loading" || loadingEntries) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <div className="max-w-[640px] mx-auto bg-white min-h-screen shadow-xl">
+        <div className="max-w-160 mx-auto bg-white min-h-screen shadow-xl">
           <NavBar />
           <div className="flex items-center justify-center h-[60vh]">
             <div className="w-8 h-8 border-3 border-purple-200 border-t-purple-500 rounded-full animate-spin" />
@@ -149,11 +149,11 @@ export default function DiaryReportPage() {
   if (entryCount !== null && entryCount < 5) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <div className="max-w-[640px] mx-auto bg-white min-h-screen shadow-xl">
+        <div className="max-w-160 mx-auto bg-white min-h-screen shadow-xl">
           <NavBar />
           <div className="px-6 py-8">
             <div className="mb-8 anim-fade-up">
-              <h1 className="font-[family-name:var(--font-display)] text-2xl font-extrabold text-gray-900 mb-3">
+              <h1 className="font-display text-2xl font-extrabold text-gray-900 mb-3">
                 📑 피부 리포트
               </h1>
               <p className="text-sm text-gray-400">기록 분석해서 피부 패턴 알려줄게~</p>
@@ -174,7 +174,7 @@ export default function DiaryReportPage() {
               </div>
               <button
                 onClick={() => router.push("/diary/write")}
-                className="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-pastel-lavender-dark via-purple-400 to-pastel-rose-dark shadow-md hover:shadow-lg transition-all"
+                className="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-linear-to-r from-pastel-lavender-dark via-purple-400 to-pastel-rose-dark shadow-md hover:shadow-lg transition-all"
               >
                 기록하러 가기
               </button>
@@ -189,11 +189,11 @@ export default function DiaryReportPage() {
   if (reportLoading) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <div className="max-w-[640px] mx-auto bg-white min-h-screen shadow-xl">
+        <div className="max-w-160 mx-auto bg-white min-h-screen shadow-xl">
           <NavBar />
           <div className="px-6 py-8">
             <div className="mb-8 anim-fade-up">
-              <h1 className="font-[family-name:var(--font-display)] text-2xl font-extrabold text-gray-900 mb-3">
+              <h1 className="font-display text-2xl font-extrabold text-gray-900 mb-3">
                 📑 피부 리포트
               </h1>
               <p className="text-sm text-gray-400">기록 분석해서 피부 패턴 알려줄게~</p>
@@ -217,12 +217,12 @@ export default function DiaryReportPage() {
   /* ── Report data ── */
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-[640px] mx-auto bg-white min-h-screen shadow-xl">
+      <div className="max-w-160 mx-auto bg-white min-h-screen shadow-xl">
         <NavBar />
 
         <div className="px-6 py-8 pb-24">
           <div className="mb-6 anim-fade-up">
-            <h1 className="font-[family-name:var(--font-display)] text-2xl font-extrabold text-gray-900 mb-1">
+            <h1 className="font-display text-2xl font-extrabold text-gray-900 mb-1">
               📑 피부 리포트
             </h1>
             <p className="text-sm text-gray-400">기록 분석해서 피부 패턴 알려줄게~</p>
@@ -255,8 +255,8 @@ export default function DiaryReportPage() {
           {reportData ? (
             <div className="rounded-2xl overflow-hidden shadow-sm anim-scale-in">
               {/* Header — 은은한 파스텔 */}
-              <div className="bg-gradient-to-r from-pastel-lavender-dark via-purple-400 to-pastel-rose-dark px-6 py-6 rounded-t-2xl">
-                <h3 className="font-[family-name:var(--font-display)] text-white text-lg font-extrabold">
+              <div className="bg-linear-to-r from-pastel-lavender-dark via-purple-400 to-pastel-rose-dark px-6 py-6 rounded-t-2xl">
+                <h3 className="font-display text-white text-lg font-extrabold">
                   {session?.user?.name || ""}님의 피부 리포트 📑
                 </h3>
                 <p className="text-white/70 text-xs mt-1">{selectedMonth.replace("-", "년 ")}월 분석 결과</p>
@@ -413,10 +413,10 @@ export default function DiaryReportPage() {
                 )}
 
                 {/* Pro upsell */}
-                <div className="bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-2xl p-4 mb-3 text-center">
+                <div className="bg-linear-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-2xl p-4 mb-3 text-center">
                   <p className="text-xs font-bold text-purple-700 mb-1">💎 프로에서 더 자세한 리포트 받아봐~</p>
                   <p className="text-[11px] text-gray-500 mb-3">시술 추천, 성분 알레르기 추적, 월간 비교 분석까지</p>
-                  <a href="/pricing" className="inline-block px-5 py-2 text-xs font-bold text-white bg-gradient-to-r from-purple-500 to-pink-400 rounded-xl no-underline hover:opacity-90 transition-all">
+                  <a href="/pricing" className="inline-block px-5 py-2 text-xs font-bold text-white bg-linear-to-r from-purple-500 to-pink-400 rounded-xl no-underline hover:opacity-90 transition-all">
                     프로 플랜 보기
                   </a>
                 </div>
@@ -459,7 +459,7 @@ export default function DiaryReportPage() {
               <p className="text-xs text-gray-400 leading-relaxed mb-4">다시 한번 해봐!</p>
               <button
                 onClick={fetchReport}
-                className="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-pastel-lavender-dark via-purple-400 to-pastel-rose-dark shadow-md hover:shadow-lg transition-all"
+                className="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-linear-to-r from-pastel-lavender-dark via-purple-400 to-pastel-rose-dark shadow-md hover:shadow-lg transition-all"
               >
                 다시 시도
               </button>

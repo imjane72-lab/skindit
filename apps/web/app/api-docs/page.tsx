@@ -48,12 +48,12 @@ export default function ApiDocsPage() {
         <div className="mb-10">
           <div className="flex items-center gap-3 mb-3">
             <a href="/" className="flex items-baseline gap-0.5 no-underline">
-              <span className="font-[family-name:var(--font-display)] text-xl font-extrabold text-gray-900">skin</span>
-              <span className="font-[family-name:var(--font-accent)] text-xl font-semibold italic text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500">dit</span>
+              <span className="font-display text-xl font-extrabold text-gray-900">skin</span>
+              <span className="font-accent text-xl font-semibold italic text-transparent bg-clip-text bg-linear-to-r from-purple-500 to-pink-500">dit</span>
             </a>
             <span className="text-xs font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full">API v{spec.info.version}</span>
           </div>
-          <h1 className="font-[family-name:var(--font-display)] text-3xl font-extrabold text-gray-900 mb-2">API Documentation</h1>
+          <h1 className="font-display text-3xl font-extrabold text-gray-900 mb-2">API Documentation</h1>
           <p className="text-sm text-gray-500">{spec.info.description}</p>
         </div>
 

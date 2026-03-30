@@ -72,8 +72,8 @@ function NavBar() {
   return (
     <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-2xl border-b border-gray-100/80 h-14 px-6 flex items-center justify-between">
       <button onClick={() => router.push("/")} className="flex items-center gap-3 bg-transparent border-none p-0">
-        <div className="w-9 h-9 rounded-2xl bg-gradient-to-br from-pastel-lavender-dark via-purple-400 to-pastel-rose-dark flex items-center justify-center shadow-md relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-t from-white/10 to-transparent" />
+        <div className="w-9 h-9 rounded-2xl bg-linear-to-br from-pastel-lavender-dark via-purple-400 to-pastel-rose-dark flex items-center justify-center shadow-md relative overflow-hidden">
+          <div className="absolute inset-0 bg-linear-to-t from-white/10 to-transparent" />
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="relative">
             <circle cx="11" cy="11" r="6" stroke="white" strokeWidth="2" strokeOpacity="0.9" />
             <path d="M16 16L20 20" stroke="white" strokeWidth="2" strokeLinecap="round" strokeOpacity="0.9" />
@@ -83,8 +83,8 @@ function NavBar() {
           </svg>
         </div>
         <div className="flex items-baseline gap-0.5">
-          <span className="font-[family-name:var(--font-display)] text-[17px] font-extrabold text-gray-900 tracking-tight">skin</span>
-          <span className="font-[family-name:var(--font-accent)] text-[17px] font-semibold italic text-transparent bg-clip-text bg-gradient-to-r from-pastel-lavender-dark to-pastel-rose-dark">dit</span>
+          <span className="font-display text-[17px] font-extrabold text-gray-900 tracking-tight">skin</span>
+          <span className="font-accent text-[17px] font-semibold italic text-transparent bg-clip-text bg-linear-to-r from-pastel-lavender-dark to-pastel-rose-dark">dit</span>
         </div>
       </button>
       <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Chat</span>
@@ -97,7 +97,7 @@ function TypingIndicator() {
   return (
     <div className="flex items-end gap-2.5 anim-fade-up">
       {/* Avatar */}
-      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-pastel-lavender-dark to-pastel-rose-dark flex items-center justify-center flex-shrink-0 shadow-sm">
+      <div className="w-8 h-8 rounded-full bg-linear-to-br from-pastel-lavender-dark to-pastel-rose-dark flex items-center justify-center flex-shrink-0 shadow-sm">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
           <circle cx="11" cy="11" r="6" stroke="white" strokeWidth="2" strokeOpacity="0.9" />
           <path d="M16 16L20 20" stroke="white" strokeWidth="2" strokeLinecap="round" strokeOpacity="0.9" />
@@ -121,7 +121,7 @@ function MessageBubble({ message }: { message: Message }) {
     <div className={`flex items-end gap-2.5 anim-fade-up ${isAI ? "justify-start" : "justify-end"}`}>
       {/* AI avatar */}
       {isAI && (
-        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-pastel-lavender-dark to-pastel-rose-dark flex items-center justify-center flex-shrink-0 shadow-sm">
+        <div className="w-8 h-8 rounded-full bg-linear-to-br from-pastel-lavender-dark to-pastel-rose-dark flex items-center justify-center flex-shrink-0 shadow-sm">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
             <circle cx="11" cy="11" r="6" stroke="white" strokeWidth="2" strokeOpacity="0.9" />
             <path d="M16 16L20 20" stroke="white" strokeWidth="2" strokeLinecap="round" strokeOpacity="0.9" />
@@ -259,7 +259,7 @@ export default function ChatPage() {
   /* ── Loading / Auth states ── */
   if (status === "loading") {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-pastel-lavender/30 to-white">
+      <div className="min-h-screen flex items-center justify-center bg-linear-to-b from-pastel-lavender/30 to-white">
         <div className="w-8 h-8 rounded-full border-2 border-pastel-lavender-dark border-t-transparent animate-spin" />
       </div>
     );
@@ -268,7 +268,7 @@ export default function ChatPage() {
   if (status === "unauthenticated") return null;
 
   return (
-    <div className="max-w-[640px] mx-auto bg-white min-h-screen shadow-xl flex flex-col relative">
+    <div className="max-w-160 mx-auto bg-white min-h-screen shadow-xl flex flex-col relative">
       <NavBar />
 
       {/* ── Decorative blobs ── */}
@@ -324,7 +324,7 @@ export default function ChatPage() {
             type="submit"
             disabled={!input.trim() || isTyping}
             className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0
-              bg-gradient-to-br from-pastel-lavender-dark via-purple-400 to-pastel-rose-dark
+              bg-linear-to-br from-pastel-lavender-dark via-purple-400 to-pastel-rose-dark
               text-white shadow-lg shadow-purple-200/50
               hover:shadow-xl hover:shadow-purple-300/50 hover:scale-105
               active:scale-95 transition-all duration-200
