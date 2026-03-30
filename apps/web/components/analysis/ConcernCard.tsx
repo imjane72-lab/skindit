@@ -1,7 +1,7 @@
 "use client"
 
-import ScoreRing from "@/components/ui/ScoreRing"
-import Md from "@/components/ui/Md"
+import { ScoreRing } from "@/components/ui"
+import { Md } from "@/components/ui"
 import { scoreColor, scoreBg, scoreLabel } from "@/lib/score-utils"
 import { CONCERN_BG } from "@/constants/skin-data"
 

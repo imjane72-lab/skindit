@@ -1,7 +1,7 @@
 "use client"
 
-import ScoreRing from "@/components/ui/ScoreRing"
-import Md from "@/components/ui/Md"
+import { ScoreRing } from "@/components/ui"
+import { Md } from "@/components/ui"
 import { scoreGradient, scoreColor, scoreBg, scoreBorder } from "@/lib/score-utils"
 
 export default function ScoreHero({
