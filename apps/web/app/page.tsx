@@ -928,8 +928,9 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3 sentences, 반�
                     나보다 내 피부를 더 잘 아는
                   </span>
                   <br />
-                  <span className="font-accent gradient-text text-[clamp(36px,8vw,52px)] font-semibold tracking-normal italic">
-                    skindit
+                  <span className="text-[clamp(36px,8vw,52px)]">
+                    <span className="font-display font-extrabold tracking-tight text-gray-900">skin</span>
+                    <span className="font-accent gradient-text font-semibold tracking-normal italic">dit</span>
                   </span>
                 </>
               ) : (
@@ -941,9 +942,8 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3 sentences, 반�
                   <span className="font-display font-extrabold tracking-tight text-gray-900">
                     better than you —{" "}
                   </span>
-                  <span className="font-accent gradient-text font-medium tracking-normal italic">
-                    skindit
-                  </span>
+                  <span className="font-display font-extrabold tracking-tight text-gray-900">skin</span>
+                  <span className="font-accent gradient-text font-semibold tracking-normal italic">dit</span>
                 </>
               )}
             </h1>
