@@ -28,8 +28,8 @@ function NavBar() {
   return (
     <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-2xl border-b border-gray-100/80 h-14 px-6 flex items-center justify-between">
       <button onClick={() => router.push("/")} className="flex items-center gap-3 bg-transparent border-none p-0">
-        <div className="w-9 h-9 rounded-2xl bg-gradient-to-br from-pastel-lavender-dark via-purple-400 to-pastel-rose-dark flex items-center justify-center shadow-md relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-t from-white/10 to-transparent" />
+        <div className="w-9 h-9 rounded-2xl bg-linear-to-br from-pastel-lavender-dark via-purple-400 to-pastel-rose-dark flex items-center justify-center shadow-md relative overflow-hidden">
+          <div className="absolute inset-0 bg-linear-to-t from-white/10 to-transparent" />
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="relative">
             <circle cx="11" cy="11" r="6" stroke="white" strokeWidth="2" strokeOpacity="0.9" />
             <path d="M16 16L20 20" stroke="white" strokeWidth="2" strokeLinecap="round" strokeOpacity="0.9" />
@@ -39,8 +39,8 @@ function NavBar() {
           </svg>
         </div>
         <div className="flex items-baseline gap-0.5">
-          <span className="font-[family-name:var(--font-display)] text-[17px] font-extrabold text-gray-900 tracking-tight">skin</span>
-          <span className="font-[family-name:var(--font-accent)] text-[17px] font-semibold italic text-transparent bg-clip-text bg-gradient-to-r from-pastel-lavender-dark to-pastel-rose-dark">dit</span>
+          <span className="font-display text-[17px] font-extrabold text-gray-900 tracking-tight">skin</span>
+          <span className="font-accent text-[17px] font-semibold italic text-transparent bg-clip-text bg-linear-to-r from-pastel-lavender-dark to-pastel-rose-dark">dit</span>
         </div>
       </button>
       <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Admin</span>
@@ -52,11 +52,11 @@ function NavBar() {
 function StatCard({ label, value, icon }: { label: string; value: number; icon: string }) {
   return (
     <div className="glass-card rounded-2xl p-5 flex items-center gap-4">
-      <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-pastel-lavender to-pastel-rose flex items-center justify-center text-xl">
+      <div className="w-11 h-11 rounded-xl bg-linear-to-br from-pastel-lavender to-pastel-rose flex items-center justify-center text-xl">
         {icon}
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-2xl font-[family-name:var(--font-display)] font-extrabold text-gray-900">
+        <p className="text-2xl font-display font-extrabold text-gray-900">
           {value.toLocaleString()}
         </p>
         <p className="text-xs text-gray-400 font-medium">{label}</p>
@@ -123,7 +123,7 @@ export default function AdminPage() {
 
   if (status === "loading" || (status === "authenticated" && loading)) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-white via-pastel-lavender/20 to-pastel-rose/20">
+      <div className="min-h-screen bg-linear-to-b from-white via-pastel-lavender/20 to-pastel-rose/20">
         <NavBar />
         <div className="flex items-center justify-center h-[60vh]">
           <div className="w-8 h-8 border-3 border-purple-200 border-t-purple-500 rounded-full animate-spin" />
@@ -155,7 +155,7 @@ export default function AdminPage() {
         <div className="px-6 py-8 pb-24">
           {/* Header */}
           <div className="mb-8 anim-fade-up">
-            <h1 className="font-[family-name:var(--font-display)] text-2xl font-extrabold text-gray-900 mb-1">
+            <h1 className="font-display text-2xl font-extrabold text-gray-900 mb-1">
               관리자 대시보드
             </h1>
             <p className="text-sm text-gray-400">Admin Dashboard</p>
@@ -165,7 +165,7 @@ export default function AdminPage() {
           {stats && (
             <>
               <section className="mb-8 anim-fade-up" style={{ animationDelay: "0.05s" }}>
-                <h2 className="font-[family-name:var(--font-display)] text-sm font-bold text-gray-600 uppercase tracking-widest mb-4">
+                <h2 className="font-display text-sm font-bold text-gray-600 uppercase tracking-widest mb-4">
                   서비스 현황 <span className="text-gray-300 font-normal normal-case tracking-normal">Overview</span>
                 </h2>
                 <div className="grid grid-cols-2 gap-3">
@@ -178,7 +178,7 @@ export default function AdminPage() {
 
               {/* Recent Users */}
               <section className="anim-fade-up" style={{ animationDelay: "0.1s" }}>
-                <h2 className="font-[family-name:var(--font-display)] text-sm font-bold text-gray-600 uppercase tracking-widest mb-4">
+                <h2 className="font-display text-sm font-bold text-gray-600 uppercase tracking-widest mb-4">
                   최근 가입 사용자 <span className="text-gray-300 font-normal normal-case tracking-normal">Recent Users</span>
                 </h2>
                 <div className="space-y-2">
@@ -187,7 +187,7 @@ export default function AdminPage() {
                       key={user.id}
                       className="glass-card rounded-2xl p-4 flex items-center gap-3"
                     >
-                      <div className="w-9 h-9 rounded-full bg-gradient-to-br from-pastel-lavender to-pastel-rose flex items-center justify-center text-sm font-bold text-white shrink-0">
+                      <div className="w-9 h-9 rounded-full bg-linear-to-br from-pastel-lavender to-pastel-rose flex items-center justify-center text-sm font-bold text-white shrink-0">
                         {(user.name || user.email || "?").charAt(0).toUpperCase()}
                       </div>
                       <div className="flex-1 min-w-0">
