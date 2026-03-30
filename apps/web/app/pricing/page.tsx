@@ -138,10 +138,10 @@ export default function PricingPage() {
                 <Feature text="사진 OCR 스캔" included />
                 <Feature text="루틴 궁합 분석" included />
                 <Feature text="성분 비교" included />
+                <Feature text="트러블 원인 리포트" included />
+                <Feature text="시술 추천 리포트" included />
+                <Feature text="피부과 방문 리포트" included />
                 <Feature text="대화 저장 & 맥락 상담" included={false} />
-                <Feature text="트러블 원인 리포트" included={false} />
-                <Feature text="시술 추천 리포트" included={false} />
-                <Feature text="피부과 방문 리포트" included={false} />
                 <Feature text="스킨딧과 무제한 대화" included={false} />
               </div>
 
