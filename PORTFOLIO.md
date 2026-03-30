@@ -247,7 +247,58 @@ Warning - the following environment variables are set on your Vercel project, bu
 
 ---
 
-### 6-3. AI가 잘못된 성분 정보를 생성 (Hallucination)
+### 6-3. Turborepo 도입과 모노레포 전환
+
+**배경**: 초기에는 단일 Next.js 프로젝트로 시작했으나, 공통 UI 컴포넌트와 ESLint/TypeScript 설정을 여러 패키지에서 공유해야 하는 상황이 생김. Turborepo를 도입하여 모노레포로 전환.
+
+**문제**: Turborepo 전환 후 빌드가 전혀 되지 않는 상황 발생. 터미널에 에러만 쌓이고 개발 서버도 실행 불가.
+
+**원인**:
+1. `turbo.json`의 `tasks` 설정에서 `dependsOn: ["^build"]`가 올바르게 설정되지 않아 빌드 순서 충돌
+2. 공유 패키지(`@workspace/ui`, `@workspace/eslint-config`, `@workspace/typescript-config`)의 `package.json`에 `exports` 필드 누락
+3. pnpm workspace 프로토콜(`workspace:*`)과 Turbo의 패키지 해석 간 버전 충돌
+
+**해결**:
+1. `turbo.json`에 `build`, `dev`, `lint`, `typecheck` 태스크를 명확하게 분리
+2. 각 공유 패키지에 올바른 `exports` 및 `main` 필드 추가
+3. 환경변수를 `turbo.json`의 `env` 배열에 명시적으로 등록 (빠뜨리면 빌드 시 환경변수가 전달되지 않음)
+
+```json
+// turbo.json
+{
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "env": ["ANTHROPIC_API_KEY", "DATABASE_URL", "NEXTAUTH_SECRET", ...]
+    }
+  }
+}
+```
+
+**교훈**: Turborepo는 빌드 캐싱과 병렬 실행으로 성능이 좋지만, 초기 설정에서 환경변수/의존성 순서를 정확히 잡아야 한다. 특히 **환경변수를 turbo.json에 등록하지 않으면 Vercel 배포 시 빌드에 전혀 전달되지 않는다**는 점이 가장 큰 함정이었음.
+
+---
+
+### 6-4. AI 코드 어시스턴트 도구 전환 (Cursor → Claude Code)
+
+**배경**: 초기 개발에 Google의 AI 코드 어시스턴트(Cursor + AI 모델)를 사용했으나, 코드가 복잡해지면서 심각한 문제가 발생.
+
+**문제**:
+1. AI가 생성한 코드에서 **런타임 에러**가 빈번하게 발생하지만, AI가 원인을 찾지 못하고 같은 실수를 반복
+2. 프로젝트 컨텍스트를 제대로 이해하지 못해 **이미 존재하는 코드를 중복 생성**하거나, 다른 파일과 **import 경로가 충돌**하는 코드를 작성
+3. 에러가 발생하면 근본 원인을 파악하지 않고 **임시 방편(workaround)만 반복** 적용 → 코드 품질 저하
+4. 결국 전체 빌드가 깨져서 **개발이 완전히 멈추는 상황** 발생
+
+**해결**: Claude Code(Anthropic CLI)로 전환
+- 프로젝트 전체 컨텍스트를 파악한 상태에서 코드 생성
+- 에러 발생 시 **근본 원인 분석 → 해결** 순서로 접근
+- 기존 코드 구조를 존중하면서 수정
+
+**교훈**: AI 코드 도구는 **코드 생성 능력**보다 **프로젝트 컨텍스트 이해 능력**이 더 중요하다. 작은 함수 하나 잘 짜는 것보다, 3,000줄짜리 파일의 전체 흐름을 이해하고 그 안에서 올바른 위치에 올바른 코드를 넣을 수 있는지가 핵심.
+
+---
+
+### 6-5. AI Hallucination — 잘못된 성분 정보 생성
 
 **문제**:
 
@@ -270,7 +321,7 @@ Warning - the following environment variables are set on your Vercel project, bu
 
 ---
 
-### 6-4. API 500 에러로 분석 결과 실패
+### 6-6. API 500 에러로 분석 결과 실패
 
 **문제**: Anthropic API가 간헐적으로 500 에러를 반환하여 사용자에게 오류 화면 노출
 
@@ -292,7 +343,7 @@ for (let attempt = 0; attempt < 3; attempt++) {
 
 ---
 
-### 6-5. 카카오 OAuth prompt 파라미터 미지원
+### 6-7. 카카오 OAuth prompt 파라미터 미지원
 
 **문제**: Google OAuth의 `prompt: "select_account"`를 Kakao에도 적용했더니 서버 에러 발생
 
@@ -313,7 +364,7 @@ Kakao({
 
 ---
 
-### 6-6. page.tsx 3,211줄 → 컴포넌트 분리
+### 6-8. page.tsx 3,211줄 → 컴포넌트 분리
 
 **문제**: 메인 페이지가 3,211줄로 비대해져 유지보수 어려움
 
@@ -328,7 +379,7 @@ Kakao({
 
 ---
 
-### 6-7. OCR이 영어로 성분을 반환
+### 6-9. OCR이 영어로 성분을 반환
 
 **문제**: 한국 화장품 전성분표를 OCR했을 때 영어로 결과가 반환됨
 
@@ -342,7 +393,7 @@ Kakao({
 
 ---
 
-### 6-8. 모바일 채팅 입력창 짤림
+### 6-10. 모바일 채팅 입력창 짤림
 
 **문제**: 모바일에서 채팅 입력창을 누르면 키보드에 의해 입력창이 화면 밖으로 밀려남
 
