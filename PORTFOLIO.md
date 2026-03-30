@@ -279,22 +279,22 @@ Warning - the following environment variables are set on your Vercel project, bu
 
 ---
 
-### 6-4. AI 코드 어시스턴트 도구 전환 (Cursor → Claude Code)
+### 6-4. Vercel 배포 시 Prisma Client 생성 누락
 
-**배경**: 초기 개발에 Google의 AI 코드 어시스턴트(Cursor + AI 모델)를 사용했으나, 코드가 복잡해지면서 심각한 문제가 발생.
+**문제**: Vercel에 첫 배포 시 빌드는 성공하지만 런타임에서 `PrismaClient is not defined` 에러 발생
 
-**문제**:
-1. AI가 생성한 코드에서 **런타임 에러**가 빈번하게 발생하지만, AI가 원인을 찾지 못하고 같은 실수를 반복
-2. 프로젝트 컨텍스트를 제대로 이해하지 못해 **이미 존재하는 코드를 중복 생성**하거나, 다른 파일과 **import 경로가 충돌**하는 코드를 작성
-3. 에러가 발생하면 근본 원인을 파악하지 않고 **임시 방편(workaround)만 반복** 적용 → 코드 품질 저하
-4. 결국 전체 빌드가 깨져서 **개발이 완전히 멈추는 상황** 발생
+```
+Error: @prisma/client did not initialize yet.
+```
 
-**해결**: Claude Code(Anthropic CLI)로 전환
-- 프로젝트 전체 컨텍스트를 파악한 상태에서 코드 생성
-- 에러 발생 시 **근본 원인 분석 → 해결** 순서로 접근
-- 기존 코드 구조를 존중하면서 수정
+**원인**: Vercel 서버리스 환경에서는 `node_modules`가 캐시되므로, `prisma generate`가 빌드 시 자동 실행되지 않아 Prisma Client가 생성되지 않음
 
-**교훈**: AI 코드 도구는 **코드 생성 능력**보다 **프로젝트 컨텍스트 이해 능력**이 더 중요하다. 작은 함수 하나 잘 짜는 것보다, 3,000줄짜리 파일의 전체 흐름을 이해하고 그 안에서 올바른 위치에 올바른 코드를 넣을 수 있는지가 핵심.
+**해결**: `package.json`의 빌드 커맨드에 `prisma generate`를 추가
+```json
+"build": "prisma generate && next build"
+```
+
+**교훈**: 로컬에서는 `npm install` 시 `postinstall`로 자동 생성되지만, **Vercel은 캐시된 node_modules를 사용**하므로 빌드 스크립트에 명시적으로 포함해야 함. 이후 Prisma 공식 문서에서도 이 패턴을 권장하고 있음을 확인.
 
 ---
 
