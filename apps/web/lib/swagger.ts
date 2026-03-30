@@ -12,7 +12,6 @@ export function getApiDocs() {
     tags: [
       { name: "Analysis", description: "AI 성분 분석" },
       { name: "OCR", description: "성분표 사진 스캔" },
-      { name: "Search", description: "제품명 검색" },
       { name: "Profile", description: "피부 프로필" },
       { name: "History", description: "분석 히스토리" },
       { name: "User", description: "사용자 관리" },
@@ -45,21 +44,6 @@ export function getApiDocs() {
           responses: {
             200: { description: "OCR 성공", content: { "application/json": { schema: { properties: { text: { type: "string" } } } } } },
             400: { description: "잘못된 이미지" },
-          },
-        },
-      },
-      "/api/search-product": {
-        post: {
-          tags: ["Search"],
-          summary: "제품명으로 성분 검색",
-          description: "제품 이름을 입력하면 AI가 해당 제품의 성분 목록을 반환합니다.",
-          requestBody: {
-            required: true,
-            content: { "application/json": { schema: { $ref: "#/components/schemas/SearchRequest" } } },
-          },
-          responses: {
-            200: { description: "검색 성공" },
-            404: { description: "제품을 찾을 수 없음" },
           },
         },
       },
@@ -163,14 +147,6 @@ export function getApiDocs() {
           required: ["image"],
           properties: {
             image: { type: "string", description: "Base64 인코딩된 이미지 (data:image/...;base64,...)" },
-          },
-        },
-        SearchRequest: {
-          type: "object",
-          required: ["productName"],
-          properties: {
-            productName: { type: "string", description: "제품 이름" },
-            lang: { type: "string", enum: ["ko", "en"], default: "ko" },
           },
         },
         ProfileRequest: {
