@@ -91,7 +91,7 @@ function TypingIndicator() {
   return (
     <div className="flex items-end gap-2.5 anim-fade-up">
       {/* Avatar */}
-      <div className="w-8 h-8 rounded-full bg-linear-to-br from-pastel-lavender-dark to-pastel-rose-dark flex items-center justify-center flex-shrink-0 shadow-sm">
+      <div className="w-8 h-8 rounded-full bg-linear-to-br from-pastel-lavender-dark to-pastel-rose-dark flex items-center justify-center shrink-0 shadow-sm">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
           <circle cx="11" cy="11" r="6" stroke="white" strokeWidth="2" strokeOpacity="0.9" />
           <path d="M16 16L20 20" stroke="white" strokeWidth="2" strokeLinecap="round" strokeOpacity="0.9" />
@@ -115,7 +115,7 @@ function MessageBubble({ message }: { message: Message }) {
     <div className={`flex items-end gap-2.5 anim-fade-up ${isAI ? "justify-start" : "justify-end"}`}>
       {/* AI avatar */}
       {isAI && (
-        <div className="w-8 h-8 rounded-full bg-linear-to-br from-pastel-lavender-dark to-pastel-rose-dark flex items-center justify-center flex-shrink-0 shadow-sm">
+        <div className="w-8 h-8 rounded-full bg-linear-to-br from-pastel-lavender-dark to-pastel-rose-dark flex items-center justify-center shrink-0 shadow-sm">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
             <circle cx="11" cy="11" r="6" stroke="white" strokeWidth="2" strokeOpacity="0.9" />
             <path d="M16 16L20 20" stroke="white" strokeWidth="2" strokeLinecap="round" strokeOpacity="0.9" />
@@ -126,7 +126,7 @@ function MessageBubble({ message }: { message: Message }) {
       <div className={`max-w-[78%] flex flex-col ${isAI ? "items-start" : "items-end"}`}>
         {/* Bubble */}
         <div
-          className={`px-4 py-3 text-[14.5px] leading-relaxed whitespace-pre-wrap break-words ${
+          className={`px-4 py-3 text-[14.5px] leading-relaxed whitespace-pre-wrap wrap-break-word ${
             isAI
               ? "bg-pastel-lavender/70 text-gray-800 rounded-2xl rounded-bl-md"
               : "bg-gray-100 text-gray-800 rounded-2xl rounded-br-md"
@@ -288,7 +288,7 @@ export default function ChatPage() {
                 key={chip}
                 onClick={() => sendMessage(chip)}
                 disabled={isTyping}
-                className="flex-shrink-0 px-3.5 py-2 rounded-full text-[12.5px] font-medium
+                className="shrink-0 px-3.5 py-2 rounded-full text-[12.5px] font-medium
                   bg-pastel-lavender/50 text-purple-700 border border-purple-100
                   hover:bg-pastel-lavender hover:border-purple-200 hover:shadow-sm
                   active:scale-95 transition-all duration-150
@@ -317,7 +317,7 @@ export default function ChatPage() {
           <button
             type="submit"
             disabled={!input.trim() || isTyping}
-            className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0
+            className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0
               bg-linear-to-br from-pastel-lavender-dark via-purple-400 to-pastel-rose-dark
               text-white shadow-lg shadow-purple-200/50
               hover:shadow-xl hover:shadow-purple-300/50 hover:scale-105
