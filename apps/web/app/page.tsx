@@ -231,7 +231,7 @@ export default function Page() {
       const res = await fetch("/api/ocr", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ image: resized }),
+        body: JSON.stringify({ image: resized, lang }),
       })
       const data = await res.json()
       if (data.error) throw new Error(data.error)
@@ -354,7 +354,7 @@ JSON only. Schema:{"summary":"3-4 sentences, 두 제품 핵심 비교 + 같이 �
       const res = await fetch("/api/ocr", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ image: resized }),
+        body: JSON.stringify({ image: resized, lang }),
       })
       const data = await res.json()
       if (data.error) throw new Error(data.error)
@@ -395,7 +395,7 @@ JSON only. Schema:{"summary":"3-4 sentences, 두 제품 핵심 비교 + 같이 �
       const res = await fetch("/api/ocr", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ image: resized }),
+        body: JSON.stringify({ image: resized, lang }),
       })
       const data = await res.json()
       if (data.error) throw new Error(data.error)

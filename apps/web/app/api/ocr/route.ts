@@ -53,14 +53,15 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  let body: { image: string };
+  let body: { image: string; lang?: string };
   try {
     body = await req.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
-  const { image } = body;
+  const { image, lang } = body;
+  const isEn = lang === "en";
   if (!image || typeof image !== "string") {
     return NextResponse.json(
       { error: "Missing or invalid 'image' field. Expected a base64 data URL." },
@@ -90,11 +91,17 @@ export async function POST(req: NextRequest) {
     body: JSON.stringify({
       model: "claude-haiku-4-5-20251001",
       max_tokens: 2048,
-      system:
-        "You are an OCR assistant specialized in cosmetic and skincare product labels. " +
-        "Extract the full ingredient list from the provided photo of a cosmetic product label. " +
-        "Return ONLY a comma-separated list of ingredients, nothing else. " +
-        "If you cannot find an ingredient list in the image, respond with exactly: NO_INGREDIENTS_FOUND",
+      system: isEn
+        ? "You are an OCR assistant specialized in Korean cosmetic product labels. " +
+          "Extract the full ingredient list from the photo. " +
+          "The label is in Korean. Read the Korean ingredients and translate each ingredient name to English. " +
+          "Return ONLY a comma-separated list of ingredient names in English, nothing else. " +
+          "If you cannot find an ingredient list, respond with exactly: NO_INGREDIENTS_FOUND"
+        : "너는 한국 화장품 전성분 OCR 전문가야. " +
+          "사진에서 전성분 목록을 읽어서 한글로 반환해줘. " +
+          "반드시 한글 성분명으로 반환해. 영어로 적혀있어도 한글 성분명으로 번역해서 반환해. " +
+          "쉼표로 구분된 성분 목록만 반환해. 다른 설명은 쓰지 마. " +
+          "성분 목록을 찾을 수 없으면 정확히 이렇게만 응답해: NO_INGREDIENTS_FOUND",
       messages: [
         {
           role: "user",
@@ -109,7 +116,9 @@ export async function POST(req: NextRequest) {
             },
             {
               type: "text",
-              text: "Extract the ingredient list from this cosmetic product label.",
+              text: isEn
+                ? "Extract the ingredient list from this Korean cosmetic product label and translate to English."
+                : "이 화장품 라벨에서 전성분 목록을 한글로 읽어줘.",
             },
           ],
         },
