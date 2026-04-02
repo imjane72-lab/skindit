@@ -2,10 +2,26 @@
 
 import { useState, useEffect } from "react"
 import { useSession, signIn, signOut } from "next-auth/react"
-import { getTrendingCache, getIngredientContext, correctOcrIngredients } from "@/lib/ingredient-db"
+import {
+  getTrendingCache,
+  getIngredientContext,
+  correctOcrIngredients,
+} from "@/lib/ingredient-db"
 import { callAI, callAIText } from "@/lib/api"
-import { CONCERNS, TRENDING, SAMPLE_S_KO, SAMPLE_S_EN, SAMPLE_R } from "@/constants/skin-data"
-import type { SingleRes, RoutineRes, CompareRes, Product, ConcernAnalysis } from "@/types/analysis"
+import {
+  CONCERNS,
+  TRENDING,
+  SAMPLE_S_KO,
+  SAMPLE_S_EN,
+  SAMPLE_R,
+} from "@/constants/skin-data"
+import type {
+  SingleRes,
+  RoutineRes,
+  CompareRes,
+  Product,
+  ConcernAnalysis,
+} from "@/types/analysis"
 import SingleResult from "@/components/analysis/SingleResult"
 import RoutineResult from "@/components/analysis/RoutineResult"
 import CompareResult from "@/components/analysis/CompareResult"
@@ -18,7 +34,8 @@ export default function Page() {
   const { data: session, status } = useSession()
   const [profileOpen, setProfileOpen] = useState(false)
   const [lang, setLang] = useState(() => {
-    if (typeof window !== "undefined") return localStorage.getItem("skindit_lang") || "ko"
+    if (typeof window !== "undefined")
+      return localStorage.getItem("skindit_lang") || "ko"
     return "ko"
   })
   const [tab, setTab] = useState(() => {
@@ -102,9 +119,10 @@ export default function Page() {
       ;(deferredPrompt as { prompt: () => void }).prompt()
     } else {
       // iOS Safari — 설치 방법 안내
-      alert(lang === "ko"
-        ? "📱 홈 화면에 추가하는 방법\n\n1. Safari로 열기\n2. 공유 버튼 (□↑) 열기\n3. '홈 화면에 추가' 클릭!\n\n완료!"
-        : "📱 Add to Home Screen\n\n1. Open in Safari\n2. Tap Share button (□↑)\n3. Tap 'Add to Home Screen'!\n\nDone!"
+      alert(
+        lang === "ko"
+          ? "📱 홈 화면에 추가하는 방법\n\n1. Safari로 열기\n2. 공유 버튼 (□↑) 열기\n3. '홈 화면에 추가' 클릭!\n\n완료!"
+          : "📱 Add to Home Screen\n\n1. Open in Safari\n2. Tap Share button (□↑)\n3. Tap 'Add to Home Screen'!\n\nDone!"
       )
     }
     setShowPwaBanner(false)
@@ -191,8 +209,7 @@ export default function Page() {
     } catch {
       setTrendInfo((p) => ({
         ...p,
-        [id]:
-          lang === "ko" ? "정보를 못 불러왔어 ㅠ" : "Could not load info.",
+        [id]: lang === "ko" ? "정보를 못 불러왔어 ㅠ" : "Could not load info.",
       }))
     }
     setTrendLoading(false)
@@ -267,7 +284,7 @@ JSON only. Schema:{"summary":"2-3줄","shared":[max 5,{"name":"","inA":true,"inB
     try {
       const raw = await callAI(
         sys,
-        `${nameA} 성분:\n${textA}\n\n${nameB} 성분:\n${textB}${skinContext}${noteContext}${getIngredientContext([...textA.split(","), ...textB.split(",")].map(s => s.trim()).filter(Boolean))}\n\n※ A/B 대신 "${nameA}", "${nameB}" 이름으로 대답해주세요.`
+        `${nameA} 성분:\n${textA}\n\n${nameB} 성분:\n${textB}${skinContext}${noteContext}${getIngredientContext([...textA.split(","), ...textB.split(",")].map((s) => s.trim()).filter(Boolean))}\n\n※ A/B 대신 "${nameA}", "${nameB}" 이름으로 대답해주세요.`
       )
       setCRes(raw)
       saveResultState("compare", null, null, raw)
@@ -386,7 +403,9 @@ JSON only. Schema:{"summary":"2-3줄","shared":[max 5,{"name":"","inA":true,"inB
       if (data.error) throw new Error(data.error)
       setProducts((ps) =>
         ps.map((x) =>
-          x.id === productId ? { ...x, ingredients: correctOcrIngredients(data.text) } : x
+          x.id === productId
+            ? { ...x, ingredients: correctOcrIngredients(data.text) }
+            : x
         )
       )
     } catch (err) {
@@ -420,7 +439,12 @@ JSON only. Schema:{"overall_score":0-100,"overall_comment":"2-3줄","concern_ana
     try {
       const raw = await callAI(
         sys,
-        `Concerns:${cl || "none"}${skinContext}${noteContext}\nIngredients:\n${ingredientText}${getIngredientContext(ingredientText.split(",").map(s => s.trim()).filter(Boolean))}`
+        `Concerns:${cl || "none"}${skinContext}${noteContext}\nIngredients:\n${ingredientText}${getIngredientContext(
+          ingredientText
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean)
+        )}`
       )
       const norm = (d: number) => (d <= 10 ? d * 10 : d)
       if (raw.overall_score) raw.overall_score = norm(raw.overall_score)
@@ -479,7 +503,14 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
     try {
       const raw = await callAI(
         sys,
-        `${filled.length} product routine:${skinContext}${noteContext}\n\n${list}${getIngredientContext(filled.flatMap(p => p.ingredients.split(",").map(s => s.trim()).filter(Boolean)))}`
+        `${filled.length} product routine:${skinContext}${noteContext}\n\n${list}${getIngredientContext(
+          filled.flatMap((p) =>
+            p.ingredients
+              .split(",")
+              .map((s) => s.trim())
+              .filter(Boolean)
+          )
+        )}`
       )
       if (raw.routine_score && raw.routine_score <= 10)
         raw.routine_score = raw.routine_score * 10
@@ -567,7 +598,9 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
   const analyzeSingle = () => {
     if (status === "unauthenticated") {
       savePending("single")
-      signIn(undefined, { callbackUrl: `${window.location.pathname}?tab=single` })
+      signIn(undefined, {
+        callbackUrl: `${window.location.pathname}?tab=single`,
+      })
       return
     }
     setLastIngs(ings)
@@ -578,7 +611,9 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
   const analyzeRoutine = () => {
     if (status === "unauthenticated") {
       savePending("routine")
-      signIn(undefined, { callbackUrl: `${window.location.pathname}?tab=routine` })
+      signIn(undefined, {
+        callbackUrl: `${window.location.pathname}?tab=routine`,
+      })
       return
     }
     setLastProducts([...products])
@@ -587,7 +622,9 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
 
   const analyzeCompare = () => {
     if (status === "unauthenticated") {
-      signIn(undefined, { callbackUrl: `${window.location.pathname}?tab=compare` })
+      signIn(undefined, {
+        callbackUrl: `${window.location.pathname}?tab=compare`,
+      })
       return
     }
     runCompareAnalysis(lang, compareA, compareB)
@@ -596,7 +633,11 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
   // Language switch: re-analyze if on result page
   const switchLang = (newLang: string) => {
     setLang(newLang)
-    try { localStorage.setItem("skindit_lang", newLang) } catch { /* */ }
+    try {
+      localStorage.setItem("skindit_lang", newLang)
+    } catch {
+      /* */
+    }
     if (phase === "result") {
       if (tab === "single" && sRes && !sRes.error) {
         runSingleAnalysis(newLang, lastIngs, lastConcerns)
@@ -860,10 +901,11 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
             </div>
 
             {/* 소제목 (작게) */}
-            <p
-              className="anim-fade-up mb-4 text-sm font-semibold tracking-wide text-purple-500"
-            >
-              {t("2만 개+ 성분 데이터 기반 AI 분석", "AI Analysis Powered by 20K+ Ingredients")}
+            <p className="anim-fade-up mb-4 text-sm font-semibold tracking-wide text-purple-500">
+              {t(
+                "2만 개+ 성분 데이터 기반 AI 분석",
+                "AI Analysis Powered by 20K+ Ingredients"
+              )}
             </p>
 
             {/* 메인 타이틀 (크게) */}
@@ -878,8 +920,12 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                   </span>
                   <br />
                   <span className="text-[clamp(36px,8vw,52px)]">
-                    <span className="font-display font-extrabold tracking-tight text-gray-900">skin</span>
-                    <span className="font-accent gradient-text font-semibold tracking-normal italic">dit</span>
+                    <span className="font-display font-extrabold tracking-tight text-gray-900">
+                      skin
+                    </span>
+                    <span className="font-accent gradient-text font-semibold tracking-normal italic">
+                      dit
+                    </span>
                   </span>
                 </>
               ) : (
@@ -891,18 +937,25 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                   <span className="font-display font-extrabold tracking-tight text-gray-900">
                     better than you —{" "}
                   </span>
-                  <span className="font-display font-extrabold tracking-tight text-gray-900">skin</span>
-                  <span className="font-accent gradient-text font-semibold tracking-normal italic">dit</span>
+                  <span className="font-display font-extrabold tracking-tight text-gray-900">
+                    skin
+                  </span>
+                  <span className="font-accent gradient-text font-semibold tracking-normal italic">
+                    dit
+                  </span>
                 </>
               )}
             </h1>
 
             {/* 설명 문구 (중간) */}
             <p
-              className="anim-fade-up mb-8 max-w-145 text-[17px] font-medium leading-relaxed text-gray-700"
+              className="anim-fade-up mb-8 max-w-145 text-[17px] leading-relaxed font-medium text-gray-700"
               style={{ animationDelay: "100ms" }}
             >
-              {t("사진 한 장으로 성분 해석부터 조합 경고까지!", "From ingredient analysis to combo warnings — just one photo!")}
+              {t(
+                "사진 한 장으로 성분 해석부터 조합 경고까지!",
+                "From ingredient analysis to combo warnings — just one photo!"
+              )}
             </p>
 
             {/* ── 순환 구조: 스킨딧 루프 ── */}
@@ -911,34 +964,78 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
               style={{ animationDelay: "140ms" }}
             >
               <p className="mb-2 text-center text-lg font-extrabold text-gray-900">
-                {t("쓸수록 나를 알아가는 스킨딧", "skindit learns you over time")}
+                {t(
+                  "쓸수록 나를 알아가는 스킨딧",
+                  "skindit learns you over time"
+                )}
               </p>
               <p className="mb-6 text-center text-sm text-gray-500">
-                {t("분석 → 기록 → 발견 → 상담, 이 흐름이 반복될수록 정확해져요", "Analyze → Record → Discover → Consult — gets smarter each cycle")}
+                {t(
+                  "분석 → 기록 → 발견 → 상담, 이 흐름이 반복될수록 정확해져요",
+                  "Analyze → Record → Discover → Consult — gets smarter each cycle"
+                )}
               </p>
               <div className="grid grid-cols-2 gap-3">
                 {[
-                  { icon: "🔬", label: t("분석", "Analyze"), sub: t("성분 바로 분석", "Instant analysis"), bg: "bg-blue-50", href: "#analyze", scroll: true },
-                  { icon: "📔", label: t("기록", "Record"), sub: t("피부 변화 기록", "Track changes"), bg: "bg-pink-50", href: "/diary", scroll: false },
-                  { icon: "📊", label: t("발견", "Discover"), sub: t("트러블 원인 발견", "Find causes"), bg: "bg-emerald-50", href: "/diary/report", scroll: false },
-                  { icon: "💬", label: t("상담", "Consult"), sub: t("1:1 AI 상담", "1:1 AI consult"), bg: "bg-purple-50", href: "/chat", scroll: false },
+                  {
+                    icon: "🔬",
+                    label: t("분석", "Analyze"),
+                    sub: t("성분 바로 분석", "Instant analysis"),
+                    bg: "bg-blue-50",
+                    href: "#analyze",
+                    scroll: true,
+                  },
+                  {
+                    icon: "📔",
+                    label: t("기록", "Record"),
+                    sub: t("피부 변화 기록", "Track changes"),
+                    bg: "bg-pink-50",
+                    href: "/diary",
+                    scroll: false,
+                  },
+                  {
+                    icon: "📊",
+                    label: t("발견", "Discover"),
+                    sub: t("트러블 원인 발견", "Find causes"),
+                    bg: "bg-emerald-50",
+                    href: "/diary/report",
+                    scroll: false,
+                  },
+                  {
+                    icon: "💬",
+                    label: t("상담", "Consult"),
+                    sub: t("1:1 AI 상담", "1:1 AI consult"),
+                    bg: "bg-purple-50",
+                    href: "/chat",
+                    scroll: false,
+                  },
                 ].map((step, i) => (
                   <a
                     key={i}
                     href={step.href}
-                    onClick={step.scroll ? (e: React.MouseEvent) => { e.preventDefault(); document.getElementById("analysis-tabs")?.scrollIntoView({ behavior: "smooth" }) } : undefined}
+                    onClick={
+                      step.scroll
+                        ? (e: React.MouseEvent) => {
+                            e.preventDefault()
+                            document
+                              .getElementById("analysis-tabs")
+                              ?.scrollIntoView({ behavior: "smooth" })
+                          }
+                        : undefined
+                    }
                     className={`flex items-center gap-3 rounded-2xl ${step.bg} p-4 no-underline transition-all hover:-translate-y-0.5 hover:shadow-md`}
                   >
                     <span className="text-3xl">{step.icon}</span>
                     <div>
-                      <p className="text-[15px] font-extrabold text-gray-900">{step.label}</p>
+                      <p className="text-[15px] font-extrabold text-gray-900">
+                        {step.label}
+                      </p>
                       <p className="text-sm text-gray-600">{step.sub}</p>
                     </div>
                   </a>
                 ))}
               </div>
             </div>
-
           </div>
         </div>
       )}
@@ -1015,7 +1112,10 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
 
         {/* Tabs */}
         {phase === "setup" && (
-          <div id="analysis-tabs" className="mb-8 flex gap-1 rounded-2xl bg-gray-100/80 p-1">
+          <div
+            id="analysis-tabs"
+            className="mb-8 flex gap-1 rounded-2xl bg-gray-100/80 p-1"
+          >
             {[
               {
                 id: "single",
@@ -1058,10 +1158,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                     {t("피부 고민", "Skin Concerns")}
                   </p>
                   <p className="text-xs text-gray-400">
-                    {t(
-                      "해당하는 거 다 골라주세요~",
-                      "Select all that apply"
-                    )}
+                    {t("해당하는 거 다 골라주세요~", "Select all that apply")}
                   </p>
                 </div>
               </div>
@@ -1490,7 +1587,10 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
               className="text-sm text-gray-400"
               style={{ animation: "pulse-text 1.6s ease infinite" }}
             >
-              {t("꼼꼼하게 보고 있으니까 잠깐만요~", "Carefully reviewing for you")}
+              {t(
+                "꼼꼼하게 보고 있으니까 잠깐만요~",
+                "Carefully reviewing for you"
+              )}
             </p>
           </div>
         )}
@@ -1556,12 +1656,9 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-xs font-bold text-gray-800">
-                {t("📱 홈 화면에 skindit 추가하기", "📱 Add skindit to Home Screen")}
-              </p>
-              <p className="text-[10px] text-gray-400">
                 {t(
-                  "Safari → 공유(□↑) → 홈 화면에 추가",
-                  "Safari → Share (□↑) → Add to Home Screen"
+                  "📱 홈 화면에 skindit 추가하기",
+                  "📱 Add skindit to Home Screen"
                 )}
               </p>
             </div>
@@ -1587,26 +1684,84 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
           <div>
             <div className="mb-6 flex items-center gap-2">
               <div className="from-pastel-lavender-dark to-pastel-rose-dark flex h-7 w-7 items-center justify-center rounded-xl bg-linear-to-br shadow-sm">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="5" stroke="white" strokeWidth="2" strokeOpacity="0.9" /><path d="M15 15L19 19" stroke="white" strokeWidth="2" strokeLinecap="round" strokeOpacity="0.9" /></svg>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                  <circle
+                    cx="11"
+                    cy="11"
+                    r="5"
+                    stroke="white"
+                    strokeWidth="2"
+                    strokeOpacity="0.9"
+                  />
+                  <path
+                    d="M15 15L19 19"
+                    stroke="white"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeOpacity="0.9"
+                  />
+                </svg>
               </div>
-              <span className="font-display text-sm font-bold text-gray-600">skindit</span>
+              <span className="font-display text-sm font-bold text-gray-600">
+                skindit
+              </span>
             </div>
             <div className="mb-6 grid grid-cols-2 gap-4 text-xs">
               <div className="space-y-2">
-                <p className="font-bold text-gray-500">{t("서비스", "Service")}</p>
-                <a href="/chat" className="block text-gray-400 no-underline hover:text-purple-500">{t("AI 상담", "AI Chat")}</a>
-                <a href="/diary" className="block text-gray-400 no-underline hover:text-purple-500">{t("피부 일지", "Skin Diary")}</a>
-                <a href="/diary/report" className="block text-gray-400 no-underline hover:text-purple-500">{t("피부 리포트", "Report")}</a>
-                <a href="/history" className="block text-gray-400 no-underline hover:text-purple-500">{t("분석 기록", "History")}</a>
+                <p className="font-bold text-gray-500">
+                  {t("서비스", "Service")}
+                </p>
+                <a
+                  href="/chat"
+                  className="block text-gray-400 no-underline hover:text-purple-500"
+                >
+                  {t("AI 상담", "AI Chat")}
+                </a>
+                <a
+                  href="/diary"
+                  className="block text-gray-400 no-underline hover:text-purple-500"
+                >
+                  {t("피부 일지", "Skin Diary")}
+                </a>
+                <a
+                  href="/diary/report"
+                  className="block text-gray-400 no-underline hover:text-purple-500"
+                >
+                  {t("피부 리포트", "Report")}
+                </a>
+                <a
+                  href="/history"
+                  className="block text-gray-400 no-underline hover:text-purple-500"
+                >
+                  {t("분석 기록", "History")}
+                </a>
               </div>
               <div className="space-y-2">
-                <p className="font-bold text-gray-500">{t("계정", "Account")}</p>
-                <a href="/profile" className="block text-gray-400 no-underline hover:text-purple-500">{t("피부 프로필", "Skin Profile")}</a>
-                <a href="/pricing" className="block text-gray-400 no-underline hover:text-purple-500">{t("프로 플랜", "Pro Plan")}</a>
+                <p className="font-bold text-gray-500">
+                  {t("계정", "Account")}
+                </p>
+                <a
+                  href="/profile"
+                  className="block text-gray-400 no-underline hover:text-purple-500"
+                >
+                  {t("피부 프로필", "Skin Profile")}
+                </a>
+                <a
+                  href="/pricing"
+                  className="block text-gray-400 no-underline hover:text-purple-500"
+                >
+                  {t("프로 플랜", "Pro Plan")}
+                </a>
               </div>
             </div>
             <div className="border-t border-gray-100 pt-4 text-[10px] text-gray-300">
-              <p>© 2026 skindit. {t("2만 개+ 성분 데이터 기반 AI 스킨 분석", "AI skin analysis powered by 20K+ ingredient data")}</p>
+              <p>
+                © 2026 skindit.{" "}
+                {t(
+                  "2만 개+ 성분 데이터 기반 AI 스킨 분석",
+                  "AI skin analysis powered by 20K+ ingredient data"
+                )}
+              </p>
             </div>
           </div>
         </footer>
