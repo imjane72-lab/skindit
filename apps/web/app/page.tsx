@@ -121,7 +121,7 @@ export default function Page() {
       // iOS Safari — 설치 방법 안내
       alert(
         lang === "ko"
-          ? "📱 홈 화면에 추가하는 방법\n\n1. Safari로 열기\n2. 공유 버튼 (□↑) 열기\n3. '홈 화면에 추가' 클릭!\n\n완료!"
+          ? "📱 홈 화면에 추가하는 방법\n\n1. Safari로 열기\n2. 공유 버튼 (↑) 열기\n3. '홈 화면에 추가' 클릭!\n\n완료!"
           : "📱 Add to Home Screen\n\n1. Open in Safari\n2. Tap Share button (□↑)\n3. Tap 'Add to Home Screen'!\n\nDone!"
       )
     }
