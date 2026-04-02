@@ -426,3 +426,76 @@ export function getIngredientContext(names: string[]): string {
   if (matched.length === 0) return ""
   return `\n\n[검증된 성분 데이터 — 이 데이터에 있는 내용만 사용하세요. 여기에 없는 성분 효능/부작용은 "확인이 필요합니다"로 답하세요]\n${matched.join("\n")}`
 }
+
+/**
+ * OCR 결과 성분명 자동 교정
+ * OCR이 약간 틀리게 읽은 성분명을 알려진 성분 목록과 대조하여 교정
+ */
+const KNOWN_INGREDIENTS = [
+  // 자체 DB 성분
+  ...Object.values(INGREDIENT_DB).flatMap(i => [i.name, i.nameEn]),
+  // 자주 쓰이는 화장품 성분 (OCR 오류가 잦은 것 위주)
+  "정제수", "글리세린", "부틸렌글라이콜", "디메치콘", "나이아신아마이드",
+  "하이드로제네이티드폴리이소부텐", "소듐하이알루로네이트", "판테놀", "알란토인",
+  "토코페롤", "아데노신", "카보머", "잔탄검", "트로메타민", "디소듐이디티에이",
+  "폴리글리세릴-10라우레이트", "세테아릴알코올", "스테아릭애씨드", "팔미틱애씨드",
+  "소르비탄올리베이트", "세틸에칠헥사노에이트", "카프릴릭카프릭트라이글리세라이드",
+  "1,2-헥산다이올", "에칠헥실글리세린", "하이드록시에칠아크릴레이트",
+  "소듐아크릴레이트코폴리머", "폴리소르베이트60", "폴리소르베이트80",
+  "소듐폴리아크릴레이트", "페녹시에탄올", "향료", "적색산화철", "황색산화철",
+  "티타늄디옥사이드", "징크옥사이드", "마이카", "실리카", "탈크",
+  "라우릴피이지-9폴리디메칠실록시에칠디메치콘", "사이클로펜타실록산",
+  "트라이에톡시카프릴릴실레인", "비스에칠헥실옥시페놀메톡시페닐트라이아진",
+  "에칠헥실메톡시신나메이트", "호모살레이트", "옥토크릴렌",
+  "락토바실러스발효물", "갈락토미세스발효여과물", "피테라",
+  "아스코빅애씨드", "아스코르브산", "레티놀", "레티날", "레티닐팔미테이트",
+  "살리실릭애씨드", "글리콜릭애씨드", "락틱애씨드", "만델릭애씨드",
+  "하이드로퀴논", "알부틴", "트라넥사믹애씨드", "글루타치온",
+  "마데카소사이드", "아시아티코사이드", "센텔라아시아티카추출물",
+  "티트리잎오일", "녹차추출물", "병풀추출물", "프로폴리스추출물",
+]
+
+function levenshtein(a: string, b: string): number {
+  const m = a.length, n = b.length
+  if (m === 0) return n
+  if (n === 0) return m
+  const prev = Array.from({ length: n + 1 }, (_, j) => j)
+  for (let i = 1; i <= m; i++) {
+    let prevDiag = prev[0]!
+    prev[0] = i
+    for (let j = 1; j <= n; j++) {
+      const temp = prev[j]!
+      prev[j] = a[i-1] === b[j-1]
+        ? prevDiag
+        : 1 + Math.min(prev[j]!, prev[j-1]!, prevDiag)
+      prevDiag = temp
+    }
+  }
+  return prev[n]!
+}
+
+export function correctOcrIngredients(ocrText: string): string {
+  return ocrText
+    .split(",")
+    .map(raw => {
+      const name = raw.trim()
+      if (name.length < 2) return name
+
+      // 정확히 일치하면 그대로
+      if (KNOWN_INGREDIENTS.some(k => k === name)) return name
+
+      // 유사도 매칭 (레벤슈타인 거리 2 이내)
+      let bestMatch = name
+      let bestDist = Infinity
+      for (const known of KNOWN_INGREDIENTS) {
+        if (Math.abs(known.length - name.length) > 2) continue
+        const dist = levenshtein(name, known)
+        if (dist < bestDist && dist <= 2) {
+          bestDist = dist
+          bestMatch = known
+        }
+      }
+      return bestMatch
+    })
+    .join(", ")
+}

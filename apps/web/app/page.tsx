@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useSession, signIn, signOut } from "next-auth/react"
-import { getTrendingCache, getIngredientContext } from "@/lib/ingredient-db"
+import { getTrendingCache, getIngredientContext, correctOcrIngredients } from "@/lib/ingredient-db"
 import { callAI, callAIText } from "@/lib/api"
 import { CONCERNS, TRENDING, SAMPLE_S_KO, SAMPLE_S_EN, SAMPLE_R } from "@/constants/skin-data"
 import type { SingleRes, RoutineRes, CompareRes, Product, ConcernAnalysis } from "@/types/analysis"
@@ -235,8 +235,9 @@ export default function Page() {
       })
       const data = await res.json()
       if (data.error) throw new Error(data.error)
-      if (target === "A") setCompareA(data.text)
-      else setCompareB(data.text)
+      const corrected = correctOcrIngredients(data.text)
+      if (target === "A") setCompareA(corrected)
+      else setCompareB(corrected)
     } catch (err) {
       alert(err instanceof Error ? err.message : "OCR failed")
     }
@@ -342,7 +343,7 @@ JSON only. Schema:{"summary":"2-3줄","shared":[max 5,{"name":"","inA":true,"inB
       })
       const data = await res.json()
       if (data.error) throw new Error(data.error)
-      setIngs(data.text)
+      setIngs(correctOcrIngredients(data.text))
     } catch (err) {
       alert(err instanceof Error ? err.message : "OCR failed")
     }
@@ -385,7 +386,7 @@ JSON only. Schema:{"summary":"2-3줄","shared":[max 5,{"name":"","inA":true,"inB
       if (data.error) throw new Error(data.error)
       setProducts((ps) =>
         ps.map((x) =>
-          x.id === productId ? { ...x, ingredients: data.text } : x
+          x.id === productId ? { ...x, ingredients: correctOcrIngredients(data.text) } : x
         )
       )
     } catch (err) {
