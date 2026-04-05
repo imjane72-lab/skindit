@@ -1,6 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { PrismaClient } from "@prisma/client";
+import puppeteer from "puppeteer";
 import { z } from "zod";
 
 // ─── Prisma Client (싱글톤) ───
@@ -431,6 +432,135 @@ server.tool(
         }, null, 2),
       }],
     };
+  }
+);
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// Tool 7: 올리브영 제품 전성분 검색
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+server.tool(
+  "search_oliveyoung",
+  "올리브영에서 제품을 검색하고 전성분 목록을 가져옵니다. 제품 이름으로 검색하면 해당 제품의 전성분을 추출합니다. (Puppeteer 기반, 로컬 Chrome 필요)",
+  {
+    keyword: z.string().describe("검색할 제품명. 예: 메디힐 PDRN 모공 탄력 세럼"),
+  },
+  async ({ keyword }) => {
+    let browser;
+    try {
+      browser = await puppeteer.launch({
+        headless: true,
+        args: [
+          "--no-sandbox",
+          "--disable-setuid-sandbox",
+          "--disable-dev-shm-usage",
+          "--disable-gpu",
+        ],
+      });
+
+      const page = await browser.newPage();
+      await page.setUserAgent(
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+      );
+      await page.setViewport({ width: 1280, height: 800 });
+
+      // 1단계: 올리브영 검색
+      const searchUrl = `https://www.oliveyoung.co.kr/store/search/getSearchMain.do?query=${encodeURIComponent(keyword.trim())}`;
+      await page.goto(searchUrl, { waitUntil: "networkidle2", timeout: 20000 });
+
+      // 2단계: 첫 번째 제품 정보 추출
+      const productInfo = await page.evaluate(() => {
+        const link = document.querySelector(".prd_info a.prd_name") as HTMLAnchorElement | null;
+        if (!link) return null;
+        const brand = (document.querySelector(".prd_info .tx_brand") as HTMLElement | null)?.textContent?.trim() || "";
+        return { url: link.href, name: link.textContent?.trim() || "", brand };
+      });
+
+      if (!productInfo) {
+        await browser.close();
+        return {
+          content: [{
+            type: "text" as const,
+            text: `"${keyword}" 검색 결과가 없습니다. 정확한 제품명이나 브랜드명을 입력해보세요.`,
+          }],
+        };
+      }
+
+      // 3단계: 제품 상세 페이지 이동
+      await page.goto(productInfo.url, { waitUntil: "networkidle2", timeout: 20000 });
+
+      // 4단계: 상세정보 탭 클릭
+      try {
+        await page.click('a[href="#prdDetail"]');
+        await new Promise((r) => setTimeout(r, 2000));
+      } catch {
+        // 탭이 없으면 이미 펼쳐져 있을 수 있음
+      }
+
+      // 5단계: 전성분 텍스트 추출
+      const ingredients = await page.evaluate(() => {
+        const bodyText = document.body.innerText;
+
+        const patterns = [
+          /전성분\s*[:\s]\s*([^\n]+(?:\n[^\n]+)*?)(?=\n{2,}|사용\s*(?:방법|법|시)|주의|보관|$)/i,
+          /(?:전체\s*)?성분\s*[:\s]\s*([^\n]+(?:\n[^\n]+)*?)(?=\n{2,}|사용\s*(?:방법|법|시)|주의|보관|$)/i,
+        ];
+
+        for (const pattern of patterns) {
+          const match = bodyText.match(pattern);
+          if (match?.[1]) {
+            const text = match[1].replace(/\n/g, " ").replace(/\s+/g, " ").trim();
+            if (text.length > 20) return text;
+          }
+        }
+
+        // 대안: "정제수" 또는 "WATER"로 시작하는 블록
+        const waterBlock = bodyText.match(
+          /(?:정제수|워터|WATER)[,\s][\s\S]{50,1500}?(?=\n{2,}|사용|주의|$)/i
+        );
+        if (waterBlock) {
+          return waterBlock[0].replace(/\n/g, " ").replace(/\s+/g, " ").trim();
+        }
+
+        return null;
+      });
+
+      await browser.close();
+
+      if (!ingredients) {
+        return {
+          content: [{
+            type: "text" as const,
+            text: JSON.stringify({
+              productName: productInfo.name,
+              brand: productInfo.brand,
+              url: productInfo.url,
+              ingredients: null,
+              message: "제품은 찾았지만 전성분을 텍스트로 추출하지 못했습니다. 상세 이미지에만 전성분이 있을 수 있습니다.",
+            }, null, 2),
+          }],
+        };
+      }
+
+      return {
+        content: [{
+          type: "text" as const,
+          text: JSON.stringify({
+            productName: productInfo.name,
+            brand: productInfo.brand,
+            url: productInfo.url,
+            ingredients,
+          }, null, 2),
+        }],
+      };
+    } catch (err) {
+      if (browser) await browser.close();
+      return {
+        content: [{
+          type: "text" as const,
+          text: `올리브영 검색 실패: ${err instanceof Error ? err.message : "Unknown error"}`,
+        }],
+      };
+    }
   }
 );
 
