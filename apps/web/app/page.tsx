@@ -1322,8 +1322,8 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                   </p>
                   <p className="text-xs text-gray-400">
                     {t(
-                      "제품 이름으로 검색하면 전성분을 자동으로 가져와요~",
-                      "Search by product name to auto-fill ingredients"
+                      "올리브영에 등록된 제품만 검색 가능해요. 브랜드명 + 제품명을 함께 입력하면 더 정확해요!",
+                      "Only products on Olive Young are searchable. Enter brand + product name for best results!"
                     )}
                   </p>
                 </div>
