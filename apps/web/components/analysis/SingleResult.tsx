@@ -15,9 +15,10 @@ interface SingleResultProps {
   t: (ko: string, en: string) => string
   reset: () => void
   lang: string
+  historyId?: string | null
 }
 
-export default function SingleResult({ res, t, reset, lang }: SingleResultProps) {
+export default function SingleResult({ res, t, reset, lang, historyId }: SingleResultProps) {
   return (
     <div className="anim-scale-in">
       <ScoreHero
@@ -185,7 +186,7 @@ export default function SingleResult({ res, t, reset, lang }: SingleResultProps)
           onClick={() => {
             const title = `skindit 분석 결과: ${res.overall_score}점`
             const text = `${res.overall_comment}\n\n${res.verdict || ""}`
-            const shareUrl = `${SITE_URL}?tab=single`
+            const shareUrl = historyId ? `${SITE_URL}/share/${historyId}` : `${SITE_URL}?tab=single`
             if (navigator.share) {
               navigator
                 .share({ title, text, url: shareUrl })

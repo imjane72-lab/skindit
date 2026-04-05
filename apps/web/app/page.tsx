@@ -77,6 +77,7 @@ export default function Page() {
   const [ings, setIngs] = useState("")
   const [productName, setProductName] = useState("")
   const [sRes, setSRes] = useState<SingleRes | null>(null)
+  const [historyId, setHistoryId] = useState<string | null>(null)
   const [products, setProducts] = useState<Product[]>([
     { id: 1, name: "", ingredients: "" },
     { id: 2, name: "", ingredients: "" },
@@ -396,6 +397,7 @@ JSON only. Schema:{"summary":"2-3줄","shared":[max 5,{"name":"","inA":true,"inB
       setCRes(raw)
       saveResultState("compare", null, null, raw)
       // 히스토리 저장
+      setHistoryId(null)
       if (status === "authenticated") {
         fetch("/api/history", {
           method: "POST",
@@ -413,7 +415,10 @@ JSON only. Schema:{"summary":"2-3줄","shared":[max 5,{"name":"","inA":true,"inB
             },
             lang: useLang,
           }),
-        }).catch(() => {})
+        })
+          .then((r) => r.json())
+          .then((d) => { if (d.id) setHistoryId(d.id) })
+          .catch(() => {})
       }
     } catch (err) {
       const msg = err instanceof Error ? err.message : ""
@@ -565,6 +570,7 @@ safety_ratings 점수 기준 (엄격히 따를 것):
       setSRes(raw)
       saveResultState("single", raw, null, null)
       // Save to history if logged in
+      setHistoryId(null)
       if (status === "authenticated") {
         fetch("/api/history", {
           method: "POST",
@@ -579,7 +585,10 @@ safety_ratings 점수 기준 (엄격히 따를 것):
             resultJson: { ...raw, productName: productName || undefined },
             lang: useLang,
           }),
-        }).catch(() => {})
+        })
+          .then((r) => r.json())
+          .then((d) => { if (d.id) setHistoryId(d.id) })
+          .catch(() => {})
       }
     } catch (err) {
       const msg = err instanceof Error ? err.message : ""
@@ -627,6 +636,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
       setRRes(raw)
       saveResultState("routine", null, raw, null)
       // Save to history if logged in
+      setHistoryId(null)
       if (status === "authenticated") {
         fetch("/api/history", {
           method: "POST",
@@ -639,7 +649,10 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
             resultJson: raw,
             lang: useLang,
           }),
-        }).catch(() => {})
+        })
+          .then((r) => r.json())
+          .then((d) => { if (d.id) setHistoryId(d.id) })
+          .catch(() => {})
       }
     } catch (err) {
       const msg = err instanceof Error ? err.message : ""
@@ -1323,8 +1336,8 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                     if (e.key === "Enter") handleOySearch()
                   }}
                   placeholder={t(
-                    "예) 메디힐 PDRN 세럼",
-                    "e.g. Mediheal PDRN Serum"
+                    "제품 이름으로 검색",
+                    "Search by product name"
                   )}
                   disabled={oyLoading}
                   className="flex-1 rounded-xl border border-gray-200 bg-gray-50/50 px-4 py-3 text-sm text-gray-900 transition-all outline-none placeholder:text-gray-400 focus:border-purple-300 focus:bg-white focus:ring-2 focus:ring-purple-100 disabled:opacity-50"
@@ -1354,8 +1367,8 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                   </p>
                   <p className="mt-1 text-[11px] text-green-600">
                     {t(
-                      "전성분을 가져왔어요! 아래에 자동으로 채워졌어요~",
-                      "Ingredients loaded! Auto-filled below~"
+                      "전성분을 가져왔어요!",
+                      "Ingredients loaded!"
                     )}
                   </p>
                 </div>
@@ -1425,7 +1438,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                     </p>
                     <p className="mt-0.5 text-[11px] text-gray-400">
                       {t(
-                        "사진 찍거나 갤러리에서 골라줘~",
+                        "사진 찍거나 갤러리에서 골라주세요",
                         "Take a photo or choose from gallery"
                       )}
                     </p>
@@ -1462,7 +1475,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                   </p>
                   <p className="text-xs text-gray-400">
                     {t(
-                      "화해 앱이나 상세페이지에서 복사해서 붙여넣어주세요~",
+                      "올리브영이나 제품 상세페이지에서 복사해서 붙여넣어주세요~",
                       "Copy from Hwahae app or product detail page and paste here"
                     )}
                   </p>
@@ -1510,7 +1523,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                   </p>
                   <p className="text-xs text-gray-400">
                     {t(
-                      "같이 쓰는 제품 2개 이상 넣어주세요~",
+                      "같이 쓰는 제품 2개 이상 넣어주세요!",
                       "Enter 2+ products you use together"
                     )}
                   </p>
@@ -1637,7 +1650,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                         )
                       }
                       placeholder={t(
-                        "여기에 자동으로 채워지거나, 직접 붙여넣어주세요~",
+                        "여기에 자동으로 채워지거나, 직접 붙여넣어주세요!",
                         "Ingredients auto-fill here, or paste manually"
                       )}
                       rows={3}
@@ -1807,7 +1820,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                       value={p.value}
                       onChange={(e) => p.set(e.target.value)}
                       placeholder={t(
-                        "여기에 자동으로 채워지거나, 직접 붙여넣어주세요~",
+                        "여기에 자동으로 채워지거나, 직접 붙여넣어주세요",
                         "Ingredients auto-fill here, or paste manually"
                       )}
                       rows={3}
@@ -1822,7 +1835,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
               disabled={!canC}
               className="from-pastel-lavender-dark to-pastel-rose-dark w-full rounded-2xl bg-linear-to-r via-purple-400 py-4 text-sm font-bold text-white shadow-md transition-all hover:-translate-y-0.5 hover:opacity-90 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:translate-y-0 disabled:hover:shadow-none"
             >
-              {t("비교해볼까요?", "Compare Ingredients")}
+              {t("비교하기", "Compare Ingredients")}
             </button>
           </div>
         )}
@@ -1862,7 +1875,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
           (sRes.error ? (
             <ErrState t={t} reset={reset} message={sRes.errorMessage} />
           ) : (
-            <SingleResult res={sRes} t={t} reset={reset} lang={lang} />
+            <SingleResult res={sRes} t={t} reset={reset} lang={lang} historyId={historyId} />
           ))}
 
         {/* ── ROUTINE RESULT ── */}
@@ -1872,7 +1885,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
           (rRes.error ? (
             <ErrState t={t} reset={reset} message={rRes.errorMessage} />
           ) : (
-            <RoutineResult rRes={rRes} t={t} reset={reset} lang={lang} />
+            <RoutineResult rRes={rRes} t={t} reset={reset} lang={lang} historyId={historyId} />
           ))}
         {/* ── COMPARE RESULT ── */}
         {phase === "result" &&
@@ -1881,7 +1894,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
           (cRes.error ? (
             <ErrState t={t} reset={reset} message={cRes.errorMessage} />
           ) : (
-            <CompareResult cRes={cRes} t={t} reset={reset} lang={lang} />
+            <CompareResult cRes={cRes} t={t} reset={reset} lang={lang} historyId={historyId} />
           ))}
       </main>
 

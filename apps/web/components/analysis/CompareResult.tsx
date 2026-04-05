@@ -9,9 +9,10 @@ interface CompareResultProps {
   t: (ko: string, en: string) => string
   reset: () => void
   lang: string
+  historyId?: string | null
 }
 
-export default function CompareResult({ cRes, t, reset, lang }: CompareResultProps) {
+export default function CompareResult({ cRes, t, reset, lang, historyId }: CompareResultProps) {
   return (
     <div className="anim-scale-in">
       {/* Summary */}
@@ -167,7 +168,7 @@ export default function CompareResult({ cRes, t, reset, lang }: CompareResultPro
           onClick={() => {
             const title = "skindit 성분 비교 결과"
             const text = `${cRes.summary}\n\n${cRes.verdict || ""}`
-            const shareUrl = `${SITE_URL}?tab=compare`
+            const shareUrl = historyId ? `${SITE_URL}/share/${historyId}` : `${SITE_URL}?tab=compare`
             if (navigator.share) {
               navigator
                 .share({ title, text, url: shareUrl })

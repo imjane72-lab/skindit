@@ -13,9 +13,10 @@ interface RoutineResultProps {
   t: (ko: string, en: string) => string
   reset: () => void
   lang: string
+  historyId?: string | null
 }
 
-export default function RoutineResult({ rRes, t, reset, lang }: RoutineResultProps) {
+export default function RoutineResult({ rRes, t, reset, lang, historyId }: RoutineResultProps) {
   return (
     <div className="anim-scale-in">
       <ScoreHero
@@ -305,7 +306,7 @@ export default function RoutineResult({ rRes, t, reset, lang }: RoutineResultPro
           onClick={() => {
             const title = `skindit 루틴 분석: ${rRes.routine_score}점`
             const text = `${rRes.routine_comment}\n\n${rRes.verdict || ""}`
-            const shareUrl = `${SITE_URL}?tab=routine`
+            const shareUrl = historyId ? `${SITE_URL}/share/${historyId}` : `${SITE_URL}?tab=routine`
             if (navigator.share) {
               navigator
                 .share({ title, text, url: shareUrl })

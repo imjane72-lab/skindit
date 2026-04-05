@@ -518,14 +518,16 @@ export default function HistoryPage() {
     if (status === "unauthenticated") router.push("/auth/signin")
   }, [status, router])
 
+  const [allItems, setAllItems] = useState<HistoryItem[]>([])
+
   const fetchHistory = useCallback(async () => {
     setLoading(true)
     try {
-      // Fetch all SINGLE and ROUTINE, filter compare client-side
+      // compare와 single이 모두 SINGLE 타입으로 저장되므로, 전체를 가져와서 클라이언트에서 분류
       const apiType = filter === "routine" ? "ROUTINE" : filter === "single" || filter === "compare" ? "SINGLE" : undefined
       const params = new URLSearchParams({
-        page: String(page),
-        limit: String(LIMIT),
+        page: "1",
+        limit: "50",
         ...(apiType && { type: apiType }),
       })
       const res = await fetch(`/api/history?${params}`)
@@ -540,18 +542,22 @@ export default function HistoryPage() {
           raw = raw.filter(item => item.resultJson?.type !== "compare")
         }
 
-        setItems(raw)
-        const total = data.total || 0
-        const limit = data.limit || LIMIT
-        setTotalPages(Math.ceil(total / limit) || 1)
+        setAllItems(raw)
+        setTotalPages(Math.ceil(raw.length / LIMIT) || 1)
+        setItems(raw.slice((page - 1) * LIMIT, page * LIMIT))
       }
     } catch { /* network error */ }
     finally { setLoading(false) }
-  }, [page, filter])
+  }, [filter])
 
   useEffect(() => {
     if (status === "authenticated") fetchHistory()
   }, [status, fetchHistory])
+
+  // 페이지 변경 시 클라이언트에서 슬라이싱
+  useEffect(() => {
+    setItems(allItems.slice((page - 1) * LIMIT, page * LIMIT))
+  }, [page, allItems])
 
   const handleDelete = async (id: string) => {
     if (!confirm(t("이 기록 지울까?", "Delete this?"))) return
@@ -559,7 +565,9 @@ export default function HistoryPage() {
     try {
       const res = await fetch(`/api/history?id=${id}`, { method: "DELETE" })
       if (res.ok) {
-        setItems(prev => prev.filter(i => i.id !== id))
+        const updated = allItems.filter(i => i.id !== id)
+        setAllItems(updated)
+        setTotalPages(Math.ceil(updated.length / LIMIT) || 1)
         if (expandedId === id) setExpandedId(null)
       }
     } catch { alert(t("삭제 실패했어요 ㅠ", "Delete failed ㅠ")) }
