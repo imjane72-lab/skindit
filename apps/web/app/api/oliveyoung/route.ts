@@ -76,7 +76,7 @@ export async function POST(req: NextRequest) {
       `https://www.oliveyoung.co.kr/store/search/getSearchMain.do?query=${encodeURIComponent(keyword.trim())}`,
       { waitUntil: "networkidle2", timeout: 25000 }
     )
-    await new Promise((r) => setTimeout(r, 5000))
+    await page.waitForSelector("a.prd_thumb", { timeout: 10000 }).catch(() => null)
 
     // ── 2단계: 첫 번째 제품 찾기 ──
     const productInfo = await page.evaluate(() => {
@@ -98,19 +98,24 @@ export async function POST(req: NextRequest) {
 
     // ── 3단계: 상세 페이지 이동 ──
     await page.goto(productInfo.url, { waitUntil: "networkidle2", timeout: 25000 })
-    await new Promise((r) => setTimeout(r, 5000))
 
     // ── 4단계: "상품정보 제공고시" 버튼 클릭 ──
-    await page.evaluate(() => {
+    const clicked = await page.evaluate(() => {
       const buttons = document.querySelectorAll("button")
       for (const btn of buttons) {
         if (btn.textContent?.includes("상품정보 제공고시")) {
           btn.click()
-          break
+          return true
         }
       }
+      return false
     })
-    await new Promise((r) => setTimeout(r, 3000))
+    if (clicked) {
+      await page.waitForFunction(
+        () => document.body.innerText.includes("모든 성분"),
+        { timeout: 8000 }
+      ).catch(() => null)
+    }
 
     // ── 5단계: "모든 성분" 이후 텍스트 추출 ──
     const ingredients = await page.evaluate(() => {
