@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from "next/server"
 import puppeteer from "puppeteer-core"
 import chromium from "@sparticuz/chromium-min"
 
+// Vercel 서버리스 함수 설정
+export const maxDuration = 60
+export const dynamic = "force-dynamic"
+
 /* ── Rate Limiter ── */
 const WINDOW_MS = 60 * 1000
 const MAX_PER_WINDOW = 5
