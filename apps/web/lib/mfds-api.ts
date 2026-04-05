@@ -91,8 +91,8 @@ export async function batchCheckIngredients(ingredientNames: string[]): Promise<
   const results: Record<string, MfdsIngredient> = {}
   if (!MFDS_KEY) return results
 
-  // 주요 성분만 조회 (최대 5개, 속도 최적화)
-  const topIngredients = ingredientNames.slice(0, 5)
+  // 주요 성분만 조회 (최대 10개, API 부하 방지)
+  const topIngredients = ingredientNames.slice(0, 10)
 
   await Promise.all(
     topIngredients.map(async (name) => {

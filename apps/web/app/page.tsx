@@ -1287,38 +1287,6 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
               </div>
             </div>
 
-            {/* ── 제품 이름 (선택) ── */}
-            <div className="mb-8">
-              <div className="mb-2 flex gap-2.5">
-                <span className="mt-0.5 text-base">🏷</span>
-                <div>
-                  <p className="text-sm font-bold text-gray-800">
-                    {t("제품 이름", "Product Name")}{" "}
-                    <span className="text-xs font-normal text-gray-400">
-                      {t("(선택)", "(optional)")}
-                    </span>
-                  </p>
-                  <p className="text-xs text-gray-400">
-                    {t(
-                      "기록에서 어떤 제품인지 구분하기 쉬워요~",
-                      "Makes it easy to identify in history"
-                    )}
-                  </p>
-                </div>
-              </div>
-              <input
-                value={productName}
-                onChange={(e) => setProductName(e.target.value)}
-                placeholder={t(
-                  "예) 에스트라 아토배리어365 크림",
-                  "e.g. Aestura Atobarrier 365 Cream"
-                )}
-                className="w-full rounded-xl border border-gray-200 bg-gray-50/50 px-4 py-3 text-sm text-gray-900 transition-all outline-none placeholder:text-gray-400 focus:border-purple-300 focus:bg-white focus:ring-2 focus:ring-purple-100"
-              />
-            </div>
-
-            <div className="mb-8 h-px bg-linear-to-r from-transparent via-gray-200 to-transparent" />
-
             {/* ── 🛒 올리브영 제품 검색 ── */}
             <div className="mb-8">
               <div className="mb-3 flex gap-2.5">
@@ -1373,6 +1341,36 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                 {t("또는 직접 등록", "or add manually")}
               </span>
               <div className="h-px flex-1 bg-linear-to-l from-transparent via-gray-200 to-gray-200" />
+            </div>
+
+            {/* ── 제품 이름 (선택) ── */}
+            <div className="mb-8">
+              <div className="mb-2 flex gap-2.5">
+                <span className="mt-0.5 text-base">🏷</span>
+                <div>
+                  <p className="text-sm font-bold text-gray-800">
+                    {t("제품 이름", "Product Name")}{" "}
+                    <span className="text-xs font-normal text-gray-400">
+                      {t("(선택)", "(optional)")}
+                    </span>
+                  </p>
+                  <p className="text-xs text-gray-400">
+                    {t(
+                      "기록에서 어떤 제품인지 구분하기 쉬워요~",
+                      "Makes it easy to identify in history"
+                    )}
+                  </p>
+                </div>
+              </div>
+              <input
+                value={productName}
+                onChange={(e) => setProductName(e.target.value)}
+                placeholder={t(
+                  "예) 에스트라 아토배리어365 크림",
+                  "e.g. Aestura Atobarrier 365 Cream"
+                )}
+                className="w-full rounded-xl border border-gray-200 bg-gray-50/50 px-4 py-3 text-sm text-gray-900 transition-all outline-none placeholder:text-gray-400 focus:border-purple-300 focus:bg-white focus:ring-2 focus:ring-purple-100"
+              />
             </div>
 
             {/* ── 📷 성분표 스캔 (메인) ── */}
@@ -1781,15 +1779,15 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
               <div className="dot" />
             </div>
             <p className="font-display mb-2 text-base font-bold text-gray-800">
-              {t("스킨딧이 분석하는 중이에요~", "skindit is analyzing...")}
+              {t("스킨딧이 꼼꼼하게 분석하고 있어요!", "skindit is carefully analyzing!")}
             </p>
             <p
               className="text-sm text-gray-400"
               style={{ animation: "pulse-text 1.6s ease infinite" }}
             >
               {t(
-                "꼼꼼하게 보고 있으니까 잠깐만요~",
-                "Carefully reviewing for you"
+                "성분 하나하나 확인 중이라 시간이 조금 걸려요~",
+                "Checking each ingredient — this may take a moment~"
               )}
             </p>
           </div>
