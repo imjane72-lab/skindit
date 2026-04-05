@@ -1318,7 +1318,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                 <span className="mt-0.5 text-base">🛒</span>
                 <div>
                   <p className="text-sm font-bold text-gray-800">
-                    {t("올리브영 제품 검색", "Search Olive Young")}
+                    {t("제품명으로 검색", "Search by Product Name")}
                   </p>
                   <p className="text-xs text-gray-400">
                     {t(
@@ -1361,11 +1361,11 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                 <p className="mt-2 text-xs text-rose-500">{oyError}</p>
               )}
               {oySuccess && (
-                <div className="mt-3 rounded-xl border border-green-200 bg-green-50/50 px-4 py-3">
-                  <p className="text-xs font-bold text-green-700">
+                <div className="mt-3 rounded-xl border border-[#9bce26]/30 bg-[#9bce26]/10 px-4 py-3">
+                  <p className="text-xs font-bold text-[#6b9a0a]">
                     {oySuccess}
                   </p>
-                  <p className="mt-1 text-[11px] text-green-600">
+                  <p className="mt-1 text-[11px] text-[#7dab18]">
                     {t(
                       "전성분을 가져왔어요!",
                       "Ingredients loaded!"
@@ -1587,8 +1587,8 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                           if (e.key === "Enter") handleRoutineOySearch(p.id)
                         }}
                         placeholder={t(
-                          "🛒 올리브영 검색",
-                          "🛒 Olive Young search"
+                          "🛒 제품명 검색",
+                          "🛒 Search product"
                         )}
                         disabled={routineOyLoading[p.id]}
                         className="flex-1 rounded-xl border border-white/70 bg-white/60 px-3 py-2 text-xs transition-all outline-none placeholder:text-gray-400 focus:border-purple-300 focus:bg-white disabled:opacity-50"
@@ -1766,8 +1766,8 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                           if (e.key === "Enter") handleCompareOySearch(p.label)
                         }}
                         placeholder={t(
-                          "🛒 올리브영 검색",
-                          "🛒 Olive Young search"
+                          "🛒 제품명 검색",
+                          "🛒 Search product"
                         )}
                         disabled={compareOyLoading[p.label]}
                         className="flex-1 rounded-xl border border-white/70 bg-white/60 px-3 py-2 text-xs transition-all outline-none placeholder:text-gray-400 focus:border-purple-300 focus:bg-white disabled:opacity-50"
