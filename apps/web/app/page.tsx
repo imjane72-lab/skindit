@@ -132,6 +132,110 @@ export default function Page() {
     setShowPwaBanner(false)
   }
 
+  // 올리브영 검색
+  const [oyQuery, setOyQuery] = useState("")
+  const [oyLoading, setOyLoading] = useState(false)
+  const [oyResult, setOyResult] = useState<{
+    productName: string
+    brand: string
+    ingredients: string | null
+    url: string
+    message?: string
+  } | null>(null)
+  const [oyError, setOyError] = useState("")
+  // 루틴 탭 올리브영 검색
+  const [routineOyQuery, setRoutineOyQuery] = useState<Record<number, string>>({})
+  const [routineOyLoading, setRoutineOyLoading] = useState<Record<number, boolean>>({})
+  // 비교 탭 올리브영 검색
+  const [compareOyQuery, setCompareOyQuery] = useState<Record<string, string>>({})
+  const [compareOyLoading, setCompareOyLoading] = useState<Record<string, boolean>>({})
+
+  // 올리브영 검색 핸들러 (Single 탭)
+  const handleOySearch = async () => {
+    if (!oyQuery.trim() || oyLoading) return
+    setOyLoading(true)
+    setOyError("")
+    setOyResult(null)
+    try {
+      const res = await fetch("/api/oliveyoung", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ keyword: oyQuery.trim() }),
+      })
+      const data = await res.json()
+      if (data.error) {
+        setOyError(data.error)
+      } else {
+        setOyResult(data)
+        if (data.ingredients) {
+          setIngs(data.ingredients)
+          if (data.productName && !productName) setProductName(data.productName)
+        }
+      }
+    } catch {
+      setOyError("올리브영 검색 중 오류가 발생했어요.")
+    }
+    setOyLoading(false)
+  }
+
+  // 올리브영 검색 핸들러 (Routine 탭)
+  const handleRoutineOySearch = async (productId: number) => {
+    const query = routineOyQuery[productId]?.trim()
+    if (!query || routineOyLoading[productId]) return
+    setRoutineOyLoading((p) => ({ ...p, [productId]: true }))
+    try {
+      const res = await fetch("/api/oliveyoung", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ keyword: query }),
+      })
+      const data = await res.json()
+      if (!data.error && data.ingredients) {
+        setProducts((ps) =>
+          ps.map((x) =>
+            x.id === productId
+              ? { ...x, ingredients: data.ingredients, name: x.name || data.productName || "" }
+              : x
+          )
+        )
+      } else {
+        alert(data.error || "전성분을 찾지 못했어요.")
+      }
+    } catch {
+      alert("올리브영 검색 중 오류가 발생했어요.")
+    }
+    setRoutineOyLoading((p) => ({ ...p, [productId]: false }))
+  }
+
+  // 올리브영 검색 핸들러 (Compare 탭)
+  const handleCompareOySearch = async (target: "A" | "B") => {
+    const query = compareOyQuery[target]?.trim()
+    if (!query || compareOyLoading[target]) return
+    setCompareOyLoading((p) => ({ ...p, [target]: true }))
+    try {
+      const res = await fetch("/api/oliveyoung", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ keyword: query }),
+      })
+      const data = await res.json()
+      if (!data.error && data.ingredients) {
+        if (target === "A") {
+          setCompareA(data.ingredients)
+          if (!compareNameA) setCompareNameA(data.productName || "")
+        } else {
+          setCompareB(data.ingredients)
+          if (!compareNameB) setCompareNameB(data.productName || "")
+        }
+      } else {
+        alert(data.error || "전성분을 찾지 못했어요.")
+      }
+    } catch {
+      alert("올리브영 검색 중 오류가 발생했어요.")
+    }
+    setCompareOyLoading((p) => ({ ...p, [target]: false }))
+  }
+
   // Camera scan (OCR)
   const [ocrLoading, setOcrLoading] = useState(false)
   const [routineOcrLoading, setRoutineOcrLoading] = useState<
@@ -1221,6 +1325,75 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
 
             <div className="mb-8 h-px bg-linear-to-r from-transparent via-gray-200 to-transparent" />
 
+            {/* ── 🛒 올리브영 제품 검색 ── */}
+            <div className="mb-8">
+              <div className="mb-3 flex gap-2.5">
+                <span className="mt-0.5 text-base">🛒</span>
+                <div>
+                  <p className="text-sm font-bold text-gray-800">
+                    {t("올리브영 제품 검색", "Search Olive Young")}
+                  </p>
+                  <p className="text-xs text-gray-400">
+                    {t(
+                      "제품 이름으로 검색하면 전성분을 자동으로 가져와요~",
+                      "Search by product name to auto-fill ingredients"
+                    )}
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <input
+                  value={oyQuery}
+                  onChange={(e) => setOyQuery(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Enter") handleOySearch() }}
+                  placeholder={t(
+                    "예) 메디힐 PDRN 세럼",
+                    "e.g. Mediheal PDRN Serum"
+                  )}
+                  disabled={oyLoading}
+                  className="flex-1 rounded-xl border border-gray-200 bg-gray-50/50 px-4 py-3 text-sm text-gray-900 transition-all outline-none placeholder:text-gray-400 focus:border-purple-300 focus:bg-white focus:ring-2 focus:ring-purple-100 disabled:opacity-50"
+                />
+                <button
+                  onClick={handleOySearch}
+                  disabled={!oyQuery.trim() || oyLoading}
+                  className="shrink-0 rounded-xl bg-[#9bce26] px-4 py-3 text-sm font-bold text-white transition-all hover:bg-[#8ab922] disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  {oyLoading ? (
+                    <span
+                      className="inline-block h-4 w-4 rounded-full border-2 border-white/40 border-t-white"
+                      style={{ animation: "spin 1s linear infinite" }}
+                    />
+                  ) : (
+                    t("검색", "Search")
+                  )}
+                </button>
+              </div>
+              {oyError && (
+                <p className="mt-2 text-xs text-rose-500">{oyError}</p>
+              )}
+              {oyResult && !oyResult.ingredients && oyResult.message && (
+                <p className="mt-2 text-xs text-amber-600">{oyResult.message}</p>
+              )}
+              {oyResult?.ingredients && (
+                <div className="mt-3 rounded-xl border border-green-200 bg-green-50/50 px-4 py-3">
+                  <p className="text-xs font-bold text-green-700">
+                    ✅ {oyResult.brand} {oyResult.productName}
+                  </p>
+                  <p className="mt-1 text-[11px] text-green-600">
+                    {t("전성분을 가져왔어요! 아래에 자동으로 채워졌어요~", "Ingredients loaded! Auto-filled below~")}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            <div className="mb-6 flex items-center gap-3">
+              <div className="h-px flex-1 bg-linear-to-r from-transparent via-gray-200 to-gray-200" />
+              <span className="text-xs font-semibold text-gray-400">
+                {t("또는 직접 등록", "or add manually")}
+              </span>
+              <div className="h-px flex-1 bg-linear-to-l from-transparent via-gray-200 to-gray-200" />
+            </div>
+
             {/* ── 📷 성분표 스캔 (메인) ── */}
             <div className="mb-8">
               {ocrLoading ? (
@@ -1381,6 +1554,29 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                       className="mb-2 w-full rounded-xl border border-white/70 bg-white/60 px-3 py-2 text-sm transition-all outline-none placeholder:text-gray-400 focus:border-purple-300 focus:bg-white"
                     />
 
+                    {/* ── 🛒 올리브영 검색 ── */}
+                    <div className="mb-2 flex gap-1.5">
+                      <input
+                        value={routineOyQuery[p.id] || ""}
+                        onChange={(e) => setRoutineOyQuery((q) => ({ ...q, [p.id]: e.target.value }))}
+                        onKeyDown={(e) => { if (e.key === "Enter") handleRoutineOySearch(p.id) }}
+                        placeholder={t("🛒 올리브영 검색", "🛒 Olive Young search")}
+                        disabled={routineOyLoading[p.id]}
+                        className="flex-1 rounded-xl border border-white/70 bg-white/60 px-3 py-2 text-xs transition-all outline-none placeholder:text-gray-400 focus:border-purple-300 focus:bg-white disabled:opacity-50"
+                      />
+                      <button
+                        onClick={() => handleRoutineOySearch(p.id)}
+                        disabled={!routineOyQuery[p.id]?.trim() || routineOyLoading[p.id]}
+                        className="shrink-0 rounded-xl bg-[#9bce26] px-3 py-2 text-[11px] font-bold text-white transition-all hover:bg-[#8ab922] disabled:cursor-not-allowed disabled:opacity-40"
+                      >
+                        {routineOyLoading[p.id] ? (
+                          <span className="inline-block h-3 w-3 rounded-full border-2 border-white/40 border-t-white" style={{ animation: "spin 1s linear infinite" }} />
+                        ) : (
+                          t("검색", "Search")
+                        )}
+                      </button>
+                    </div>
+
                     {/* ── 성분 입력: 카메라 촬영 / 사진 선택 ── */}
                     <label className="hover:bg-pastel-lavender/30 mb-2 flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-purple-100 bg-white/60 px-3 py-2.5 text-[11px] font-semibold text-purple-500 transition-all hover:border-purple-200">
                       {routineOcrLoading[p.id] ? (
@@ -1521,6 +1717,29 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                       )}
                       className="mb-2 w-full rounded-xl border border-white/70 bg-white/60 px-3 py-2 text-sm transition-all outline-none placeholder:text-gray-400 focus:border-purple-300 focus:bg-white"
                     />
+                    {/* ── 🛒 올리브영 검색 ── */}
+                    <div className="mb-2 flex gap-1.5">
+                      <input
+                        value={compareOyQuery[p.label] || ""}
+                        onChange={(e) => setCompareOyQuery((q) => ({ ...q, [p.label]: e.target.value }))}
+                        onKeyDown={(e) => { if (e.key === "Enter") handleCompareOySearch(p.label) }}
+                        placeholder={t("🛒 올리브영 검색", "🛒 Olive Young search")}
+                        disabled={compareOyLoading[p.label]}
+                        className="flex-1 rounded-xl border border-white/70 bg-white/60 px-3 py-2 text-xs transition-all outline-none placeholder:text-gray-400 focus:border-purple-300 focus:bg-white disabled:opacity-50"
+                      />
+                      <button
+                        onClick={() => handleCompareOySearch(p.label)}
+                        disabled={!compareOyQuery[p.label]?.trim() || compareOyLoading[p.label]}
+                        className="shrink-0 rounded-xl bg-[#9bce26] px-3 py-2 text-[11px] font-bold text-white transition-all hover:bg-[#8ab922] disabled:cursor-not-allowed disabled:opacity-40"
+                      >
+                        {compareOyLoading[p.label] ? (
+                          <span className="inline-block h-3 w-3 rounded-full border-2 border-white/40 border-t-white" style={{ animation: "spin 1s linear infinite" }} />
+                        ) : (
+                          t("검색", "Search")
+                        )}
+                      </button>
+                    </div>
+
                     {/* ── 성분 입력: 카메라 촬영 / 사진 선택 ── */}
                     <label className="hover:bg-pastel-lavender/30 mb-2 flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-purple-100 bg-white/60 px-3 py-2.5 text-[11px] font-semibold text-purple-500 transition-all hover:border-purple-200">
                       {compareOcrLoading === p.label ? (

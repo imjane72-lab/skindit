@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "skindit": {
+      "command": "npx",
+      "args": ["tsx", "src/index.ts"],
+      "cwd": "/Users/jane/Desktop/skin/apps/mcp-server",
+      "env": {
+        "DATABASE_URL": "your-database-url-here",
+        "MFDS_API_KEY": "your-mfds-api-key-here"
+      }
+    }
+  }
+}
