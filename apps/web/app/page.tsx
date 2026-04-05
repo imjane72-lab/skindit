@@ -523,7 +523,10 @@ JSON only. Schema:{"summary":"2-3줄","shared":[max 5,{"name":"","inA":true,"inB
 규칙: 입력 성분+제공된 데이터만 사용. 데이터에 없으면 "확인이 필요합니다"로 답변. 추측/지어내기 금지. 주의 콤보는 검증된 것만. "절대 금지" 대신 "분리 사용 권장". concern_analysis에 선택한 고민 전부 포함.
 출처: [검증된 성분 데이터]가 제공되면 해당 데이터 기반임을 표시. 예: "식약처 등록 성분이에요", "검증된 데이터 기준으로..."
 가드레일: 답변 전 자체 검증 — 모든 내용이 제공된 컨텍스트에 포함되어 있는지 확인. 컨텍스트에 없는 성분 효능/부작용은 언급 금지.
-JSON only. Schema:{"overall_score":0-100,"overall_comment":"2-3줄","concern_analysis":[선택 고민 전부,{"concern":"","score":0-100,"comment":"2-3줄"}],"star_ingredients":[max 5,{"name":"","benefit":"","best_time":"","synergy":[],"source":"검증됨|일반"}],"watch_out":[{"name":"","reason":"","alternative":""}],"forbidden_combos":[max 3,{"ingredients":"","reason":""}],"usage_guide":{"best_time":"","effect_timeline":"","beginner_tips":["3개"]},"safety_ratings":[max 8,{"name":"","score":1-10,"note":""}],"verdict":"★(1-5)+근거 2줄"}. safety:1=safe,10=hazard. ${useLang === "ko" ? "한국어" : "English"}.`
+JSON only. Schema:{"overall_score":0-100,"overall_comment":"2-3줄","concern_analysis":[선택 고민 전부,{"concern":"","score":0-100,"comment":"2-3줄"}],"star_ingredients":[max 5,{"name":"","benefit":"","best_time":"","synergy":[],"source":"검증됨|일반"}],"watch_out":[{"name":"","reason":"","alternative":""}],"forbidden_combos":[max 3,{"ingredients":"","reason":""}],"usage_guide":{"best_time":"","effect_timeline":"","beginner_tips":["3개"]},"safety_ratings":[max 8,{"name":"","score":1-10,"note":""}],"verdict":"★(1-5)+근거 2줄"}.
+safety_ratings 점수 기준 (엄격히 따를 것):
+1=가장 안전(정제수,글리세린,히알루론산,판테놀,알란토인,토코페롤,스쿠알란,세라마이드,센텔라,아데노신,발효물/발효여과물/유산균발효물,펩타이드,병풀추출물,베타글루칸,알부틴,나이아신아마이드,트레할로오스,부틸렌글라이콜,프룩토올리고사카라이드,잔탄검,마데카소사이드,아시아티코사이드,글리세릴 류,소듐하이알루로네이트), 2=안전(대부분의 식물추출물,아미노산류,비타민류), 3=보통(에틸헥실글리세린,폴리머류,유화제류,1,2-헥산다이올), 4-5=약간 주의(향료,색소,고농도 에탄올,PEG류), 6-7=주의필요(특정 방부제,포름알데히드방출제), 8-10=위험(금지성분급만 해당).
+확실하지 않은 성분은 2-3점으로. 안전한 성분을 높게 매기는 것은 금지. ${useLang === "ko" ? "한국어" : "English"}.`
     const skinContext =
       profileSkinTypes.length > 0
         ? `\n⚠️ 이 사용자의 피부 타입: ${profileSkinTypes.join(", ")} — 이 피부 타입 기준으로 분석해주세요! 예: 민감성이면 자극 성분 더 엄격하게, 지성이면 유분 많은 성분 주의`
