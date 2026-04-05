@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import puppeteer from "puppeteer-core"
-import chromium from "@sparticuz/chromium"
+import chromium from "@sparticuz/chromium-min"
 
 /* ── Rate Limiter ── */
 const WINDOW_MS = 60 * 1000
@@ -22,9 +22,13 @@ function rateLimit(ip: string): { ok: boolean; msg?: string } {
   return { ok: true }
 }
 
+// chromium-min은 런타임에 CDN에서 chromium을 다운로드
+const CHROMIUM_URL =
+  "https://github.com/nickmccurdy/chromium-for-serverless/releases/download/v131.0.1/chromium-v131.0.1-pack.tar"
+
 /**
  * 올리브영 제품 검색 → 전성분 추출 API
- * puppeteer-core + @sparticuz/chromium (서버리스 환경 호환)
+ * puppeteer-core + @sparticuz/chromium-min (서버리스 환경 호환)
  */
 export async function POST(req: NextRequest) {
   const ip =
@@ -51,21 +55,22 @@ export async function POST(req: NextRequest) {
 
   let browser
   try {
-    // 로컬 개발: 시스템 Chrome 사용 / 배포: @sparticuz/chromium 사용
     const isLocal = process.env.NODE_ENV === "development"
+
+    const executablePath = isLocal
+      ? (process.platform === "darwin"
+          ? "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+          : process.platform === "win32"
+            ? "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+            : "/usr/bin/google-chrome")
+      : await chromium.executablePath(CHROMIUM_URL)
 
     browser = await puppeteer.launch({
       args: isLocal
         ? ["--no-sandbox", "--disable-setuid-sandbox"]
         : chromium.args,
       defaultViewport: { width: 1280, height: 800 },
-      executablePath: isLocal
-        ? (process.platform === "darwin"
-            ? "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
-            : process.platform === "win32"
-              ? "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
-              : "/usr/bin/google-chrome")
-        : await chromium.executablePath(),
+      executablePath,
       headless: true,
     })
 
@@ -76,7 +81,7 @@ export async function POST(req: NextRequest) {
 
     // 1단계: 올리브영 검색
     const searchUrl = `https://www.oliveyoung.co.kr/store/search/getSearchMain.do?query=${encodeURIComponent(keyword.trim())}`
-    await page.goto(searchUrl, { waitUntil: "networkidle2", timeout: 20000 })
+    await page.goto(searchUrl, { waitUntil: "networkidle2", timeout: 25000 })
 
     // 2단계: 첫 번째 제품 정보 추출
     const productInfo = await page.evaluate(() => {
@@ -105,7 +110,7 @@ export async function POST(req: NextRequest) {
     // 3단계: 제품 상세 페이지 이동
     await page.goto(productInfo.url, {
       waitUntil: "networkidle2",
-      timeout: 20000,
+      timeout: 25000,
     })
 
     // 4단계: 상세정보 탭 클릭 (전성분이 여기에 있음)
