@@ -28,7 +28,7 @@ function rateLimit(ip: string): { ok: boolean; msg?: string } {
 
 // chromium-min은 런타임에 CDN에서 chromium을 다운로드
 const CHROMIUM_URL =
-  "https://github.com/nickmccurdy/chromium-for-serverless/releases/download/v131.0.1/chromium-v131.0.1-pack.tar"
+  "https://github.com/Sparticuz/chromium/releases/download/v143.0.4/chromium-v143.0.4-pack.x64.tar"
 
 /**
  * 올리브영 제품 검색 → 전성분 추출 API
