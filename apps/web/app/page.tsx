@@ -138,11 +138,19 @@ export default function Page() {
   const [oyError, setOyError] = useState("")
   const [oySuccess, setOySuccess] = useState("")
   // 루틴 탭
-  const [routineOyQuery, setRoutineOyQuery] = useState<Record<number, string>>({})
-  const [routineOyLoading, setRoutineOyLoading] = useState<Record<number, boolean>>({})
+  const [routineOyQuery, setRoutineOyQuery] = useState<Record<number, string>>(
+    {}
+  )
+  const [routineOyLoading, setRoutineOyLoading] = useState<
+    Record<number, boolean>
+  >({})
   // 비교 탭
-  const [compareOyQuery, setCompareOyQuery] = useState<Record<string, string>>({})
-  const [compareOyLoading, setCompareOyLoading] = useState<Record<string, boolean>>({})
+  const [compareOyQuery, setCompareOyQuery] = useState<Record<string, string>>(
+    {}
+  )
+  const [compareOyLoading, setCompareOyLoading] = useState<
+    Record<string, boolean>
+  >({})
 
   const handleOySearch = async () => {
     if (!oyQuery.trim() || oyLoading) return
@@ -186,7 +194,11 @@ export default function Page() {
         setProducts((ps) =>
           ps.map((x) =>
             x.id === productId
-              ? { ...x, ingredients: data.ingredients, name: x.name || data.productName || "" }
+              ? {
+                  ...x,
+                  ingredients: data.ingredients,
+                  name: x.name || data.productName || "",
+                }
               : x
           )
         )
@@ -289,7 +301,7 @@ export default function Page() {
     setTrendLoading(true)
     try {
       const raw = await callAIText(
-        `스킨케어 성분 전문가. 반존대. ${lang === "ko" ? "한국어" : "English"}. 확실한 정보만. 추측 금지. 모르면 안 쓰기.`,
+        `스킨케어 성분 전문가. 반존대. ${lang === "ko" ? "한국어" : "English"}. 확실한 정보만. 추측하지 않기. 모르면 안 쓰기.`,
         `"${name}" 성분 가이드. 각 항목 1-2줄:
 
 **작용** 피부에서 하는 일 (확실한 메커니즘만)
@@ -365,7 +377,7 @@ export default function Page() {
     setPhase("loading")
     const sys = `skindit 성분 비교. 친근한 존댓말.
 규칙: 입력 성분+제공된 데이터만 사용. 데이터에 없으면 "확인이 필요합니다". 제품 단위 꿀팁(아침/저녁, 순서, 시너지). 주의 콤보는 검증된 것만. 같은제형이면 하나만 추천.
-가드레일: 답변의 모든 내용이 제공된 컨텍스트에 포함되어 있는지 자체 검증. 컨텍스트에 없으면 언급 금지.
+가드레일: 답변의 모든 내용이 제공된 컨텍스트에 포함되어 있는지 자체 검증. 컨텍스트에 없으면 언급하지 않기. "금지"라는 단어 사용하지 말고 부드러운 표현 사용.
 JSON only. Schema:{"summary":"2-3줄","shared":[max 5,{"name":"","inA":true,"inB":true,"note":""}],"only_a":[max 5,{"name":"","inA":true,"inB":false,"note":""}],"only_b":[max 5,{"name":"","inA":false,"inB":true,"note":""}],"forbidden_combos":[max 2,{"ingredients":"","reason":""}],"recommendation":"2-3줄","usage_guide":{"best_time":"A:시간+이유, B:시간+이유, 순서","effect_timeline":"","beginner_tips":["3개"]},"verdict":"★(1-5)+근거 2줄"}. ${useLang === "ko" ? "한국어" : "English"}.`
     const skinContext =
       profileSkinTypes.length > 0
@@ -520,13 +532,13 @@ JSON only. Schema:{"summary":"2-3줄","shared":[max 5,{"name":"","inA":true,"inB
       .map((c) => (c ? tl(useLang, c.ko, c.en) : ""))
       .join(", ")
     const sys = `skindit 성분 분석. 친근한 존댓말.
-규칙: 입력 성분+제공된 데이터만 사용. 데이터에 없으면 "확인이 필요합니다"로 답변. 추측/지어내기 금지. 주의 콤보는 검증된 것만. "절대 금지" 대신 "분리 사용 권장". concern_analysis에 선택한 고민 전부 포함.
+규칙: 입력 성분+제공된 데이터만 사용. 데이터에 없으면 "확인이 필요합니다"로 답변. 추측/지어내기 하지 않기. 주의 콤보는 검증된 것만. "분리 사용 권장"처럼 부드러운 표현 사용. "금지"라는 단어 대신 "피하는 게 좋아요", "권장하지 않아요" 등으로. concern_analysis에 선택한 고민 전부 포함.
 출처: [검증된 성분 데이터]가 제공되면 해당 데이터 기반임을 표시. 예: "식약처 등록 성분이에요", "검증된 데이터 기준으로..."
-가드레일: 답변 전 자체 검증 — 모든 내용이 제공된 컨텍스트에 포함되어 있는지 확인. 컨텍스트에 없는 성분 효능/부작용은 언급 금지.
+가드레일: 답변 전 자체 검증 — 모든 내용이 제공된 컨텍스트에 포함되어 있는지 확인. 컨텍스트에 없는 성분 효능/부작용은 언급하지 않기.
 JSON only. Schema:{"overall_score":0-100,"overall_comment":"2-3줄","concern_analysis":[선택 고민 전부,{"concern":"","score":0-100,"comment":"2-3줄"}],"star_ingredients":[max 5,{"name":"","benefit":"","best_time":"","synergy":[],"source":"검증됨|일반"}],"watch_out":[{"name":"","reason":"","alternative":""}],"forbidden_combos":[max 3,{"ingredients":"","reason":""}],"usage_guide":{"best_time":"","effect_timeline":"","beginner_tips":["3개"]},"safety_ratings":[max 8,{"name":"","score":1-10,"note":""}],"verdict":"★(1-5)+근거 2줄"}.
 safety_ratings 점수 기준 (엄격히 따를 것):
 1=가장 안전(정제수,글리세린,히알루론산,판테놀,알란토인,토코페롤,스쿠알란,세라마이드,센텔라,아데노신,발효물/발효여과물/유산균발효물,펩타이드,병풀추출물,베타글루칸,알부틴,나이아신아마이드,트레할로오스,부틸렌글라이콜,프룩토올리고사카라이드,잔탄검,마데카소사이드,아시아티코사이드,글리세릴 류,소듐하이알루로네이트), 2=안전(대부분의 식물추출물,아미노산류,비타민류), 3=보통(에틸헥실글리세린,폴리머류,유화제류,1,2-헥산다이올), 4-5=약간 주의(향료,색소,고농도 에탄올,PEG류), 6-7=주의필요(특정 방부제,포름알데히드방출제), 8-10=위험(금지성분급만 해당).
-확실하지 않은 성분은 2-3점으로. 안전한 성분을 높게 매기는 것은 금지. ${useLang === "ko" ? "한국어" : "English"}.`
+확실하지 않은 성분은 2-3점으로. 안전한 성분을 높게 매기지 않기. ${useLang === "ko" ? "한국어" : "English"}.`
     const skinContext =
       profileSkinTypes.length > 0
         ? `\n⚠️ 이 사용자의 피부 타입: ${profileSkinTypes.join(", ")} — 이 피부 타입 기준으로 분석해주세요! 예: 민감성이면 자극 성분 더 엄격하게, 지성이면 유분 많은 성분 주의`
@@ -588,8 +600,8 @@ safety_ratings 점수 기준 (엄격히 따를 것):
       .map((p, i) => `[${p.name || `Product${i + 1}`}]: ${p.ingredients}`)
       .join("\n\n")
     const sys = `skindit 루틴 분석. 친근한 존댓말.
-규칙: 입력 성분+제공된 데이터만 사용. 데이터에 없으면 "확인이 필요합니다". 같은제형 겹침=점수↓(40~60), 다른제형=OK(70~85), 상호보완=80~90. 주의 콤보는 검증된 것만. "절대 금지" 대신 "분리 사용 권장".
-가드레일: 답변의 모든 내용이 제공된 컨텍스트에 포함되어 있는지 자체 검증. 컨텍스트에 없으면 언급 금지.
+규칙: 입력 성분+제공된 데이터만 사용. 데이터에 없으면 "확인이 필요합니다". 같은제형 겹침=점수↓(40~60), 다른제형=OK(70~85), 상호보완=80~90. 주의 콤보는 검증된 것만. "분리 사용 권장"처럼 부드러운 표현 사용. "금지"라는 단어 대신 "피하는 게 좋아요", "권장하지 않아요" 등으로.
+가드레일: 답변의 모든 내용이 제공된 컨텍스트에 포함되어 있는지 자체 검증. 컨텍스트에 없으면 언급하지 않기.
 JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":[max 3,{"ingredients":[""],"products":[""],"severity":"high|medium|low","reason":""}],"synergies":[max 3,{"ingredients":[""],"products":[""],"reason":""}],"order_suggestion":["순서"],"recommendations":[max 3,"팁"],"timeline":[{"product":"","timing":"morning|evening|both","reason":""}],"usage_guide":{"effect_timeline":"","beginner_tips":["2-3개"]},"verdict":"★(1-5)+근거 2줄"}. ${useLang === "ko" ? "한국어" : "English"}.`
     const skinContext =
       profileSkinTypes.length > 0
@@ -1307,8 +1319,13 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                 <input
                   value={oyQuery}
                   onChange={(e) => setOyQuery(e.target.value)}
-                  onKeyDown={(e) => { if (e.key === "Enter") handleOySearch() }}
-                  placeholder={t("예) 메디힐 PDRN 세럼", "e.g. Mediheal PDRN Serum")}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") handleOySearch()
+                  }}
+                  placeholder={t(
+                    "예) 메디힐 PDRN 세럼",
+                    "e.g. Mediheal PDRN Serum"
+                  )}
                   disabled={oyLoading}
                   className="flex-1 rounded-xl border border-gray-200 bg-gray-50/50 px-4 py-3 text-sm text-gray-900 transition-all outline-none placeholder:text-gray-400 focus:border-purple-300 focus:bg-white focus:ring-2 focus:ring-purple-100 disabled:opacity-50"
                 />
@@ -1318,18 +1335,28 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                   className="shrink-0 rounded-xl bg-[#9bce26] px-4 py-3 text-sm font-bold text-white transition-all hover:bg-[#8ab922] disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   {oyLoading ? (
-                    <span className="inline-block h-4 w-4 rounded-full border-2 border-white/40 border-t-white" style={{ animation: "spin 1s linear infinite" }} />
+                    <span
+                      className="inline-block h-4 w-4 rounded-full border-2 border-white/40 border-t-white"
+                      style={{ animation: "spin 1s linear infinite" }}
+                    />
                   ) : (
                     t("검색", "Search")
                   )}
                 </button>
               </div>
-              {oyError && <p className="mt-2 text-xs text-rose-500">{oyError}</p>}
+              {oyError && (
+                <p className="mt-2 text-xs text-rose-500">{oyError}</p>
+              )}
               {oySuccess && (
                 <div className="mt-3 rounded-xl border border-green-200 bg-green-50/50 px-4 py-3">
-                  <p className="text-xs font-bold text-green-700">{oySuccess}</p>
+                  <p className="text-xs font-bold text-green-700">
+                    {oySuccess}
+                  </p>
                   <p className="mt-1 text-[11px] text-green-600">
-                    {t("전성분을 가져왔어요! 아래에 자동으로 채워졌어요~", "Ingredients loaded! Auto-filled below~")}
+                    {t(
+                      "전성분을 가져왔어요! 아래에 자동으로 채워졌어요~",
+                      "Ingredients loaded! Auto-filled below~"
+                    )}
                   </p>
                 </div>
               )}
@@ -1537,19 +1564,35 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                     <div className="mb-2 flex gap-1.5">
                       <input
                         value={routineOyQuery[p.id] || ""}
-                        onChange={(e) => setRoutineOyQuery((q) => ({ ...q, [p.id]: e.target.value }))}
-                        onKeyDown={(e) => { if (e.key === "Enter") handleRoutineOySearch(p.id) }}
-                        placeholder={t("🛒 올리브영 검색", "🛒 Olive Young search")}
+                        onChange={(e) =>
+                          setRoutineOyQuery((q) => ({
+                            ...q,
+                            [p.id]: e.target.value,
+                          }))
+                        }
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") handleRoutineOySearch(p.id)
+                        }}
+                        placeholder={t(
+                          "🛒 올리브영 검색",
+                          "🛒 Olive Young search"
+                        )}
                         disabled={routineOyLoading[p.id]}
                         className="flex-1 rounded-xl border border-white/70 bg-white/60 px-3 py-2 text-xs transition-all outline-none placeholder:text-gray-400 focus:border-purple-300 focus:bg-white disabled:opacity-50"
                       />
                       <button
                         onClick={() => handleRoutineOySearch(p.id)}
-                        disabled={!routineOyQuery[p.id]?.trim() || routineOyLoading[p.id]}
+                        disabled={
+                          !routineOyQuery[p.id]?.trim() ||
+                          routineOyLoading[p.id]
+                        }
                         className="shrink-0 rounded-xl bg-[#9bce26] px-3 py-2 text-[11px] font-bold text-white transition-all hover:bg-[#8ab922] disabled:cursor-not-allowed disabled:opacity-40"
                       >
                         {routineOyLoading[p.id] ? (
-                          <span className="inline-block h-3 w-3 rounded-full border-2 border-white/40 border-t-white" style={{ animation: "spin 1s linear infinite" }} />
+                          <span
+                            className="inline-block h-3 w-3 rounded-full border-2 border-white/40 border-t-white"
+                            style={{ animation: "spin 1s linear infinite" }}
+                          />
                         ) : (
                           t("검색", "Search")
                         )}
@@ -1700,19 +1743,35 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                     <div className="mb-2 flex gap-1.5">
                       <input
                         value={compareOyQuery[p.label] || ""}
-                        onChange={(e) => setCompareOyQuery((q) => ({ ...q, [p.label]: e.target.value }))}
-                        onKeyDown={(e) => { if (e.key === "Enter") handleCompareOySearch(p.label) }}
-                        placeholder={t("🛒 올리브영 검색", "🛒 Olive Young search")}
+                        onChange={(e) =>
+                          setCompareOyQuery((q) => ({
+                            ...q,
+                            [p.label]: e.target.value,
+                          }))
+                        }
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") handleCompareOySearch(p.label)
+                        }}
+                        placeholder={t(
+                          "🛒 올리브영 검색",
+                          "🛒 Olive Young search"
+                        )}
                         disabled={compareOyLoading[p.label]}
                         className="flex-1 rounded-xl border border-white/70 bg-white/60 px-3 py-2 text-xs transition-all outline-none placeholder:text-gray-400 focus:border-purple-300 focus:bg-white disabled:opacity-50"
                       />
                       <button
                         onClick={() => handleCompareOySearch(p.label)}
-                        disabled={!compareOyQuery[p.label]?.trim() || compareOyLoading[p.label]}
+                        disabled={
+                          !compareOyQuery[p.label]?.trim() ||
+                          compareOyLoading[p.label]
+                        }
                         className="shrink-0 rounded-xl bg-[#9bce26] px-3 py-2 text-[11px] font-bold text-white transition-all hover:bg-[#8ab922] disabled:cursor-not-allowed disabled:opacity-40"
                       >
                         {compareOyLoading[p.label] ? (
-                          <span className="inline-block h-3 w-3 rounded-full border-2 border-white/40 border-t-white" style={{ animation: "spin 1s linear infinite" }} />
+                          <span
+                            className="inline-block h-3 w-3 rounded-full border-2 border-white/40 border-t-white"
+                            style={{ animation: "spin 1s linear infinite" }}
+                          />
                         ) : (
                           t("검색", "Search")
                         )}
@@ -1779,14 +1838,17 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
               <div className="dot" />
             </div>
             <p className="font-display mb-2 text-base font-bold text-gray-800">
-              {t("스킨딧이 꼼꼼하게 분석하고 있어요!", "skindit is carefully analyzing!")}
+              {t(
+                "스킨딧이 꼼꼼하게 분석하고 있어요!",
+                "skindit is carefully analyzing!"
+              )}
             </p>
             <p
               className="text-sm text-gray-400"
               style={{ animation: "pulse-text 1.6s ease infinite" }}
             >
               {t(
-                "성분 하나하나 확인 중이라 시간이 조금 걸려요~",
+                "성분 하나하나 확인 중이라 시간이 조금 걸립니다~!",
                 "Checking each ingredient — this may take a moment~"
               )}
             </p>
