@@ -29,7 +29,7 @@ export async function searchIngredient(name: string): Promise<MfdsIngredient | n
   if (!MFDS_KEY) return null
   try {
     const controller = new AbortController()
-    const timeout = setTimeout(() => controller.abort(), 2000) // 2초 타임아웃
+    const timeout = setTimeout(() => controller.abort(), 1500) // 1.5초 타임아웃
     const res = await fetch(
       `${BASE_URL}/CsmtcsIngdCpntInfoService01/getCsmtcsIngdCpntInfoService01?serviceKey=${encodeURIComponent(MFDS_KEY)}&type=json&numOfRows=5&INGR_KOR_NAME=${encodeURIComponent(name)}`,
       { next: { revalidate: 86400 }, signal: controller.signal }
@@ -91,8 +91,8 @@ export async function batchCheckIngredients(ingredientNames: string[]): Promise<
   const results: Record<string, MfdsIngredient> = {}
   if (!MFDS_KEY) return results
 
-  // 주요 성분만 조회 (최대 10개, API 부하 방지)
-  const topIngredients = ingredientNames.slice(0, 10)
+  // 주요 성분만 조회 (최대 5개, 속도 최적화)
+  const topIngredients = ingredientNames.slice(0, 5)
 
   await Promise.all(
     topIngredients.map(async (name) => {
