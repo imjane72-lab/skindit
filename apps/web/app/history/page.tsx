@@ -764,12 +764,12 @@ export default function HistoryPage() {
                               const verdict = String(item.resultJson?.verdict || "")
                               const title = displayType === "compare" ? "skindit 성분 비교 결과" : `skindit 분석 결과: ${item.score}점`
                               const text = `${comment}\n${verdict}`.trim()
-                              const shareUrl = `${SITE_URL}/history`
+                              const shareUrl = `${SITE_URL}/share/${item.id}`
                               if (navigator.share) {
                                 navigator.share({ title, text, url: shareUrl }).catch(() => {})
                               } else {
                                 navigator.clipboard.writeText(`${title}\n${text}\n${shareUrl}`)
-                                alert("결과 복사했어! 친구한테 보내줘~")
+                                alert("공유 링크가 복사되었어요!")
                               }
                             }}
                             className="flex items-center gap-1.5 text-xs text-purple-400 transition-colors hover:text-purple-600"

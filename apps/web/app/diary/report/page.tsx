@@ -404,7 +404,7 @@ export default function DiaryReportPage() {
                   <div className="rounded-xl bg-amber-50/50 border border-amber-100 p-3">
                     <p className="text-[11px] font-bold text-amber-600 mb-1">💡 이 제품들은 아직 성분 분석이 되지 않았어요!</p>
                     <p className="text-[10px] text-gray-500 leading-relaxed">
-                      {(reportData.unanalyzed_products as string[]).join(", ")} — 성분 분석을 하시면 다음 리포트에서 더 정확하게 원인을 추적해 드려요~
+                      {(reportData.unanalyzed_products as string[]).join(", ")} — 성분 분석을 하시면 다음 리포트에서 더 정확하게 원인을 추적해 드릴게요~
                     </p>
                     <a href="/" className="mt-2 inline-block text-[11px] font-bold text-purple-600 no-underline hover:underline">
                       성분 분석하러 가기 →
@@ -412,27 +412,18 @@ export default function DiaryReportPage() {
                   </div>
                 )}
 
-                {/* Pro upsell */}
-                <div className="bg-linear-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-2xl p-4 mb-3 text-center">
-                  <p className="text-xs font-bold text-purple-700 mb-1">💎 프로에서 더 자세한 리포트를 받아보세요~</p>
-                  <p className="text-[11px] text-gray-500 mb-3">시술 추천, 성분 알레르기 추적, 월간 비교 분석까지</p>
-                  <a href="/pricing" className="inline-block px-5 py-2 text-xs font-bold text-white bg-linear-to-r from-purple-500 to-pink-400 rounded-xl no-underline hover:opacity-90 transition-all">
-                    프로 플랜 보기
-                  </a>
-                </div>
-
                 {/* Share + Refresh */}
                 <div className="flex gap-2">
                   <button
                     onClick={() => {
                       const title = `skindit 피부 리포트`
-                      const text = `${reportData?.summary || ""}\n\n${(reportData?.recommendations || []).join("\n")}`.trim()
-                      const shareUrl = `${SITE_URL}/diary/report`
+                      const recs = (reportData?.recommendations || []).map((r: string, i: number) => `${i + 1}. ${r}`).join("\n")
+                      const text = `📑 ${title}\n\n${reportData?.summary || ""}\n\n💜 맞춤 조언\n${recs}`.trim()
                       if (navigator.share) {
-                        navigator.share({ title, text, url: shareUrl }).catch(() => {})
+                        navigator.share({ title, text, url: SITE_URL }).catch(() => {})
                       } else {
-                        navigator.clipboard.writeText(`${title}\n${text}\n${shareUrl}`)
-                        alert("리포트가 복사되었어요! 친구에게 공유해 보세요~")
+                        navigator.clipboard.writeText(text)
+                        alert("리포트가 복사되었어요!")
                       }
                     }}
                     className="flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl text-sm font-bold text-purple-600 bg-purple-50 border border-purple-200 hover:bg-purple-100 transition-all"

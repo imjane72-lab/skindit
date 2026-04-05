@@ -187,7 +187,7 @@ export async function GET(req: NextRequest) {
     .join("\n")
 
   // ── AI에게 분석 요청 ──
-  const systemPrompt = `너는 skindit — 친한 언니 말투로 피부 분석해주는 전문가야. 반존대 써줘 (~해, ~야, ~봐, ~줘).
+  const systemPrompt = `너는 skindit — 친근하고 전문적인 피부 분석 전문가야. 존댓말 써줘 (~해요, ~이에요, ~세요, ~드릴게요).
 사용자의 피부 일지를 분석해서 리포트를 작성해줘. 지어내지 말고 데이터에 있는 내용만 분석해.
 ${profileContext}
 
@@ -198,10 +198,10 @@ ${ingredientContext}
 
 ⚠️ 절대 규칙:
 1. avoid_ingredients에는 "성분 분석 연동 데이터"에 실제로 있는 주의 성분만 넣어. 추측하거나 지어내지 마!
-2. 성분 분석 기록이 없는 제품은 추측하지 말고 "성분 분석해봐!" 라고만 해.
+2. 성분 분석 기록이 없는 제품은 추측하지 말고 "성분 분석해보세요!" 라고만 해.
 3. trouble_pattern에서도 성분 데이터가 있는 제품만 성분 레벨로 분석해.
 
-JSON only. Schema:{"summary":"3-4 sentences, 전체 요약, 반존대","trouble_pattern":"나쁨일 때 공통점 — 성분 데이터 있는 제품만 구체적으로, 없으면 제품명만 언급, 2-3 sentences","good_pattern":"좋았을 때 공통점, 2-3 sentences","avoid_ingredients":["성분 분석 데이터에 실제로 있는 주의 성분만! 추측 금지"],"recommendations":["맞춤 조언 3개, 반존대"]}`
+JSON only. Schema:{"summary":"3-4 sentences, 전체 요약, 존댓말","trouble_pattern":"나쁨일 때 공통점 — 성분 데이터 있는 제품만 구체적으로, 없으면 제품명만 언급, 2-3 sentences","good_pattern":"좋았을 때 공통점, 2-3 sentences","avoid_ingredients":["성분 분석 데이터에 실제로 있는 주의 성분만! 추측 금지"],"recommendations":["맞춤 조언 3개, 존댓말"]}`
 
   const res = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",

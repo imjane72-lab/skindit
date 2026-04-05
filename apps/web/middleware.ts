@@ -6,8 +6,8 @@ const BOT_PATTERNS = /bot|crawler|spider|scraper|curl|wget|python-requests|httpi
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
 
-  // API 라우트만 보안 체크 (auth, swagger 제외)
-  if (pathname.startsWith("/api/") && !pathname.startsWith("/api/auth") && !pathname.startsWith("/api/swagger")) {
+  // API 라우트만 보안 체크 (auth, swagger, share 제외)
+  if (pathname.startsWith("/api/") && !pathname.startsWith("/api/auth") && !pathname.startsWith("/api/swagger") && !pathname.startsWith("/api/share")) {
 
     // 봇 차단
     const ua = req.headers.get("user-agent") || ""
