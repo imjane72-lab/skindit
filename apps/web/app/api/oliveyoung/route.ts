@@ -2,14 +2,12 @@ import { NextRequest, NextResponse } from "next/server"
 import puppeteer from "puppeteer-core"
 import chromium from "@sparticuz/chromium-min"
 
-// Vercel 서버리스 함수 설정
 export const maxDuration = 60
 export const dynamic = "force-dynamic"
 
 /* ── Rate Limiter ── */
 const WINDOW_MS = 60 * 1000
 const MAX_PER_WINDOW = 5
-
 const hits = new Map<string, { count: number; reset: number }>()
 
 function rateLimit(ip: string): { ok: boolean; msg?: string } {
@@ -20,27 +18,26 @@ function rateLimit(ip: string): { ok: boolean; msg?: string } {
   } else {
     w.count++
     if (w.count > MAX_PER_WINDOW) {
-      return { ok: false, msg: "Too many requests. Please wait a minute." }
+      return { ok: false, msg: "잠시 후 다시 시도해주세요." }
     }
   }
   return { ok: true }
 }
 
-// chromium-min은 런타임에 CDN에서 chromium을 다운로드
 const CHROMIUM_URL =
   "https://github.com/Sparticuz/chromium/releases/download/v143.0.4/chromium-v143.0.4-pack.x64.tar"
 
 /**
  * 올리브영 제품 검색 → 전성분 추출 API
- * puppeteer-core + @sparticuz/chromium-min (서버리스 환경 호환)
+ *
+ * 1. 검색 → 제품 찾기
+ * 2. 상세 페이지 → "상품정보 제공고시" 클릭
+ * 3. "화장품법에 따라 기재해야 하는 모든 성분" 텍스트 추출
  */
 export async function POST(req: NextRequest) {
-  const ip =
-    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown"
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown"
   const limit = rateLimit(ip)
-  if (!limit.ok) {
-    return NextResponse.json({ error: limit.msg }, { status: 429 })
-  }
+  if (!limit.ok) return NextResponse.json({ error: limit.msg }, { status: 429 })
 
   let body: { keyword: string }
   try {
@@ -51,31 +48,22 @@ export async function POST(req: NextRequest) {
 
   const { keyword } = body
   if (!keyword || keyword.trim().length < 2) {
-    return NextResponse.json(
-      { error: "검색어를 2글자 이상 입력해주세요." },
-      { status: 400 }
-    )
+    return NextResponse.json({ error: "검색어를 2글자 이상 입력해주세요." }, { status: 400 })
   }
 
   let browser
   try {
     const isLocal = process.env.NODE_ENV === "development"
 
-    const executablePath = isLocal
-      ? (process.platform === "darwin"
-          ? "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
-          : process.platform === "win32"
-            ? "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
-            : "/usr/bin/google-chrome")
-      : await chromium.executablePath(CHROMIUM_URL)
-
     browser = await puppeteer.launch({
-      args: isLocal
-        ? ["--no-sandbox", "--disable-setuid-sandbox"]
-        : chromium.args,
+      args: isLocal ? ["--no-sandbox", "--disable-setuid-sandbox"] : chromium.args,
       defaultViewport: { width: 1280, height: 800 },
-      executablePath,
-      headless: true,
+      executablePath: isLocal
+        ? (process.platform === "darwin"
+            ? "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+            : "/usr/bin/google-chrome")
+        : await chromium.executablePath(CHROMIUM_URL),
+      headless: "shell",
     })
 
     const page = await browser.newPage()
@@ -83,80 +71,59 @@ export async function POST(req: NextRequest) {
       "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
     )
 
-    // 1단계: 올리브영 검색
-    const searchUrl = `https://www.oliveyoung.co.kr/store/search/getSearchMain.do?query=${encodeURIComponent(keyword.trim())}`
-    await page.goto(searchUrl, { waitUntil: "networkidle2", timeout: 25000 })
+    // ── 1단계: 검색 ──
+    await page.goto(
+      `https://www.oliveyoung.co.kr/store/search/getSearchMain.do?query=${encodeURIComponent(keyword.trim())}`,
+      { waitUntil: "networkidle2", timeout: 25000 }
+    )
+    await new Promise((r) => setTimeout(r, 5000))
 
-    // 2단계: 첫 번째 제품 정보 추출
+    // ── 2단계: 첫 번째 제품 찾기 ──
     const productInfo = await page.evaluate(() => {
-      const link = document.querySelector(
-        ".prd_info a.prd_name"
-      ) as HTMLAnchorElement | null
-      if (!link) return null
-      const brand =
-        (
-          document.querySelector(".prd_info .tx_brand") as HTMLElement | null
-        )?.textContent?.trim() || ""
-      return { url: link.href, name: link.textContent?.trim() || "", brand }
+      const thumbLink = document.querySelector("a.prd_thumb") as HTMLAnchorElement | null
+      if (!thumbLink) return null
+      const card = thumbLink.closest("li") || thumbLink.parentElement?.parentElement
+      const name = card?.querySelector(".prd_name")?.textContent?.trim().replace(/\s+/g, " ") || ""
+      const brand = card?.querySelector(".tx_brand")?.textContent?.trim() || ""
+      return { url: thumbLink.href, name, brand }
     })
 
     if (!productInfo) {
       await browser.close()
       return NextResponse.json(
-        {
-          error: `"${keyword}" 검색 결과가 없습니다.`,
-          suggestions: "정확한 제품명이나 브랜드명을 입력해보세요.",
-        },
+        { error: `"${keyword}" 검색 결과가 없습니다.` },
         { status: 404 }
       )
     }
 
-    // 3단계: 제품 상세 페이지 이동
-    await page.goto(productInfo.url, {
-      waitUntil: "networkidle2",
-      timeout: 25000,
-    })
+    // ── 3단계: 상세 페이지 이동 ──
+    await page.goto(productInfo.url, { waitUntil: "networkidle2", timeout: 25000 })
+    await new Promise((r) => setTimeout(r, 5000))
 
-    // 4단계: 상세정보 탭 클릭 (전성분이 여기에 있음)
-    try {
-      await page.click('a[href="#prdDetail"]')
-      await new Promise((r) => setTimeout(r, 2000))
-    } catch {
-      // 탭이 없으면 이미 펼쳐져 있을 수 있음
-    }
-
-    // 5단계: 전성분 텍스트 추출
-    const ingredients = await page.evaluate(() => {
-      const bodyText = document.body.innerText
-
-      const patterns = [
-        /전성분\s*[:\s]\s*([^\n]+(?:\n[^\n]+)*?)(?=\n{2,}|사용\s*(?:방법|법|시)|주의|보관|$)/i,
-        /(?:전체\s*)?성분\s*[:\s]\s*([^\n]+(?:\n[^\n]+)*?)(?=\n{2,}|사용\s*(?:방법|법|시)|주의|보관|$)/i,
-      ]
-
-      for (const pattern of patterns) {
-        const match = bodyText.match(pattern)
-        if (match?.[1]) {
-          const text = match[1]
-            .replace(/\n/g, " ")
-            .replace(/\s+/g, " ")
-            .trim()
-          if (text.length > 20) return text
+    // ── 4단계: "상품정보 제공고시" 버튼 클릭 ──
+    await page.evaluate(() => {
+      const buttons = document.querySelectorAll("button")
+      for (const btn of buttons) {
+        if (btn.textContent?.includes("상품정보 제공고시")) {
+          btn.click()
+          break
         }
       }
+    })
+    await new Promise((r) => setTimeout(r, 3000))
 
-      // 대안: "정제수" 또는 "WATER"로 시작하는 블록
-      const waterBlock = bodyText.match(
-        /(?:정제수|워터|WATER)[,\s][\s\S]{50,1500}?(?=\n{2,}|사용|주의|$)/i
-      )
-      if (waterBlock) {
-        return waterBlock[0]
-          .replace(/\n/g, " ")
-          .replace(/\s+/g, " ")
-          .trim()
-      }
+    // ── 5단계: "모든 성분" 이후 텍스트 추출 ──
+    const ingredients = await page.evaluate(() => {
+      const text = document.body.innerText
+      const idx = text.indexOf("모든 성분")
+      if (idx === -1) return null
 
-      return null
+      const after = text.substring(idx + 5).trim()
+      const endPatterns = /내용물의 용량|사용기한|사용방법|화장품제조|제조국|사용할 때|품질보증|기능성 화장품/
+      const endIdx = after.search(endPatterns)
+      const raw = endIdx > -1 ? after.substring(0, endIdx).trim() : after.substring(0, 3000).trim()
+
+      return raw.length > 10 ? raw : null
     })
 
     await browser.close()
@@ -167,8 +134,7 @@ export async function POST(req: NextRequest) {
         brand: productInfo.brand,
         url: productInfo.url,
         ingredients: null,
-        message:
-          "제품은 찾았지만 전성분을 텍스트로 추출하지 못했어요. 상세 이미지에만 전성분이 있을 수 있습니다.",
+        message: "제품은 찾았지만 전성분을 추출하지 못했어요.",
       })
     }
 
@@ -180,8 +146,9 @@ export async function POST(req: NextRequest) {
     })
   } catch (err) {
     if (browser) await browser.close()
-    const message =
-      err instanceof Error ? err.message : "올리브영 검색 중 오류 발생"
-    return NextResponse.json({ error: message }, { status: 500 })
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : "올리브영 검색 중 오류 발생" },
+      { status: 500 }
+    )
   }
 }
