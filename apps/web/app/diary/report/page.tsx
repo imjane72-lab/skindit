@@ -117,17 +117,17 @@ export default function DiaryReportPage() {
         alert(err?.error?.message || "리포트 생성에 실패했습니다.");
       }
     } catch {
-      alert("리포트 생성 실패했어 ㅠ 다시 해봐!");
+      alert("리포트 생성에 실패했어요. 다시 시도해 주세요!");
     } finally {
       setReportLoading(false);
     }
-  }, [entryCount]);
+  }, [entryCount, selectedMonth, reportCache]);
 
   useEffect(() => {
     if (!loadingEntries && entryCount !== null && entryCount >= 5) {
       fetchReport();
     }
-  }, [loadingEntries, entryCount, fetchReport]);
+  }, [loadingEntries, entryCount, fetchReport, selectedMonth]);
 
   /* ── Loading ── */
   if (status === "loading" || loadingEntries) {
@@ -156,16 +156,16 @@ export default function DiaryReportPage() {
               <h1 className="font-display text-2xl font-extrabold text-gray-900 mb-3">
                 📑 피부 리포트
               </h1>
-              <p className="text-sm text-gray-400">기록 분석해서 피부 패턴 알려줄게~</p>
+              <p className="text-sm text-gray-400">기록을 분석해서 피부 패턴을 알려드려요</p>
             </div>
 
             <div className="bg-white border-2 border-purple-100 rounded-2xl p-8 text-center shadow-sm anim-scale-in">
               <div className="text-4xl mb-4">📝</div>
-              <p className="text-sm font-bold text-gray-800 mb-1">리포트까지 {5 - entryCount}일 남았어!</p>
+              <p className="text-sm font-bold text-gray-800 mb-1">리포트까지 {5 - entryCount}일 남았어요!</p>
               <p className="text-xs text-gray-400 leading-relaxed mb-2">
                 {entryCount === 0
-                  ? "5일간 피부 상태 기록하면 스킨딧이 리포트 만들어줄게 💜"
-                  : `지금 ${entryCount}일 기록했어~ ${5 - entryCount}일만 더 하면 리포트 열려!`}
+                  ? "5일간 피부 상태를 기록하시면 스킨딧이 리포트를 만들어 드려요 💜"
+                  : `지금 ${entryCount}일 기록하셨어요~ ${5 - entryCount}일만 더 하시면 리포트를 받아보실 수 있어요!`}
               </p>
               <div className="flex justify-center gap-1 mb-4">
                 {Array.from({ length: 5 }).map((_, i) => (
@@ -196,7 +196,7 @@ export default function DiaryReportPage() {
               <h1 className="font-display text-2xl font-extrabold text-gray-900 mb-3">
                 📑 피부 리포트
               </h1>
-              <p className="text-sm text-gray-400">기록 분석해서 피부 패턴 알려줄게~</p>
+              <p className="text-sm text-gray-400">기록을 분석해서 피부 패턴을 알려드려요</p>
             </div>
 
             <div className="rounded-2xl p-30 text-center anim-scale-in">
@@ -225,7 +225,7 @@ export default function DiaryReportPage() {
             <h1 className="font-display text-2xl font-extrabold text-gray-900 mb-1">
               📑 피부 리포트
             </h1>
-            <p className="text-sm text-gray-400">기록 분석해서 피부 패턴 알려줄게~</p>
+            <p className="text-sm text-gray-400">기록을 분석해서 피부 패턴을 알려드려요</p>
           </div>
 
           {/* 월 선택 */}
@@ -402,9 +402,9 @@ export default function DiaryReportPage() {
                 {/* 아직 분석 안 한 제품 안내 */}
                 {reportData.unanalyzed_products && reportData.unanalyzed_products.length > 0 && (
                   <div className="rounded-xl bg-amber-50/50 border border-amber-100 p-3">
-                    <p className="text-[11px] font-bold text-amber-600 mb-1">💡 이 제품들은 아직 성분 분석 안 했어!</p>
+                    <p className="text-[11px] font-bold text-amber-600 mb-1">💡 이 제품들은 아직 성분 분석이 되지 않았어요!</p>
                     <p className="text-[10px] text-gray-500 leading-relaxed">
-                      {(reportData.unanalyzed_products as string[]).join(", ")} — 성분 분석하면 다음 리포트에서 더 정확하게 원인 추적해줄게~
+                      {(reportData.unanalyzed_products as string[]).join(", ")} — 성분 분석을 하시면 다음 리포트에서 더 정확하게 원인을 추적해 드려요~
                     </p>
                     <a href="/" className="mt-2 inline-block text-[11px] font-bold text-purple-600 no-underline hover:underline">
                       성분 분석하러 가기 →
@@ -414,7 +414,7 @@ export default function DiaryReportPage() {
 
                 {/* Pro upsell */}
                 <div className="bg-linear-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-2xl p-4 mb-3 text-center">
-                  <p className="text-xs font-bold text-purple-700 mb-1">💎 프로에서 더 자세한 리포트 받아봐~</p>
+                  <p className="text-xs font-bold text-purple-700 mb-1">💎 프로에서 더 자세한 리포트를 받아보세요~</p>
                   <p className="text-[11px] text-gray-500 mb-3">시술 추천, 성분 알레르기 추적, 월간 비교 분석까지</p>
                   <a href="/pricing" className="inline-block px-5 py-2 text-xs font-bold text-white bg-linear-to-r from-purple-500 to-pink-400 rounded-xl no-underline hover:opacity-90 transition-all">
                     프로 플랜 보기
@@ -432,7 +432,7 @@ export default function DiaryReportPage() {
                         navigator.share({ title, text, url: shareUrl }).catch(() => {})
                       } else {
                         navigator.clipboard.writeText(`${title}\n${text}\n${shareUrl}`)
-                        alert("리포트 복사했어! 친구한테 보내줘~")
+                        alert("리포트가 복사되었어요! 친구에게 공유해 보세요~")
                       }
                     }}
                     className="flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl text-sm font-bold text-purple-600 bg-purple-50 border border-purple-200 hover:bg-purple-100 transition-all"
@@ -455,8 +455,8 @@ export default function DiaryReportPage() {
           ) : (
             <div className="rounded-2xl p-10 text-center anim-scale-in">
               <div className="text-4xl mb-4">📊</div>
-              <p className="text-sm font-bold text-gray-700 mb-1">리포트를 못 불러왔어 ㅠ</p>
-              <p className="text-xs text-gray-400 leading-relaxed mb-4">다시 한번 해봐!</p>
+              <p className="text-sm font-bold text-gray-700 mb-1">리포트를 불러오지 못했어요</p>
+              <p className="text-xs text-gray-400 leading-relaxed mb-4">다시 한번 시도해 주세요!</p>
               <button
                 onClick={fetchReport}
                 className="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-linear-to-r from-pastel-lavender-dark via-purple-400 to-pastel-rose-dark shadow-md hover:shadow-lg transition-all"

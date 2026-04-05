@@ -205,19 +205,16 @@ export default function ChatPage() {
       setIsTyping(true);
 
       try {
-        const res = await fetch("/api/analyze", {
+        const res = await fetch("/api/chat/ai", {
           method: "POST",
           headers: { "Content-Type": "application/json", "x-skindit-client": "web" },
-          body: JSON.stringify({
-            system: buildSystemPrompt(),
-            user: trimmed,
-          }),
+          body: JSON.stringify({ message: trimmed }),
         });
 
         if (!res.ok) throw new Error("API error");
 
         const data = await res.json();
-        const aiText = data?.content?.[0]?.text || "죄송해요, 잠시 문제가 생겼어요. 다시 한번 말해주세요! 🙏";
+        const aiText = data?.content || "죄송해요, 잠시 문제가 생겼어요. 다시 한번 말해주세요! 🙏";
 
         const aiMsg: Message = { id: uid(), role: "ai", text: aiText, timestamp: new Date() };
         setMessages((prev) => [...prev, aiMsg]);

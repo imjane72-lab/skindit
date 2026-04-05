@@ -38,7 +38,7 @@ export async function GET(req: NextRequest) {
   })
 
   if (entries.length < 5) {
-    return apiError(`${5 - entries.length}일만 더 기록하면 리포트 열려! 💜`, 400)
+    return apiError(`${5 - entries.length}일만 더 기록하시면 리포트를 받아보실 수 있어요! 💜`, 400)
   }
 
   // ── DB에서 직접 stats 계산 ──
@@ -246,6 +246,6 @@ JSON only. Schema:{"summary":"3-4 sentences, 전체 요약, 반존대","trouble_
 
     return apiResponse(report)
   } catch {
-    return apiError("리포트 생성 실패했어 ㅠ 다시 해봐!", 500)
+    return apiError("리포트 생성에 실패했어요. 다시 시도해 주세요!", 500)
   }
 }

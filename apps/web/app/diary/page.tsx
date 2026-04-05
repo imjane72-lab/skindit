@@ -902,7 +902,7 @@ export default function DiaryPage() {
               </p>
               {entries.length < 5 && (
                 <p className="mt-3 text-[11px] font-medium text-purple-400">
-                  {t("📊 5일만 기록하면 리포트가 열려요!", "📊 Log 5 days to unlock your report!")}
+                  {t("📊 5일만 기록하시면 리포트를 받아보실 수 있어요!", "📊 Log 5 days to unlock your report!")}
                 </p>
               )}
             </div>
