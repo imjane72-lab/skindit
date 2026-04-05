@@ -152,18 +152,20 @@ function DiaryWritePage() {
       .catch(() => {});
   }, [status]);
 
-  // 제품명 입력 시 자동완성 제안
+  // 제품명 입력 시 자동완성 제안 (분석 기록 + 일지 기록 통합)
   useEffect(() => {
     const q = productInput.trim().toLowerCase();
     if (q.length < 1) {
       setProductSuggestions([]);
       return;
     }
-    const matches = allAnalyzedNames
+    // 분석한 제품 + 일지에서 입력한 제품 합치기 (중복 제거)
+    const allNames = [...new Set([...allAnalyzedNames, ...recentProducts])];
+    const matches = allNames
       .filter(n => n.toLowerCase().includes(q) && !products.includes(n))
       .slice(0, 5);
     setProductSuggestions(matches);
-  }, [productInput, allAnalyzedNames, products]);
+  }, [productInput, allAnalyzedNames, recentProducts, products]);
 
   /* ── Handlers ── */
   const addProduct = useCallback((name?: string) => {
@@ -397,18 +399,25 @@ function DiaryWritePage() {
                 {/* 자동완성 드롭다운 */}
                 {productSuggestions.length > 0 && (
                   <div className="absolute left-0 right-0 top-full z-20 mt-1 rounded-xl border border-purple-200 bg-white shadow-lg overflow-hidden anim-fade-up">
-                    <p className="px-3 py-1.5 text-[10px] font-bold text-purple-400 bg-purple-50/50">🧬 분석 기록에서 찾았어!</p>
-                    {productSuggestions.map(name => (
-                      <button
-                        key={name}
-                        onClick={() => addProduct(name)}
-                        className="flex w-full items-center gap-2 border-none bg-transparent px-3 py-2.5 text-left text-sm text-gray-700 hover:bg-purple-50 transition-all"
-                      >
-                        <span className="flex h-5 w-5 items-center justify-center rounded-md bg-purple-100 text-[10px] font-bold text-purple-600">✓</span>
-                        <span className="font-medium">{name}</span>
-                        <span className="ml-auto text-[10px] text-purple-400">성분 연동</span>
-                      </button>
-                    ))}
+                    <p className="px-3 py-1.5 text-[10px] font-bold text-purple-400 bg-purple-50/50">이전에 기록한 제품이에요!</p>
+                    {productSuggestions.map(name => {
+                      const isAnalyzed = allAnalyzedNames.some(n => n.toLowerCase() === name.toLowerCase() || n.toLowerCase().includes(name.toLowerCase()) || name.toLowerCase().includes(n.toLowerCase()));
+                      return (
+                        <button
+                          key={name}
+                          onClick={() => addProduct(name)}
+                          className="flex w-full items-center gap-2 border-none bg-transparent px-3 py-2.5 text-left text-sm text-gray-700 hover:bg-purple-50 transition-all"
+                        >
+                          <span className={`flex h-5 w-5 items-center justify-center rounded-md text-[10px] font-bold ${isAnalyzed ? "bg-purple-100 text-purple-600" : "bg-gray-100 text-gray-500"}`}>
+                            {isAnalyzed ? "🧬" : "📝"}
+                          </span>
+                          <span className="font-medium">{name}</span>
+                          <span className={`ml-auto text-[10px] ${isAnalyzed ? "text-purple-400" : "text-gray-400"}`}>
+                            {isAnalyzed ? "성분 연동" : "일지 기록"}
+                          </span>
+                        </button>
+                      );
+                    })}
                   </div>
                 )}
               </div>
