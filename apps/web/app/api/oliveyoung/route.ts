@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server"
-import puppeteer from "puppeteer"
 
 /* ── Rate Limiter ── */
 const WINDOW_MS = 60 * 1000
@@ -19,6 +18,14 @@ function rateLimit(ip: string): { ok: boolean; msg?: string } {
     }
   }
   return { ok: true }
+}
+
+const HEADERS = {
+  "User-Agent":
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+  "Accept":
+    "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+  "Accept-Language": "ko-KR,ko;q=0.9,en;q=0.8",
 }
 
 /**
@@ -51,53 +58,52 @@ export async function POST(req: NextRequest) {
     )
   }
 
-  let browser
   try {
-    browser = await puppeteer.launch({
-      headless: true,
-      args: [
-        "--no-sandbox",
-        "--disable-setuid-sandbox",
-        "--disable-dev-shm-usage",
-        "--disable-gpu",
-      ],
-    })
-
-    const page = await browser.newPage()
-
-    // 봇 감지 회피를 위한 기본 설정
-    await page.setUserAgent(
-      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-    )
-    await page.setViewport({ width: 1280, height: 800 })
-
-    // 1단계: 올리브영 검색 페이지 접속
+    // 1단계: 올리브영 검색 페이지 HTML fetch
     const searchUrl = `https://www.oliveyoung.co.kr/store/search/getSearchMain.do?query=${encodeURIComponent(keyword.trim())}`
-    await page.goto(searchUrl, { waitUntil: "networkidle2", timeout: 15000 })
+    const searchRes = await fetch(searchUrl, { headers: HEADERS })
 
-    // 2단계: 검색 결과에서 첫 번째 제품 URL 추출
-    const productInfo = await page.evaluate(() => {
-      // 검색 결과 제품 링크
-      const productLink = document.querySelector(
-        ".prd_info a.prd_name"
-      ) as HTMLAnchorElement | null
+    if (!searchRes.ok) {
+      return NextResponse.json(
+        { error: "올리브영 검색 페이지에 접근할 수 없습니다." },
+        { status: 502 }
+      )
+    }
 
-      if (!productLink) return null
+    const searchHtml = await searchRes.text()
 
-      const brand =
-        (
-          document.querySelector(".prd_info .tx_brand") as HTMLElement | null
-        )?.textContent?.trim() || ""
+    // 2단계: 검색 결과에서 첫 번째 제품 정보 추출
+    // 제품 링크: <a href="/store/goods/getGoodsDetail.do?goodsNo=..." class="prd_name">제품명</a>
+    const productMatch = searchHtml.match(
+      /goods\/getGoodsDetail\.do\?goodsNo=([^"&]+)[^"]*"[^>]*class="prd_name"[^>]*>([^<]+)/
+    )
 
-      return {
-        url: productLink.href,
-        name: productLink.textContent?.trim() || "",
-        brand,
-      }
-    })
+    // 대안 패턴: class가 앞에 올 수도 있음
+    const altMatch = !productMatch
+      ? searchHtml.match(
+          /class="prd_name"[^>]*href="([^"]*getGoodsDetail[^"]*)"[^>]*>([^<]+)/
+        )
+      : null
 
-    if (!productInfo) {
-      await browser.close()
+    // 브랜드명 추출
+    const brandMatch = searchHtml.match(
+      /class="tx_brand"[^>]*>([^<]+)/
+    )
+
+    let productUrl: string
+    let productName: string
+    const brand = brandMatch?.[1]?.trim() || ""
+
+    if (productMatch) {
+      productUrl = `https://www.oliveyoung.co.kr/store/goods/getGoodsDetail.do?goodsNo=${productMatch[1]}`
+      productName = productMatch[2]?.trim() || ""
+    } else if (altMatch) {
+      const rawUrl = altMatch[1]!
+      productUrl = rawUrl.startsWith("http")
+        ? rawUrl
+        : `https://www.oliveyoung.co.kr${rawUrl}`
+      productName = altMatch[2]?.trim() || ""
+    } else {
       return NextResponse.json(
         {
           error: `"${keyword}" 검색 결과가 없습니다.`,
@@ -107,74 +113,87 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // 3단계: 제품 상세 페이지 접속
-    await page.goto(productInfo.url, {
-      waitUntil: "networkidle2",
-      timeout: 15000,
-    })
+    // 3단계: 제품 상세 페이지 HTML fetch
+    const detailRes = await fetch(productUrl, { headers: HEADERS })
 
-    // 4단계: 상세정보 탭 클릭 (전성분은 상세정보 영역에 있음)
-    try {
-      await page.click('a[href="#prdDetail"]')
-      await new Promise((r) => setTimeout(r, 1500))
-    } catch {
-      // 탭이 없는 경우 — 이미 펼쳐져 있을 수 있음
+    if (!detailRes.ok) {
+      return NextResponse.json({
+        productName,
+        brand,
+        url: productUrl,
+        ingredients: null,
+        message: "제품 페이지에 접근할 수 없습니다.",
+      })
     }
 
-    // 5단계: 전성분 텍스트 추출
-    const ingredients = await page.evaluate(() => {
-      const bodyText = document.body.innerText
+    const detailHtml = await detailRes.text()
 
-      // "전성분" 키워드 이후 텍스트 블록 추출
-      const patterns = [
-        /전성분\s*[:\s]\s*([^\n]+(?:\n[^\n]+)*?)(?=\n{2,}|사용\s*(?:방법|법|시)|주의|보관|$)/i,
-        /(?:전체\s*)?성분\s*[:\s]\s*([^\n]+(?:\n[^\n]+)*?)(?=\n{2,}|사용\s*(?:방법|법|시)|주의|보관|$)/i,
-      ]
+    // 4단계: HTML에서 전성분 추출
+    // HTML 태그 제거 유틸
+    const stripTags = (html: string) =>
+      html.replace(/<br\s*\/?>/gi, "\n").replace(/<[^>]+>/g, " ").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&")
 
-      for (const pattern of patterns) {
-        const match = bodyText.match(pattern)
-        if (match?.[1]) {
-          const text = match[1]
-            .replace(/\n/g, " ")
-            .replace(/\s+/g, " ")
-            .trim()
-          if (text.length > 20) return text
+    let ingredients: string | null = null
+
+    // 방법 1: "전성분" 텍스트 이후 블록 추출
+    const plainText = stripTags(detailHtml)
+    const ingredientPatterns = [
+      /전성분\s*[:\s]\s*([^\n]+(?:\n[^\n]+)*?)(?=\n{2,}|사용\s*(?:방법|법|시)|주의|보관|용법|$)/i,
+      /(?:전체\s*)?성분\s*[:\s]\s*((?:정제수|워터|WATER)[^\n]+(?:\n[^\n]+)*?)(?=\n{2,}|사용|주의|보관|$)/i,
+    ]
+
+    for (const pattern of ingredientPatterns) {
+      const match = plainText.match(pattern)
+      if (match?.[1]) {
+        const text = match[1].replace(/\n/g, " ").replace(/\s+/g, " ").trim()
+        if (text.length > 20) {
+          ingredients = text
+          break
         }
       }
+    }
 
-      // 대안: 상세 이미지가 아닌 텍스트에서 쉼표로 구분된 성분 목록 찾기
-      const allText = bodyText
-      const ingredientBlock = allText.match(
-        /(?:정제수|워터|WATER)[,\s][\s\S]{50,1500}?(?=\n{2,}|사용|주의|$)/i
+    // 방법 2: "정제수" 또는 "WATER"로 시작하는 쉼표 구분 블록 찾기
+    if (!ingredients) {
+      const waterBlock = plainText.match(
+        /(?:정제수|워터|WATER)\s*,[\s\S]{30,2000}?(?=\n{2,}|사용|주의|보관|$)/i
       )
-      if (ingredientBlock) {
-        return ingredientBlock[0].replace(/\n/g, " ").replace(/\s+/g, " ").trim()
+      if (waterBlock) {
+        ingredients = waterBlock[0].replace(/\n/g, " ").replace(/\s+/g, " ").trim()
       }
+    }
 
-      return null
-    })
-
-    await browser.close()
+    // 방법 3: HTML 구조에서 직접 추출 (상세정보 영역)
+    if (!ingredients) {
+      const detailSection = detailHtml.match(
+        /전성분[\s\S]{0,50}?<[^>]*>([\s\S]{30,2000}?)<\/(?:p|div|td|span)/i
+      )
+      if (detailSection?.[1]) {
+        const text = stripTags(detailSection[1]).replace(/\s+/g, " ").trim()
+        if (text.length > 20) {
+          ingredients = text
+        }
+      }
+    }
 
     if (!ingredients) {
       return NextResponse.json({
-        productName: productInfo.name,
-        brand: productInfo.brand,
-        url: productInfo.url,
+        productName,
+        brand,
+        url: productUrl,
         ingredients: null,
         message:
-          "제품은 찾았지만 전성분을 텍스트로 추출하지 못했어요. 상세 이미지에만 전성분이 있을 수 있습니다.",
+          "제품은 찾았지만 전성분을 추출하지 못했어요. 전성분이 이미지로만 제공되는 제품일 수 있습니다.",
       })
     }
 
     return NextResponse.json({
-      productName: productInfo.name,
-      brand: productInfo.brand,
-      url: productInfo.url,
+      productName,
+      brand,
+      url: productUrl,
       ingredients,
     })
   } catch (err) {
-    if (browser) await browser.close()
     const message =
       err instanceof Error ? err.message : "올리브영 검색 중 오류 발생"
     return NextResponse.json({ error: message }, { status: 500 })
