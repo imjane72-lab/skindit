@@ -260,6 +260,14 @@ export default function Page() {
     }
   }
 
+  // 에러 시 입력 데이터 유지한 채 setup으로 돌아가기
+  const retry = () => {
+    setPhase("setup")
+    setSRes(null)
+    setRRes(null)
+    setCRes(null)
+  }
+
   const reset = () => {
     setPhase("setup")
     setSRes(null)
@@ -1873,7 +1881,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
           tab === "single" &&
           sRes &&
           (sRes.error ? (
-            <ErrState t={t} reset={reset} message={sRes.errorMessage} />
+            <ErrState t={t} reset={retry} message={sRes.errorMessage} />
           ) : (
             <SingleResult res={sRes} t={t} reset={reset} lang={lang} historyId={historyId} productName={productName} />
           ))}
@@ -1883,7 +1891,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
           tab === "routine" &&
           rRes &&
           (rRes.error ? (
-            <ErrState t={t} reset={reset} message={rRes.errorMessage} />
+            <ErrState t={t} reset={retry} message={rRes.errorMessage} />
           ) : (
             <RoutineResult rRes={rRes} t={t} reset={reset} lang={lang} historyId={historyId} />
           ))}
@@ -1892,7 +1900,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
           tab === "compare" &&
           cRes &&
           (cRes.error ? (
-            <ErrState t={t} reset={reset} message={cRes.errorMessage} />
+            <ErrState t={t} reset={retry} message={cRes.errorMessage} />
           ) : (
             <CompareResult cRes={cRes} t={t} reset={reset} lang={lang} historyId={historyId} />
           ))}
