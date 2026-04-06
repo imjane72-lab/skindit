@@ -51,18 +51,20 @@ function Section({ icon, title, color, children }: { icon: string; title: string
 export default function SingleResult({ res, t, reset, lang, historyId, productName }: SingleResultProps) {
   return (
     <div className="anim-scale-in">
-      {/* ── Header: 제품 이름 + 점수 ── */}
-      <div className="bg-linear-to-r from-pastel-lavender-dark via-purple-400 to-pastel-rose-dark px-6 py-6 rounded-2xl mb-6">
+      {/* ── Header: 제품 이름 ── */}
+      <div className="bg-linear-to-r from-pastel-lavender-dark via-purple-400 to-pastel-rose-dark px-6 py-6 rounded-2xl mb-4">
         <p className="text-white/60 text-[10px] font-bold uppercase tracking-widest mb-1">
           skindit {t("분석 결과", "Analysis Result")}
         </p>
         {productName && (
-          <h1 className="font-display text-white text-lg font-extrabold mb-2">{productName}</h1>
+          <h1 className="font-display text-white text-lg font-extrabold">{productName}</h1>
         )}
-        <div className="flex items-center gap-4 mt-3">
-          <ScoreRing score={res.overall_score} size={80} compact />
-          <span className="text-white/60 text-xs">{new Date().toLocaleDateString("ko-KR")}</span>
-        </div>
+        <span className="text-white/60 text-xs">{new Date().toLocaleDateString("ko-KR")}</span>
+      </div>
+
+      {/* ── 점수 ── */}
+      <div className="flex justify-center mb-6">
+        <ScoreRing score={res.overall_score} size={160} />
       </div>
 
       {/* ── 1. 종합 의견 ── */}
