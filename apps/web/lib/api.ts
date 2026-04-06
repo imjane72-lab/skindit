@@ -14,7 +14,7 @@ export async function callAI(sys: string, usr: string, retries = 2): Promise<Ret
       const d = await res.json()
       if (d.error) {
         if (attempt < retries && (res.status >= 500 || res.status === 429)) {
-          await new Promise(r => setTimeout(r, 1500 * (attempt + 1)))
+          await new Promise(r => setTimeout(r, 800 * (attempt + 1)))
           continue
         }
         throw new Error(d.error.message)
@@ -28,7 +28,7 @@ export async function callAI(sys: string, usr: string, retries = 2): Promise<Ret
           return JSON.parse(fixed)
         } catch {
           if (attempt < retries) {
-            await new Promise(r => setTimeout(r, 1500))
+            await new Promise(r => setTimeout(r, 800))
             continue
           }
           throw new Error("분석 결과를 처리하지 못했어요. 다시 시도해주세요.")
@@ -36,7 +36,7 @@ export async function callAI(sys: string, usr: string, retries = 2): Promise<Ret
       }
     } catch (e) {
       if (attempt < retries && e instanceof TypeError) {
-        await new Promise(r => setTimeout(r, 1500 * (attempt + 1)))
+        await new Promise(r => setTimeout(r, 800 * (attempt + 1)))
         continue
       }
       throw e
@@ -56,7 +56,7 @@ export async function callAIText(sys: string, usr: string, retries = 2): Promise
       const d = await res.json()
       if (d.error) {
         if (attempt < retries && (res.status >= 500 || res.status === 429)) {
-          await new Promise(r => setTimeout(r, 1500 * (attempt + 1)))
+          await new Promise(r => setTimeout(r, 800 * (attempt + 1)))
           continue
         }
         throw new Error(d.error.message)
@@ -64,7 +64,7 @@ export async function callAIText(sys: string, usr: string, retries = 2): Promise
       return d.content[0].text.trim()
     } catch (e) {
       if (attempt < retries && e instanceof TypeError) {
-        await new Promise(r => setTimeout(r, 1500 * (attempt + 1)))
+        await new Promise(r => setTimeout(r, 800 * (attempt + 1)))
         continue
       }
       throw e

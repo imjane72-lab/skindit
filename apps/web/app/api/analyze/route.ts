@@ -107,7 +107,7 @@ export async function POST(req: NextRequest) {
     if (data.error) {
       const status = res.status;
       if ((status >= 500 || status === 429) && attempt < 2) {
-        await new Promise(r => setTimeout(r, 1500 * (attempt + 1)));
+        await new Promise(r => setTimeout(r, 800 * (attempt + 1)));
         continue;
       }
       return NextResponse.json({ error: data.error }, { status: 400 });

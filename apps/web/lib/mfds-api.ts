@@ -11,6 +11,10 @@
 const MFDS_KEY = process.env.MFDS_API_KEY || ""
 const BASE_URL = "https://apis.data.go.kr/1471000"
 
+// 메모리 캐시 (서버 인스턴스 유지 동안 재사용)
+const ingredientCache = new Map<string, { data: MfdsIngredient | null; ts: number }>()
+const CACHE_TTL = 24 * 60 * 60 * 1000 // 24시간
+
 export interface MfdsIngredient {
   name: string        // 성분명 (한글)
   nameEn: string      // 성분명 (영문)
@@ -27,6 +31,11 @@ export interface MfdsIngredient {
  */
 export async function searchIngredient(name: string): Promise<MfdsIngredient | null> {
   if (!MFDS_KEY) return null
+
+  // 캐시 확인
+  const cached = ingredientCache.get(name)
+  if (cached && Date.now() - cached.ts < CACHE_TTL) return cached.data
+
   try {
     const controller = new AbortController()
     const timeout = setTimeout(() => controller.abort(), 1500) // 1.5초 타임아웃
@@ -41,7 +50,7 @@ export async function searchIngredient(name: string): Promise<MfdsIngredient | n
     if (!items || items.length === 0) return null
 
     const item = items[0]
-    return {
+    const result: MfdsIngredient = {
       name: item.INGR_KOR_NAME || name,
       nameEn: item.INGR_ENG_NAME || "",
       purpose: item.ORIGIN_MAJOR_KOR_NAME || "",
@@ -51,7 +60,10 @@ export async function searchIngredient(name: string): Promise<MfdsIngredient | n
       isBanned: false,
       source: "mfds",
     }
+    ingredientCache.set(name, { data: result, ts: Date.now() })
+    return result
   } catch {
+    ingredientCache.set(name, { data: null, ts: Date.now() })
     return null
   }
 }
