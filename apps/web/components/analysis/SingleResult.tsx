@@ -167,28 +167,28 @@ export default function SingleResult({ res, t, reset, lang, historyId, productNa
 
       {/* ── 사용 가이드 ── */}
       {res.usage_guide && (
-        <div className="rounded-2xl bg-sky-50/50 p-5">
+        <div className="rounded-2xl bg-blue-50/50 p-5">
           <SectionHeader icon="📋" title={t("사용 가이드", "Usage Guide")} />
           <div className="space-y-3">
             {res.usage_guide.best_time && (
               <div className="flex gap-3 items-start">
-                <span className="shrink-0 w-8 h-8 rounded-xl bg-white/80 flex items-center justify-center text-sm">⏰</span>
-                <div><p className="text-[11px] font-bold text-gray-700 mb-0.5">{t("최적 사용 시간", "Best Time")}</p><p className="text-xs text-gray-500 leading-relaxed">{res.usage_guide.best_time}</p></div>
+                <span className="shrink-0 w-8 h-8 rounded-xl bg-blue-100/60 flex items-center justify-center text-sm">⏰</span>
+                <div><p className="text-[11px] font-bold text-blue-700 mb-0.5">{t("최적 사용 시간", "Best Time")}</p><p className="text-xs text-gray-600 leading-relaxed">{res.usage_guide.best_time}</p></div>
               </div>
             )}
             {res.usage_guide.effect_timeline && (
               <div className="flex gap-3 items-start">
-                <span className="shrink-0 w-8 h-8 rounded-xl bg-white/80 flex items-center justify-center text-sm">📅</span>
-                <div><p className="text-[11px] font-bold text-gray-700 mb-0.5">{t("효과 체감 시기", "Effect Timeline")}</p><p className="text-xs text-gray-500 leading-relaxed">{res.usage_guide.effect_timeline}</p></div>
+                <span className="shrink-0 w-8 h-8 rounded-xl bg-blue-100/60 flex items-center justify-center text-sm">📅</span>
+                <div><p className="text-[11px] font-bold text-blue-700 mb-0.5">{t("효과 체감 시기", "Effect Timeline")}</p><p className="text-xs text-gray-600 leading-relaxed">{res.usage_guide.effect_timeline}</p></div>
               </div>
             )}
             {res.usage_guide.beginner_tips && res.usage_guide.beginner_tips.length > 0 && (
               <div className="flex gap-3 items-start">
-                <span className="shrink-0 w-8 h-8 rounded-xl bg-white/80 flex items-center justify-center text-sm">💡</span>
+                <span className="shrink-0 w-8 h-8 rounded-xl bg-blue-100/60 flex items-center justify-center text-sm">💡</span>
                 <div>
-                  <p className="text-[11px] font-bold text-gray-700 mb-1">{t("초보자 주의사항", "Beginner Tips")}</p>
+                  <p className="text-[11px] font-bold text-blue-700 mb-1">{t("초보자 주의사항", "Beginner Tips")}</p>
                   {res.usage_guide.beginner_tips.map((tip, i) => (
-                    <p key={i} className="text-xs text-gray-500 leading-relaxed mb-0.5">· {tip}</p>
+                    <p key={i} className="text-xs text-gray-600 leading-relaxed mb-0.5 font-medium">· {tip.replace(/\*\*/g, "")}</p>
                   ))}
                 </div>
               </div>
