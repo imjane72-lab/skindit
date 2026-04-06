@@ -78,11 +78,11 @@ export default function SingleResult({ res, t, reset, lang, historyId, productNa
 
       {/* ── 종합 의견 ── */}
       {res.overall_comment && (
-        <div className="rounded-2xl bg-purple-50/60 border border-purple-100/60 p-5">
+        <div className="rounded-2xl bg-purple-50/60 p-5">
           <SectionHeader icon="💜" title={t("종합 의견", "Summary")} />
           <p className="text-[13px] leading-relaxed text-gray-700"><Md>{res.overall_comment}</Md></p>
           {res.verdict && (
-            <div className="mt-3 rounded-xl bg-linear-to-r from-purple-50 to-pink-50 border border-purple-100/60 p-3.5">
+            <div className="mt-3 rounded-xl bg-linear-to-r from-purple-50 to-pink-50 p-3.5">
               <p className="text-[13px] leading-relaxed text-purple-800 font-medium"><Md>{res.verdict}</Md></p>
             </div>
           )}
@@ -92,7 +92,15 @@ export default function SingleResult({ res, t, reset, lang, historyId, productNa
       {/* ── 피부 고민별 분석 ── */}
       {res.concern_analysis && res.concern_analysis.length > 0 && (
         <div>
-          <SectionHeader icon="🫧" title={t("피부 고민별 분석", "By Concern")} />
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <span className="text-sm">🫧</span>
+              <span className="text-xs font-bold tracking-wide text-gray-800 uppercase">{t("피부 고민별 분석", "By Concern")}</span>
+            </div>
+            <span className="text-[11px] text-gray-400 flex items-center gap-1">
+              {t("밀어서 보기", "swipe")} <span className="inline-block animate-pulse">→</span>
+            </span>
+          </div>
           <div className="hide-scrollbar -mx-1 flex gap-2.5 overflow-x-auto px-1 pb-1">
             {res.concern_analysis.map((c, i) => (
               <ConcernCard key={i} concern={c.concern} score={c.score} comment={c.comment} lang={lang} delay={i * 55} index={i} />
@@ -103,7 +111,7 @@ export default function SingleResult({ res, t, reset, lang, historyId, productNa
 
       {/* ── 주목 성분 ── */}
       {res.star_ingredients && res.star_ingredients.length > 0 && (
-        <div className="rounded-2xl bg-emerald-50/50 border border-emerald-100/60 p-5">
+        <div className="rounded-2xl bg-emerald-50/50 p-5">
           <SectionHeader icon="✨" title={t("주목 성분", "Key Ingredients")} />
           <div className="space-y-2">
             {res.star_ingredients.map((ing, i) => {
@@ -119,7 +127,7 @@ export default function SingleResult({ res, t, reset, lang, historyId, productNa
 
       {/* ── 주의 성분 ── */}
       {res.watch_out && res.watch_out.length > 0 && (
-        <div className="rounded-2xl bg-rose-50/50 border border-rose-100/60 p-5">
+        <div className="rounded-2xl bg-rose-50/50 p-5">
           <SectionHeader icon="⚠️" title={t("주의 성분", "Watch Out")} />
           <div className="space-y-2">
             {res.watch_out.map((ing, i) => (
@@ -141,7 +149,7 @@ export default function SingleResult({ res, t, reset, lang, historyId, productNa
 
       {/* ── 주의 콤보 ── */}
       {res.forbidden_combos && res.forbidden_combos.length > 0 && (
-        <div className="rounded-2xl bg-rose-50/50 border border-rose-100/60 p-5">
+        <div className="rounded-2xl bg-rose-50/50 p-5">
           <SectionHeader icon="🚫" title={t("주의 콤보", "Caution Combos")} />
           <div className="space-y-2">
             {res.forbidden_combos.map((combo, i) => (
@@ -156,7 +164,7 @@ export default function SingleResult({ res, t, reset, lang, historyId, productNa
 
       {/* ── 사용 가이드 ── */}
       {res.usage_guide && (
-        <div className="rounded-2xl bg-sky-50/50 border border-sky-100/60 p-5">
+        <div className="rounded-2xl bg-sky-50/50 p-5">
           <SectionHeader icon="📋" title={t("사용 가이드", "Usage Guide")} />
           <div className="space-y-3">
             {res.usage_guide.best_time && (
