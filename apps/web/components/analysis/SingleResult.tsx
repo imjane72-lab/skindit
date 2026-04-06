@@ -52,12 +52,19 @@ function SectionHeader({ icon, title }: { icon: string; title: string }) {
 export default function SingleResult({ res, t, reset, lang, historyId, productName }: SingleResultProps) {
   return (
     <div className="anim-scale-in space-y-6">
-      {/* ── Hero: 제품 이름 + 점수 ── */}
-      <div className="text-center pt-2">
+      {/* ── Hero: 제품 이름 ── */}
+      <div className="bg-linear-to-r from-pastel-lavender-dark via-purple-400 to-pastel-rose-dark px-6 py-6 rounded-2xl mb-2">
+        <p className="text-white/60 text-[10px] font-bold uppercase tracking-widest mb-1">
+          skindit {t("분석 결과", "Analysis Result")}
+        </p>
         {productName && (
-          <h1 className="font-display text-lg font-extrabold text-gray-900 mb-1 px-4">{productName}</h1>
+          <h1 className="font-display text-white text-lg font-extrabold">{productName}</h1>
         )}
-        <p className="text-[11px] text-gray-400 mb-5">{new Date().toLocaleDateString("ko-KR")} {t("분석", "analyzed")}</p>
+        <span className="text-white/60 text-xs">{new Date().toLocaleDateString("ko-KR")}</span>
+      </div>
+
+      {/* ── 점수 ── */}
+      <div className="text-center">
         <div className="flex justify-center mb-2">
           <ScoreRing score={res.overall_score} size={180} />
         </div>
