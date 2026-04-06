@@ -60,10 +60,13 @@ export default function SingleResult({ res, t, reset, lang, historyId, productNa
         <p className="text-white/60 text-[10px] font-bold uppercase tracking-widest mb-1">
           skindit {t("분석 결과", "Analysis Result")}
         </p>
-        {displayName && (
-          <h1 className="font-display text-white text-lg font-extrabold">{displayName}</h1>
-        )}
-        <span className="text-white/60 text-xs">{new Date().toLocaleDateString("ko-KR")}</span>
+        <h1 className="font-display text-white text-lg font-extrabold">
+          {displayName || t("성분 분석 결과", "Ingredient Analysis")}
+        </h1>
+        <div className="flex items-center gap-3 mt-2">
+          <span className="bg-white/20 rounded-full px-3 py-1 text-xs font-bold text-white">{res.overall_score}{t("점", "pt")}</span>
+          <span className="text-white/60 text-xs">{new Date().toLocaleDateString("ko-KR")}</span>
+        </div>
       </div>
 
       {/* ── 점수 ── */}
@@ -101,7 +104,7 @@ export default function SingleResult({ res, t, reset, lang, historyId, productNa
               {t("밀어서 보기", "swipe")} <span className="inline-block animate-pulse">→</span>
             </span>
           </div>
-          <div className="hide-scrollbar -mx-1 flex gap-2.5 overflow-x-auto px-1 pb-1">
+          <div className="hide-scrollbar flex gap-2.5 overflow-x-auto pr-8 pb-1">
             {res.concern_analysis.map((c, i) => (
               <ConcernCard key={i} concern={c.concern} score={c.score} comment={c.comment} lang={lang} delay={i * 55} index={i} />
             ))}
