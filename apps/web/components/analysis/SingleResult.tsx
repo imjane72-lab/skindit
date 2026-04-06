@@ -23,7 +23,7 @@ function ResultPill({ name, detail, good }: { name: string; detail: string; good
   const [open, setOpen] = useState(false)
   return (
     <div className="w-full">
-      <button onClick={() => setOpen(!open)} className={`w-full flex items-center gap-2.5 rounded-xl border p-3 text-left text-sm font-semibold transition-all ${open ? good ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-rose-200 bg-rose-50 text-rose-700" : "border-gray-100 bg-white text-gray-700 hover:bg-gray-50"}`}>
+      <button onClick={() => setOpen(!open)} className={`w-full flex items-center gap-2.5 rounded-xl border p-3 text-left text-sm font-semibold transition-all ${open ? good ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-rose-200 bg-rose-50 text-rose-700" : good ? "border-emerald-100 bg-white text-gray-700 hover:bg-emerald-50/30" : "border-rose-100 bg-white text-gray-700 hover:bg-rose-50/30"}`}>
         <span className={`h-5 w-5 shrink-0 rounded-full ${good ? "bg-emerald-400" : "bg-rose-400"} inline-flex items-center justify-center text-[9px] font-bold text-white`}>{good ? "✓" : "!"}</span>
         <span className="flex-1">{name}</span>
         <svg width="12" height="12" viewBox="0 0 16 16" fill="none" className={`shrink-0 text-gray-300 transition-transform ${open ? "rotate-180" : ""}`}>
@@ -50,15 +50,18 @@ function SectionHeader({ icon, title }: { icon: string; title: string }) {
 }
 
 export default function SingleResult({ res, t, reset, lang, historyId, productName }: SingleResultProps) {
+  // productName이 없으면 resultJson에서 가져오기
+  const displayName = productName || (res as unknown as Record<string, unknown>).productName as string || ""
+
   return (
-    <div className="anim-scale-in space-y-6">
-      {/* ── Hero: 제품 이름 ── */}
-      <div className="bg-linear-to-r from-pastel-lavender-dark via-purple-400 to-pastel-rose-dark px-6 py-6 rounded-2xl mb-2">
+    <div className="anim-scale-in space-y-5">
+      {/* ── Hero: 그라디언트 헤더 ── */}
+      <div className="bg-linear-to-r from-pastel-lavender-dark via-purple-400 to-pastel-rose-dark px-6 py-6 rounded-2xl">
         <p className="text-white/60 text-[10px] font-bold uppercase tracking-widest mb-1">
           skindit {t("분석 결과", "Analysis Result")}
         </p>
-        {productName && (
-          <h1 className="font-display text-white text-lg font-extrabold">{productName}</h1>
+        {displayName && (
+          <h1 className="font-display text-white text-lg font-extrabold">{displayName}</h1>
         )}
         <span className="text-white/60 text-xs">{new Date().toLocaleDateString("ko-KR")}</span>
       </div>
@@ -75,7 +78,7 @@ export default function SingleResult({ res, t, reset, lang, historyId, productNa
 
       {/* ── 종합 의견 ── */}
       {res.overall_comment && (
-        <div className="rounded-2xl bg-white border border-gray-100 p-5 shadow-sm">
+        <div className="rounded-2xl bg-purple-50/60 border border-purple-100/60 p-5">
           <SectionHeader icon="💜" title={t("종합 의견", "Summary")} />
           <p className="text-[13px] leading-relaxed text-gray-700"><Md>{res.overall_comment}</Md></p>
           {res.verdict && (
@@ -100,7 +103,7 @@ export default function SingleResult({ res, t, reset, lang, historyId, productNa
 
       {/* ── 주목 성분 ── */}
       {res.star_ingredients && res.star_ingredients.length > 0 && (
-        <div className="rounded-2xl bg-white border border-gray-100 p-5 shadow-sm">
+        <div className="rounded-2xl bg-emerald-50/50 border border-emerald-100/60 p-5">
           <SectionHeader icon="✨" title={t("주목 성분", "Key Ingredients")} />
           <div className="space-y-2">
             {res.star_ingredients.map((ing, i) => {
@@ -116,7 +119,7 @@ export default function SingleResult({ res, t, reset, lang, historyId, productNa
 
       {/* ── 주의 성분 ── */}
       {res.watch_out && res.watch_out.length > 0 && (
-        <div className="rounded-2xl bg-white border border-gray-100 p-5 shadow-sm">
+        <div className="rounded-2xl bg-rose-50/50 border border-rose-100/60 p-5">
           <SectionHeader icon="⚠️" title={t("주의 성분", "Watch Out")} />
           <div className="space-y-2">
             {res.watch_out.map((ing, i) => (
@@ -138,11 +141,11 @@ export default function SingleResult({ res, t, reset, lang, historyId, productNa
 
       {/* ── 주의 콤보 ── */}
       {res.forbidden_combos && res.forbidden_combos.length > 0 && (
-        <div className="rounded-2xl bg-white border border-gray-100 p-5 shadow-sm">
+        <div className="rounded-2xl bg-rose-50/50 border border-rose-100/60 p-5">
           <SectionHeader icon="🚫" title={t("주의 콤보", "Caution Combos")} />
           <div className="space-y-2">
             {res.forbidden_combos.map((combo, i) => (
-              <div key={i} className="rounded-xl border border-rose-100 bg-rose-50/40 p-3.5">
+              <div key={i} className="rounded-xl border border-rose-100 bg-white/60 p-3.5">
                 <p className="text-xs font-bold text-rose-600 mb-1">{combo.ingredients}</p>
                 <p className="text-[12px] leading-relaxed text-gray-600"><Md>{combo.reason}</Md></p>
               </div>
@@ -153,24 +156,24 @@ export default function SingleResult({ res, t, reset, lang, historyId, productNa
 
       {/* ── 사용 가이드 ── */}
       {res.usage_guide && (
-        <div className="rounded-2xl bg-white border border-gray-100 p-5 shadow-sm">
+        <div className="rounded-2xl bg-sky-50/50 border border-sky-100/60 p-5">
           <SectionHeader icon="📋" title={t("사용 가이드", "Usage Guide")} />
           <div className="space-y-3">
             {res.usage_guide.best_time && (
               <div className="flex gap-3 items-start">
-                <span className="shrink-0 w-8 h-8 rounded-xl bg-sky-50 flex items-center justify-center text-sm">⏰</span>
+                <span className="shrink-0 w-8 h-8 rounded-xl bg-white/80 flex items-center justify-center text-sm">⏰</span>
                 <div><p className="text-[11px] font-bold text-gray-700 mb-0.5">{t("최적 사용 시간", "Best Time")}</p><p className="text-xs text-gray-500 leading-relaxed">{res.usage_guide.best_time}</p></div>
               </div>
             )}
             {res.usage_guide.effect_timeline && (
               <div className="flex gap-3 items-start">
-                <span className="shrink-0 w-8 h-8 rounded-xl bg-purple-50 flex items-center justify-center text-sm">📅</span>
+                <span className="shrink-0 w-8 h-8 rounded-xl bg-white/80 flex items-center justify-center text-sm">📅</span>
                 <div><p className="text-[11px] font-bold text-gray-700 mb-0.5">{t("효과 체감 시기", "Effect Timeline")}</p><p className="text-xs text-gray-500 leading-relaxed">{res.usage_guide.effect_timeline}</p></div>
               </div>
             )}
             {res.usage_guide.beginner_tips && res.usage_guide.beginner_tips.length > 0 && (
               <div className="flex gap-3 items-start">
-                <span className="shrink-0 w-8 h-8 rounded-xl bg-amber-50 flex items-center justify-center text-sm">💡</span>
+                <span className="shrink-0 w-8 h-8 rounded-xl bg-white/80 flex items-center justify-center text-sm">💡</span>
                 <div>
                   <p className="text-[11px] font-bold text-gray-700 mb-1">{t("초보자 주의사항", "Beginner Tips")}</p>
                   {res.usage_guide.beginner_tips.map((tip, i) => (
@@ -195,7 +198,7 @@ export default function SingleResult({ res, t, reset, lang, historyId, productNa
               alert(lang === "ko" ? "링크 복사했어요! 친구한테 보내주세요~" : "Link copied!")
             }
           }}
-          className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-linear-to-r from-pastel-lavender-dark to-pastel-rose-dark py-3.5 text-sm font-bold text-white shadow-sm transition-all hover:opacity-90"
+          className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-linear-to-r from-pastel-lavender-dark to-pastel-rose-dark py-3.5 text-sm font-bold text-white transition-all hover:opacity-90"
         >
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13" />
