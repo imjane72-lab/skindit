@@ -45,7 +45,6 @@ function SectionHeader({ icon, title }: { icon: string; title: string }) {
     <div className="flex items-center gap-2 mb-3">
       <span className="text-sm">{icon}</span>
       <span className="text-xs font-bold tracking-wide text-gray-800 uppercase">{title}</span>
-      <div className="h-px flex-1 bg-linear-to-r from-gray-200 to-transparent" />
     </div>
   )
 }
@@ -94,7 +93,7 @@ export default function SingleResult({ res, t, reset, lang, historyId, productNa
 
       {/* ── 주목 성분 ── */}
       {res.star_ingredients && res.star_ingredients.length > 0 && (
-        <div>
+        <div className="rounded-2xl bg-white border border-gray-100 p-5 shadow-sm">
           <SectionHeader icon="✨" title={t("주목 성분", "Key Ingredients")} />
           <div className="space-y-2">
             {res.star_ingredients.map((ing, i) => {
@@ -110,7 +109,7 @@ export default function SingleResult({ res, t, reset, lang, historyId, productNa
 
       {/* ── 주의 성분 ── */}
       {res.watch_out && res.watch_out.length > 0 && (
-        <div>
+        <div className="rounded-2xl bg-white border border-gray-100 p-5 shadow-sm">
           <SectionHeader icon="⚠️" title={t("주의 성분", "Watch Out")} />
           <div className="space-y-2">
             {res.watch_out.map((ing, i) => (
@@ -132,11 +131,11 @@ export default function SingleResult({ res, t, reset, lang, historyId, productNa
 
       {/* ── 주의 콤보 ── */}
       {res.forbidden_combos && res.forbidden_combos.length > 0 && (
-        <div>
+        <div className="rounded-2xl bg-white border border-gray-100 p-5 shadow-sm">
           <SectionHeader icon="🚫" title={t("주의 콤보", "Caution Combos")} />
           <div className="space-y-2">
             {res.forbidden_combos.map((combo, i) => (
-              <div key={i} className="rounded-xl border border-rose-100 bg-white p-3.5">
+              <div key={i} className="rounded-xl border border-rose-100 bg-rose-50/40 p-3.5">
                 <p className="text-xs font-bold text-rose-600 mb-1">{combo.ingredients}</p>
                 <p className="text-[12px] leading-relaxed text-gray-600"><Md>{combo.reason}</Md></p>
               </div>
