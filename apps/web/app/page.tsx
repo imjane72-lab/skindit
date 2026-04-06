@@ -169,7 +169,7 @@ export default function Page() {
         setOyError(data.error)
       } else if (data.ingredients) {
         setIngs(data.ingredients)
-        setProductName(data.productName || oyQuery.trim())
+        setProductName(oyQuery.trim())
         setOySuccess(`✅ ${data.brand} ${data.productName}`)
       } else {
         setOyError(data.message || "전성분을 찾지 못했어요.")
