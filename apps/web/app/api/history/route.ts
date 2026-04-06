@@ -3,6 +3,7 @@ import { z } from "zod"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { apiResponse, apiError } from "@/lib/api-utils"
+import { generateAndSaveEmbedding } from "@/lib/embedding"
 
 const createSchema = z.object({
   type: z.enum(["SINGLE", "ROUTINE"]),
@@ -146,6 +147,10 @@ export async function POST(req: NextRequest) {
       resultJson: resultJson as unknown as import("@prisma/client").Prisma.InputJsonValue,
     },
   })
+
+  // Fire-and-forget: 임베딩 생성 (벡터 유사도 검색용)
+  generateAndSaveEmbedding(entry.id, rest.ingredients, rest.concerns, rest.score)
+    .catch(err => console.error("Embedding generation failed:", err))
 
   return apiResponse(entry, 201)
 }

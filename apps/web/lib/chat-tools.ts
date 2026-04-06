@@ -7,6 +7,7 @@
 
 import { prisma } from "@/lib/prisma"
 import { searchIngredient, checkRegulation } from "@/lib/mfds-api"
+import { generateEmbedding, buildEmbeddingText, searchSimilar } from "@/lib/embedding"
 
 // ── Claude API tool 정의 (JSON Schema) ──
 
@@ -118,6 +119,29 @@ export const TOOL_DEFINITIONS = [
       required: ["name"],
     },
   },
+  {
+    name: "search_similar_products",
+    description:
+      "성분 구성이 유사한 제품을 벡터 유사도 검색으로 찾습니다. 특정 성분 목록과 비슷한 제품을 찾거나, 기존 분석 결과와 유사한 제품을 추천할 때 사용하세요.",
+    input_schema: {
+      type: "object" as const,
+      properties: {
+        ingredients: {
+          type: "string",
+          description: "유사한 제품을 찾고 싶은 성분 목록 (쉼표 구분)",
+        },
+        analysisId: {
+          type: "string",
+          description: "기존 분석 ID. 이 분석과 유사한 제품을 찾습니다. ingredients와 둘 중 하나만 사용.",
+        },
+        limit: {
+          type: "number",
+          description: "최대 결과 수 (기본값: 5)",
+        },
+      },
+      required: [],
+    },
+  },
 ]
 
 // ── Tool 실행기 ──
@@ -140,6 +164,8 @@ export async function executeTool(
       return execSearchIngredient(toolInput)
     case "check_regulation":
       return execCheckRegulation(toolInput)
+    case "search_similar_products":
+      return execSearchSimilarProducts(userId, toolInput)
     default:
       return JSON.stringify({ error: `알 수 없는 도구: ${toolName}` })
   }
@@ -344,4 +370,49 @@ async function execCheckRegulation(
     detail: result.detail || "규제 대상 아님",
     source: "식약처 화장품 규제정보",
   })
+}
+
+async function execSearchSimilarProducts(
+  userId: string,
+  input: Record<string, unknown>,
+): Promise<string> {
+  const limit = (input.limit as number) ?? 5
+  const analysisId = input.analysisId as string | undefined
+  const ingredients = input.ingredients as string | undefined
+
+  let queryEmbedding: number[]
+
+  if (analysisId) {
+    // 기존 분석의 임베딩을 가져와서 유사 검색
+    const rows = await prisma.$queryRawUnsafe<{ embedding: string }[]>(
+      `SELECT embedding::text FROM analysis_history WHERE id = $1 AND embedding IS NOT NULL`,
+      analysisId,
+    )
+    if (!rows.length) return "해당 분석의 임베딩이 없습니다. 아직 벡터가 생성되지 않은 분석이에요."
+    queryEmbedding = JSON.parse(rows[0]!.embedding)
+  } else if (ingredients) {
+    // 성분 텍스트로 임베딩 생성 후 유사 검색
+    queryEmbedding = await generateEmbedding(
+      buildEmbeddingText(ingredients, [], 0),
+    )
+  } else {
+    return "ingredients 또는 analysisId 중 하나를 제공해주세요."
+  }
+
+  const results = await searchSimilar(queryEmbedding, userId, limit)
+
+  if (results.length === 0) return "유사한 분석 기록을 찾을 수 없습니다."
+
+  const formatted = results.map((r) => ({
+    id: r.id,
+    score: r.score,
+    similarity: Math.round(r.similarity * 100) + "%",
+    ingredients:
+      r.ingredients.substring(0, 200) +
+      (r.ingredients.length > 200 ? "..." : ""),
+    concerns: r.concerns,
+    createdAt: r.created_at,
+  }))
+
+  return JSON.stringify({ total: results.length, similar_products: formatted })
 }
