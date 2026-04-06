@@ -166,21 +166,17 @@ export default function CompareResult({ cRes, t, reset, lang, historyId }: Compa
       <div className="flex gap-2">
         <button
           onClick={() => {
-            const title = "skindit 성분 비교 결과"
-            const text = `${cRes.summary}\n\n${cRes.verdict || ""}`
             const shareUrl = historyId ? `${SITE_URL}/share/${historyId}` : `${SITE_URL}?tab=compare`
             if (navigator.share) {
               navigator
-                .share({ title, text, url: shareUrl })
+                .share({ url: shareUrl })
                 .catch(() => {})
             } else {
-              navigator.clipboard.writeText(
-                `${title}\n${text}\n${shareUrl}`
-              )
+              navigator.clipboard.writeText(shareUrl)
               alert(
                 lang === "ko"
-                  ? "비교 결과 복사했어요! 친구한테 보내주세요~"
-                  : "Result copied!"
+                  ? "링크 복사했어요! 친구한테 보내주세요~"
+                  : "Link copied!"
               )
             }
           }}

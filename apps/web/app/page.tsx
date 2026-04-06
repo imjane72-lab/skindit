@@ -1556,23 +1556,6 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                         </button>
                       )}
                     </div>
-                    {/* ── 제품 이름 ── */}
-                    <input
-                      value={p.name}
-                      onChange={(e) =>
-                        setProducts((ps) =>
-                          ps.map((x) =>
-                            x.id === p.id ? { ...x, name: e.target.value } : x
-                          )
-                        )
-                      }
-                      placeholder={t(
-                        "제품 이름 (선택)",
-                        "Product name (optional)"
-                      )}
-                      className="mb-2 w-full rounded-xl border border-white/70 bg-white/60 px-3 py-2 text-sm transition-all outline-none placeholder:text-gray-400 focus:border-purple-300 focus:bg-white"
-                    />
-
                     {/* ── 🛒 올리브영 검색 ── */}
                     <div className="mb-2 flex gap-1.5">
                       <input
@@ -1611,6 +1594,23 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                         )}
                       </button>
                     </div>
+
+                    {/* ── 제품 이름 ── */}
+                    <input
+                      value={p.name}
+                      onChange={(e) =>
+                        setProducts((ps) =>
+                          ps.map((x) =>
+                            x.id === p.id ? { ...x, name: e.target.value } : x
+                          )
+                        )
+                      }
+                      placeholder={t(
+                        "제품 이름 (선택)",
+                        "Product name (optional)"
+                      )}
+                      className="mb-2 w-full rounded-xl border border-white/70 bg-white/60 px-3 py-2 text-sm transition-all outline-none placeholder:text-gray-400 focus:border-purple-300 focus:bg-white"
+                    />
 
                     {/* ── 성분 입력: 카메라 촬영 / 사진 선택 ── */}
                     <label className="hover:bg-pastel-lavender/30 mb-2 flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-purple-100 bg-white/60 px-3 py-2.5 text-[11px] font-semibold text-purple-500 transition-all hover:border-purple-200">
@@ -1742,16 +1742,6 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                         </span>
                       </div>
                     </div>
-                    {/* ── 제품 이름 ── */}
-                    <input
-                      value={p.name}
-                      onChange={(e) => p.setName(e.target.value)}
-                      placeholder={t(
-                        "제품 이름 (선택)",
-                        "Product name (optional)"
-                      )}
-                      className="mb-2 w-full rounded-xl border border-white/70 bg-white/60 px-3 py-2 text-sm transition-all outline-none placeholder:text-gray-400 focus:border-purple-300 focus:bg-white"
-                    />
                     {/* ── 🛒 올리브영 검색 ── */}
                     <div className="mb-2 flex gap-1.5">
                       <input
@@ -1791,6 +1781,16 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                       </button>
                     </div>
 
+                    {/* ── 제품 이름 ── */}
+                    <input
+                      value={p.name}
+                      onChange={(e) => p.setName(e.target.value)}
+                      placeholder={t(
+                        "제품 이름 (선택)",
+                        "Product name (optional)"
+                      )}
+                      className="mb-2 w-full rounded-xl border border-white/70 bg-white/60 px-3 py-2 text-sm transition-all outline-none placeholder:text-gray-400 focus:border-purple-300 focus:bg-white"
+                    />
                     {/* ── 성분 입력: 카메라 촬영 / 사진 선택 ── */}
                     <label className="hover:bg-pastel-lavender/30 mb-2 flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-purple-100 bg-white/60 px-3 py-2.5 text-[11px] font-semibold text-purple-500 transition-all hover:border-purple-200">
                       {compareOcrLoading === p.label ? (
@@ -1875,7 +1875,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
           (sRes.error ? (
             <ErrState t={t} reset={reset} message={sRes.errorMessage} />
           ) : (
-            <SingleResult res={sRes} t={t} reset={reset} lang={lang} historyId={historyId} />
+            <SingleResult res={sRes} t={t} reset={reset} lang={lang} historyId={historyId} productName={productName} />
           ))}
 
         {/* ── ROUTINE RESULT ── */}

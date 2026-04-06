@@ -91,7 +91,7 @@ function SharedResultView({ data }: { data: ShareData }) {
           </Section>
         )}
         {starIngs.length > 0 && (
-          <Section icon="⭐" title="주목 성분" color="bg-emerald-50/60">
+          <Section icon="✨" title="주목 성분" color="bg-emerald-50/60">
             <div className="space-y-2">
               {starIngs.map((ing, i) => {
                 const extra = [ing.benefit || "", ing.best_time ? `⏰ 사용 시간: ${ing.best_time}` : "", ing.synergy ? `💜 시너지: ${ing.synergy.join(", ")}` : ""].filter(Boolean).join("\n\n")

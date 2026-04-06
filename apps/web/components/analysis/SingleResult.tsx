@@ -1,13 +1,11 @@
 "use client"
 
-import ScoreHero from "@/components/analysis/ScoreHero"
+import { useState } from "react"
 import ConcernCard from "@/components/analysis/ConcernCard"
-import Pill from "@/components/analysis/Pill"
-import SevBadge from "@/components/analysis/SevBadge"
 import SafetyChart from "@/components/analysis/SafetyChart"
+import ScoreRing from "@/components/ui/ScoreRing"
 import Md from "@/components/ui/Md"
 import { SITE_URL } from "@/lib/constants"
-import { scoreLabel } from "@/lib/score-utils"
 import type { SingleRes } from "@/types/analysis"
 
 interface SingleResultProps {
@@ -16,32 +14,71 @@ interface SingleResultProps {
   reset: () => void
   lang: string
   historyId?: string | null
+  productName?: string
 }
 
-export default function SingleResult({ res, t, reset, lang, historyId }: SingleResultProps) {
+/* ── Pill (공유 페이지 스타일) ── */
+function ResultPill({ name, detail, good }: { name: string; detail: string; good: boolean }) {
+  const [open, setOpen] = useState(false)
+  return (
+    <div className="w-full">
+      <button onClick={() => setOpen(!open)} className={`w-full flex items-center gap-2 rounded-xl border p-3 text-left text-sm font-semibold transition-all ${open ? good ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-rose-200 bg-rose-50 text-rose-700" : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"}`}>
+        <span className={`h-5 w-5 shrink-0 rounded-full ${good ? "bg-emerald-400" : "bg-rose-400"} inline-flex items-center justify-center text-[9px] font-bold text-white`}>{good ? "✓" : "!"}</span>
+        <span className="flex-1">{name}</span>
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" className={`shrink-0 text-gray-300 transition-transform ${open ? "rotate-180" : ""}`}>
+          <path d="M4 6L8 10L12 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+      {open && detail && (
+        <div className="mt-1.5 rounded-xl bg-gray-50 border border-gray-100 p-3 text-xs leading-relaxed text-gray-600 whitespace-pre-line">
+          {detail}
+        </div>
+      )}
+    </div>
+  )
+}
+
+/* ── Section (공유 페이지 스타일) ── */
+function Section({ icon, title, color, children }: { icon: string; title: string; color: string; children: React.ReactNode }) {
+  return (
+    <div className={`rounded-2xl ${color} p-4 mb-3`}>
+      <p className="mb-2 text-xs font-extrabold flex items-center gap-1.5 text-gray-800">{icon} {title}</p>
+      {children}
+    </div>
+  )
+}
+
+export default function SingleResult({ res, t, reset, lang, historyId, productName }: SingleResultProps) {
   return (
     <div className="anim-scale-in">
-      <ScoreHero
-        score={res.overall_score}
-        label={scoreLabel(res.overall_score, lang)}
-        comment={res.overall_comment}
-        verdict={res.verdict}
-        eyebrow={t("성분 분석 결과", "Analysis Result")}
-      />
+      {/* ── Header: 제품 이름 + 점수 ── */}
+      <div className="bg-linear-to-r from-pastel-lavender-dark via-purple-400 to-pastel-rose-dark px-6 py-6 rounded-2xl mb-6">
+        <p className="text-white/60 text-[10px] font-bold uppercase tracking-widest mb-1">
+          skindit {t("분석 결과", "Analysis Result")}
+        </p>
+        {productName && (
+          <h1 className="font-display text-white text-lg font-extrabold mb-2">{productName}</h1>
+        )}
+        <div className="flex items-center gap-4 mt-3">
+          <ScoreRing score={res.overall_score} size={80} compact />
+          <span className="text-white/60 text-xs">{new Date().toLocaleDateString("ko-KR")}</span>
+        </div>
+      </div>
 
-      {/* Concern horizontal scroll */}
+      {/* ── 1. 종합 의견 ── */}
+      {res.overall_comment && (
+        <Section icon="💜" title={t("종합 의견", "Overall Comment")} color="bg-purple-50">
+          <p className="text-sm leading-relaxed text-gray-700"><Md>{res.overall_comment}</Md></p>
+          {res.verdict && (
+            <p className="mt-2 text-sm leading-relaxed text-gray-600 border-t border-purple-100 pt-2"><Md>{res.verdict}</Md></p>
+          )}
+        </Section>
+      )}
+
+      {/* ── 2. 피부 고민별 분석 ── */}
       {res.concern_analysis && res.concern_analysis.length > 0 && (
-        <div className="mb-5">
-          <div className="mb-3 flex items-center gap-2.5">
-            <span className="text-xs font-bold tracking-widest whitespace-nowrap text-gray-700 uppercase">
-              {t("피부 고민별 분석", "By Concern")}
-            </span>
-            <div className="h-px flex-1 bg-linear-to-r from-gray-200 to-transparent" />
-            <span className="text-[11px] whitespace-nowrap text-gray-300">
-              {t("← 스크롤", "scroll →")}
-            </span>
-          </div>
-          <div className="hide-scrollbar flex gap-3 overflow-x-auto pb-2">
+        <Section icon="🫧" title={t("피부 고민별 분석", "By Concern")} color="bg-gray-50/80">
+          <div className="hide-scrollbar -mx-1 flex gap-2.5 overflow-x-auto px-1 pb-1">
             {res.concern_analysis.map((c, i) => (
               <ConcernCard
                 key={i}
@@ -54,164 +91,103 @@ export default function SingleResult({ res, t, reset, lang, historyId }: SingleR
               />
             ))}
           </div>
-        </div>
+        </Section>
       )}
 
-      {/* Ingredients grid */}
-      <div className="mb-5 grid grid-cols-1 gap-4">
-        {res.star_ingredients && res.star_ingredients.length > 0 && (
-          <div className="glass-card rounded-2xl bg-linear-to-br from-emerald-50/50 to-teal-50/30 p-5 shadow-sm">
-            <div className="mb-4 flex items-center gap-2.5 border-b border-emerald-100/60 pb-3">
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-linear-to-br from-emerald-400 to-teal-300">
-                <svg width="12" height="12" viewBox="0 0 12 12">
-                  <polygon
-                    points="6,1 7.5,4.5 11,5 8.5,7.5 9,11 6,9.5 3,11 3.5,7.5 1,5 4.5,4.5"
-                    fill="white"
-                  />
-                </svg>
-              </div>
-              <span className="text-xs font-bold tracking-wide text-emerald-700">
-                {t("주목 성분", "Key Ingredients")}
-              </span>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {res.star_ingredients.map((ing, i) => {
-                const extra: string[] = [];
-                if (ing.best_time) extra.push(`⏰ ${ing.best_time}`);
-                if (ing.synergy) extra.push(`💜 시너지: ${ing.synergy.join(", ")}`);
-                const detail = [ing.benefit || "", ...extra].filter(Boolean).join("\n\n");
-                return (
-                  <Pill key={i} name={ing.name} detail={detail} good delay={i * 45} />
-                );
-              })}
-            </div>
+      {/* ── 3. 주목 성분 ── */}
+      {res.star_ingredients && res.star_ingredients.length > 0 && (
+        <Section icon="✨" title={t("주목 성분", "Key Ingredients")} color="bg-emerald-50/60">
+          <div className="space-y-2">
+            {res.star_ingredients.map((ing, i) => {
+              const extra: string[] = []
+              if (ing.benefit) extra.push(ing.benefit)
+              if (ing.best_time) extra.push(`⏰ ${ing.best_time}`)
+              if (ing.synergy) extra.push(`💜 시너지: ${ing.synergy.join(", ")}`)
+              return <ResultPill key={i} name={ing.name} detail={extra.join("\n\n")} good />
+            })}
           </div>
-        )}
+        </Section>
+      )}
 
-        {res.watch_out && res.watch_out.length > 0 && (
-          <div className="glass-card rounded-2xl bg-linear-to-br from-rose-50/50 to-pink-50/30 p-5 shadow-sm">
-            <div className="mb-4 flex items-center gap-2.5 border-b border-rose-100/60 pb-3">
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-linear-to-br from-rose-400 to-pink-300">
-                <svg width="12" height="12" viewBox="0 0 12 12">
-                  <path d="M6 1L11 10H1Z" fill="white" />
-                </svg>
-              </div>
-              <span className="text-xs font-bold tracking-wide text-rose-700">
-                {t("주의 성분", "Watch Out")}
-              </span>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {res.watch_out.map((ing, i) => (
-                <Pill
-                  key={i}
-                  name={ing.name}
-                  detail={`${ing.reason || ""}${ing.alternative ? `\n\n💡 ${t("대안", "Alternative")}: ${ing.alternative}` : ""}`}
-                  good={false}
-                  delay={i * 45}
-                />
-              ))}
-            </div>
+      {/* ── 4. 주의 성분 ── */}
+      {res.watch_out && res.watch_out.length > 0 && (
+        <Section icon="⚠️" title={t("주의 성분", "Watch Out")} color="bg-rose-50/60">
+          <div className="space-y-2">
+            {res.watch_out.map((ing, i) => (
+              <ResultPill
+                key={i}
+                name={ing.name}
+                detail={`${ing.reason || ""}${ing.alternative ? `\n\n💡 ${t("대안", "Alternative")}: ${ing.alternative}` : ""}`}
+                good={false}
+              />
+            ))}
           </div>
-        )}
-      </div>
+        </Section>
+      )}
 
-      {/* EWG Safety Chart */}
+      {/* ── 5. 안전 등급 ── */}
       {res.safety_ratings && res.safety_ratings.length > 0 && (
         <SafetyChart ratings={res.safety_ratings} t={t} />
       )}
 
-      {/* Caution Combos */}
+      {/* ── 6. 주의 콤보 ── */}
       {res.forbidden_combos && res.forbidden_combos.length > 0 && (
-        <div className="glass-card mb-5 rounded-2xl bg-linear-to-br from-rose-50/50 to-orange-50/30 p-5 shadow-sm">
-          <div className="mb-3 flex items-center gap-2.5 border-b border-rose-100/60 pb-3">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-linear-to-br from-rose-500 to-orange-400">
-              <span className="text-[10px] font-bold text-white">🚫</span>
-            </div>
-            <span className="text-xs font-bold tracking-wide text-rose-700">{t("주의 콤보", "Caution Combos")}</span>
-          </div>
+        <Section icon="🚫" title={t("주의 콤보", "Caution Combos")} color="bg-rose-50/60">
           {res.forbidden_combos.map((combo, i) => (
             <div key={i} className="mb-2 last:mb-0 rounded-xl border border-rose-100 bg-white/60 p-3">
               <p className="text-xs font-bold text-rose-600 mb-0.5">{combo.ingredients}</p>
               <p className="text-[11px] leading-relaxed text-gray-600"><Md>{combo.reason}</Md></p>
             </div>
           ))}
-        </div>
+        </Section>
       )}
 
-      {/* Usage Guide */}
+      {/* ── 7. 사용 가이드 ── */}
       {res.usage_guide && (
-        <div className="glass-card mb-5 rounded-2xl bg-linear-to-br from-sky-50/50 to-blue-50/30 p-5 shadow-sm">
-          <div className="mb-3 flex items-center gap-2.5 border-b border-sky-100/60 pb-3">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-linear-to-br from-sky-500 to-blue-400">
-              <span className="text-[10px] font-bold text-white">📋</span>
-            </div>
-            <span className="text-xs font-bold tracking-wide text-sky-700">{t("사용 가이드", "Usage Guide")}</span>
-          </div>
-          {(() => {
-            const guide = res.usage_guide!;
-            return (
-              <div className="space-y-2.5">
-                {guide.best_time && (
-                  <div className="flex gap-2.5 items-start">
-                    <span className="shrink-0 text-sm">⏰</span>
-                    <div><p className="text-[10px] font-bold text-sky-600 mb-0.5">{t("최적 사용 시간", "Best Time")}</p><p className="text-xs text-gray-600 leading-relaxed">{guide.best_time}</p></div>
-                  </div>
-                )}
-                {guide.effect_timeline && (
-                  <div className="flex gap-2.5 items-start">
-                    <span className="shrink-0 text-sm">📅</span>
-                    <div><p className="text-[10px] font-bold text-sky-600 mb-0.5">{t("효과 체감 시기", "Effect Timeline")}</p><p className="text-xs text-gray-600 leading-relaxed">{guide.effect_timeline}</p></div>
-                  </div>
-                )}
-                {guide.beginner_tips && guide.beginner_tips.length > 0 && (
-                  <div className="flex gap-2.5 items-start">
-                    <span className="shrink-0 text-sm">💡</span>
-                    <div>
-                      <p className="text-[10px] font-bold text-sky-600 mb-1">{t("초보자 주의사항", "Beginner Tips")}</p>
-                      {guide.beginner_tips.map((tip, i) => (
-                        <p key={i} className="text-xs text-gray-600 leading-relaxed mb-0.5">· {tip}</p>
-                      ))}
-                    </div>
-                  </div>
-                )}
+        <Section icon="📋" title={t("사용 가이드", "Usage Guide")} color="bg-sky-50/60">
+          <div className="space-y-2.5">
+            {res.usage_guide.best_time && (
+              <div className="flex gap-2.5 items-start">
+                <span className="shrink-0 text-sm">⏰</span>
+                <div><p className="text-[10px] font-bold text-sky-600 mb-0.5">{t("최적 사용 시간", "Best Time")}</p><p className="text-xs text-gray-600 leading-relaxed">{res.usage_guide.best_time}</p></div>
               </div>
-            );
-          })()}
-        </div>
+            )}
+            {res.usage_guide.effect_timeline && (
+              <div className="flex gap-2.5 items-start">
+                <span className="shrink-0 text-sm">📅</span>
+                <div><p className="text-[10px] font-bold text-sky-600 mb-0.5">{t("효과 체감 시기", "Effect Timeline")}</p><p className="text-xs text-gray-600 leading-relaxed">{res.usage_guide.effect_timeline}</p></div>
+              </div>
+            )}
+            {res.usage_guide.beginner_tips && res.usage_guide.beginner_tips.length > 0 && (
+              <div className="flex gap-2.5 items-start">
+                <span className="shrink-0 text-sm">💡</span>
+                <div>
+                  <p className="text-[10px] font-bold text-sky-600 mb-1">{t("초보자 주의사항", "Beginner Tips")}</p>
+                  {res.usage_guide.beginner_tips.map((tip, i) => (
+                    <p key={i} className="text-xs text-gray-600 leading-relaxed mb-0.5">· {tip}</p>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </Section>
       )}
 
-      {/* Share + Reset buttons */}
-      <div className="flex gap-2">
+      {/* ── Share + Reset buttons ── */}
+      <div className="flex gap-2 mt-4">
         <button
           onClick={() => {
-            const title = `skindit 분석 결과: ${res.overall_score}점`
-            const text = `${res.overall_comment}\n\n${res.verdict || ""}`
             const shareUrl = historyId ? `${SITE_URL}/share/${historyId}` : `${SITE_URL}?tab=single`
             if (navigator.share) {
-              navigator
-                .share({ title, text, url: shareUrl })
-                .catch(() => {})
+              navigator.share({ url: shareUrl }).catch(() => {})
             } else {
-              navigator.clipboard.writeText(
-                `${title}\n${text}\n${shareUrl}`
-              )
-              alert(
-                lang === "ko" ? "결과 복사했어요! 친구한테 보내주세요~" : "Result copied!"
-              )
+              navigator.clipboard.writeText(shareUrl)
+              alert(lang === "ko" ? "링크 복사했어요! 친구한테 보내주세요~" : "Link copied!")
             }
           }}
           className="flex flex-1 items-center justify-center gap-2 rounded-2xl border border-purple-200 bg-purple-50 py-3.5 text-sm font-semibold text-purple-600 transition-all hover:bg-purple-100"
         >
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13" />
           </svg>
           {t("결과 공유", "Share")}

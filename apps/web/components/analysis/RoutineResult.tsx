@@ -304,21 +304,17 @@ export default function RoutineResult({ rRes, t, reset, lang, historyId }: Routi
       <div className="flex gap-2">
         <button
           onClick={() => {
-            const title = `skindit 루틴 분석: ${rRes.routine_score}점`
-            const text = `${rRes.routine_comment}\n\n${rRes.verdict || ""}`
             const shareUrl = historyId ? `${SITE_URL}/share/${historyId}` : `${SITE_URL}?tab=routine`
             if (navigator.share) {
               navigator
-                .share({ title, text, url: shareUrl })
+                .share({ url: shareUrl })
                 .catch(() => {})
             } else {
-              navigator.clipboard.writeText(
-                `${title}\n${text}\n${shareUrl}`
-              )
+              navigator.clipboard.writeText(shareUrl)
               alert(
                 lang === "ko"
-                  ? "결과 복사했어요! 친구한테 보내주세요~"
-                  : "Result copied!"
+                  ? "링크 복사했어요! 친구한테 보내주세요~"
+                  : "Link copied!"
               )
             }
           }}
