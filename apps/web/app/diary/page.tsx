@@ -583,7 +583,7 @@ export default function DiaryPage() {
                     disabled={!d.current || isFuture}
                     className={`relative flex aspect-square flex-col items-center justify-center rounded-2xl border-[1.5px] transition-all duration-200 ${!d.current ? "pointer-events-none opacity-0" : ""} ${isFuture ? "cursor-not-allowed border-transparent opacity-25" : ""} ${d.current && !entry && !isSelected && !isToday ? "border-transparent hover:bg-gray-50" : ""} ${
                       isSelected
-                        ? "z-10 border-green-500 shadow-[0_0_0_2px_rgba(123,164,40,0.15)] " +
+                        ? "z-10 border-green-500 shadow-[0_0_0_2px_rgba(155,206,38,0.15)] " +
                           (entry ? cellBg.split(" ")[0] : "bg-green-50")
                         : entry
                           ? cellBg

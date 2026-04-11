@@ -201,9 +201,9 @@ export default function DiaryReportPage() {
 
             <div className="rounded-2xl p-30 text-center anim-scale-in">
               <div className="flex items-center justify-center gap-3 mb-14">
-                <div className="w-4 h-4 rounded-full" style={{ background: "#7ba428", animation: "bounce-dot 1.2s ease-in-out infinite" }} />
-                <div className="w-4 h-4 rounded-full" style={{ background: "#8fb83a", animation: "bounce-dot 1.2s ease-in-out 0.2s infinite" }} />
-                <div className="w-4 h-4 rounded-full" style={{ background: "#a3c44d", animation: "bounce-dot 1.2s ease-in-out 0.4s infinite" }} />
+                <div className="w-4 h-4 rounded-full" style={{ background: "#9bce26", animation: "bounce-dot 1.2s ease-in-out infinite" }} />
+                <div className="w-4 h-4 rounded-full" style={{ background: "#E8B830", animation: "bounce-dot 1.2s ease-in-out 0.2s infinite" }} />
+                <div className="w-4 h-4 rounded-full" style={{ background: "#8B6914", animation: "bounce-dot 1.2s ease-in-out 0.4s infinite" }} />
               </div>
               <p className="text-sm font-bold text-gray-800 mb-1">스킨딧이 피부를 분석하고 있어요</p>
               <p className="text-xs text-gray-400" style={{ animation: "pulse-text 1.6s ease infinite" }}>최근 기록을 바탕으로 리포트를 작성 중...</p>

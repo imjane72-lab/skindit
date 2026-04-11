@@ -832,9 +832,9 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                 strokeLinecap="round"
                 strokeOpacity="0.9"
               />
-              <circle cx="9.5" cy="9.5" r="1.5" fill="rgba(123,164,40,0.7)" />
-              <circle cx="13" cy="11" r="1" fill="rgba(163,196,77,0.6)" />
-              <circle cx="10.5" cy="13" r="0.8" fill="rgba(123,164,40,0.5)" />
+              <circle cx="9.5" cy="9.5" r="1.5" fill="rgba(155,206,38,0.7)" />
+              <circle cx="13" cy="11" r="1" fill="rgba(232,184,48,0.6)" />
+              <circle cx="10.5" cy="13" r="0.8" fill="rgba(139,105,20,0.5)" />
             </svg>
           </div>
           <div className="flex items-baseline gap-0.5">
@@ -862,7 +862,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
             className="pointer-events-none absolute inset-0"
             style={{
               background:
-                "radial-gradient(ellipse 80% 60% at 20% 0%, rgba(123,164,40,0.08) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 100%, rgba(163,196,77,0.06) 0%, transparent 50%)",
+                "radial-gradient(ellipse 80% 60% at 20% 0%, rgba(155,206,38,0.08) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 100%, rgba(232,184,48,0.06) 0%, transparent 50%)",
             }}
           />
 
@@ -904,7 +904,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                             WebkitBackdropFilter: "blur(40px) saturate(1.6)",
                             border: "1px solid rgba(255,255,255,0.6)",
                             boxShadow:
-                              "0 8px 40px rgba(80,120,40,0.12), 0 2px 8px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.8)",
+                              "0 8px 40px rgba(139,105,20,0.12), 0 2px 8px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.8)",
                           }}
                         >
                           <div className="mb-1.5 border-b border-white/30 px-3 py-2.5">
@@ -982,12 +982,12 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                         cx="12"
                         cy="8"
                         r="4"
-                        stroke="#7ba428"
+                        stroke="#9bce26"
                         strokeWidth="2"
                       />
                       <path
                         d="M4 20c0-3.3 3.6-6 8-6s8 2.7 8 6"
-                        stroke="#7ba428"
+                        stroke="#9bce26"
                         strokeWidth="2"
                         strokeLinecap="round"
                       />
