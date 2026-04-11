@@ -1072,7 +1072,6 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                     icon: "🔬",
                     label: t("분석", "Analyze"),
                     sub: t("성분 바로 분석", "Instant analysis"),
-                    bg: "bg-blue-50",
                     href: "#analyze",
                     scroll: true,
                   },
@@ -1080,7 +1079,6 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                     icon: "📔",
                     label: t("기록", "Record"),
                     sub: t("피부 변화 기록", "Track changes"),
-                    bg: "bg-pink-50",
                     href: "/diary",
                     scroll: false,
                   },
@@ -1088,7 +1086,6 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                     icon: "📊",
                     label: t("발견", "Discover"),
                     sub: t("트러블 원인 발견", "Find causes"),
-                    bg: "bg-emerald-50",
                     href: "/diary/report",
                     scroll: false,
                   },
@@ -1096,7 +1093,6 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                     icon: "💬",
                     label: t("상담", "Consult"),
                     sub: t("1:1 AI 상담", "1:1 AI consult"),
-                    bg: "bg-lime-50",
                     href: "/chat",
                     scroll: false,
                   },
@@ -1114,7 +1110,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                           }
                         : undefined
                     }
-                    className={`flex items-center gap-3 rounded-2xl ${step.bg} p-4 no-underline transition-all hover:-translate-y-0.5 hover:shadow-md`}
+                    className="flex items-center gap-3 rounded-2xl border border-[#9bce26]/15 bg-[#9bce26]/5 p-4 no-underline transition-all hover:-translate-y-0.5 hover:border-[#9bce26]/30 hover:shadow-md"
                   >
                     <span className="text-3xl">{step.icon}</span>
                     <div>
