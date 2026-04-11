@@ -19,19 +19,19 @@ function SignInContent() {
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col items-center justify-center bg-linear-to-b from-white via-pastel-lavender/30 to-pastel-rose/30 overflow-hidden px-6">
+    <div className="relative min-h-screen flex flex-col items-center justify-center bg-linear-to-b from-white via-[#9bce26]/8 to-pastel-rose/30 overflow-hidden px-6">
       {/* ── Decorative blobs ── */}
       <div className="blob w-70 h-70 bg-pastel-lavender top-[-60px] right-[-80px]" />
       <div className="blob w-50 h-50 bg-pastel-rose top-[120px] left-[-60px]" />
       <div className="blob w-40 h-40 bg-pastel-mint bottom-[80px] right-[20px]" />
       <div className="blob w-30 h-30 bg-pastel-lilac bottom-[-20px] left-[40px]" />
-      <div className="absolute top-0 right-0 w-[50%] h-[60%] bg-linear-to-bl from-pastel-lavender-dark/30 via-pastel-rose-dark/15 to-transparent pointer-events-none blur-3xl" />
+      <div className="absolute top-0 right-0 w-[50%] h-[60%] bg-[#9bce26]/10 pointer-events-none blur-3xl" />
 
       {/* ── Card ── */}
       <div className="relative glass-card rounded-3xl p-8 w-full max-w-95 shadow-xl anim-scale-in">
         {/* Logo */}
         <div className="flex flex-col items-center mb-8">
-          <div className="w-14 h-14 rounded-2xl bg-linear-to-br bg-[#9bce26] flex items-center justify-center shadow-lg relative overflow-hidden mb-5 anim-pop-in">
+          <div className="w-14 h-14 rounded-2xl bg-[#9bce26] flex items-center justify-center shadow-lg relative overflow-hidden mb-5 anim-pop-in">
             <div className="absolute inset-0 bg-linear-to-t from-white/10 to-transparent" />
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" className="relative">
               <circle cx="11" cy="11" r="6" stroke="white" strokeWidth="2" strokeOpacity="0.9" />
@@ -135,7 +135,7 @@ function SignInContent() {
 
       {/* 하단 링크 */}
       <div className="mt-8 anim-fade-up" style={{ animationDelay: "0.4s" }}>
-        <a href="/" className="text-xs text-gray-400 hover:text-green-500 transition-colors">
+        <a href="/" className="text-xs text-gray-400 hover:text-[#9bce26] transition-colors">
           {t("← 홈으로 돌아가기", "← Back to Home")}
         </a>
       </div>

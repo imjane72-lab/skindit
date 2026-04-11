@@ -29,7 +29,7 @@ export default function Md({ children }: { children: string }) {
           const content = trimmed.slice(2)
           return (
             <div key={li} className="flex gap-1.5 ml-1 mb-0.5">
-              <span className="shrink-0 text-green-500">·</span>
+              <span className="shrink-0 text-[#9bce26]">·</span>
               <span>{parseBold(content)}</span>
             </div>
           )
@@ -40,7 +40,7 @@ export default function Md({ children }: { children: string }) {
         }
         // 섹션 헤더 (콜론으로 끝나는 짧은 볼드 줄)
         if (trimmed.endsWith(":") && !trimmed.includes(" ") === false && trimmed.length < 30) {
-          return <p key={li} className="mt-2.5 mb-1 text-xs font-extrabold text-green-700">{trimmed}</p>
+          return <p key={li} className="mt-2.5 mb-1 text-xs font-extrabold text-lime-700">{trimmed}</p>
         }
         // 일반 텍스트 (볼드 파싱 포함)
         return <span key={li}>{parseBold(trimmed)}{li < lines.length - 1 ? " " : ""}</span>

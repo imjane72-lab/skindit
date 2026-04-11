@@ -9,7 +9,7 @@ function NavBar() {
   return (
     <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-2xl border-b border-gray-100/80 h-14 px-6 flex items-center justify-between">
       <button onClick={() => router.push("/")} className="flex items-center gap-3 bg-transparent border-none p-0">
-        <div className="w-9 h-9 rounded-2xl bg-linear-to-br bg-[#9bce26] flex items-center justify-center shadow-md relative overflow-hidden">
+        <div className="w-9 h-9 rounded-2xl bg-[#9bce26] flex items-center justify-center shadow-md relative overflow-hidden">
           <div className="absolute inset-0 bg-linear-to-t from-white/10 to-transparent" />
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="relative">
             <circle cx="11" cy="11" r="6" stroke="white" strokeWidth="2" strokeOpacity="0.9" />
@@ -63,9 +63,9 @@ export default function PricingPage() {
           </div>
 
           {/* Free Card */}
-          <div className="rounded-2xl border-2 border-green-200 bg-linear-to-b from-green-50/50 to-white p-6 anim-fade-up" style={{ animationDelay: "0.05s" }}>
+          <div className="rounded-2xl border-2 border-[#9bce26]/30 bg-[#9bce26]/5 p-6 anim-fade-up" style={{ animationDelay: "0.05s" }}>
             <div className="text-center mb-6">
-              <span className="inline-block text-[11px] font-bold text-white bg-linear-to-r from-green-500 to-green-500 px-3 py-1 rounded-full mb-3">
+              <span className="inline-block text-[11px] font-bold text-white bg-[#9bce26] px-3 py-1 rounded-full mb-3">
                 {t("현재 무료", "Currently Free")}
               </span>
               <p className="text-3xl font-extrabold text-gray-900">
@@ -92,7 +92,7 @@ export default function PricingPage() {
           <div className="mt-6 anim-fade-up" style={{ animationDelay: "0.1s" }}>
             <button
               onClick={() => router.push("/")}
-              className="w-full h-12 rounded-2xl bg-linear-to-r from-green-500 via-green-500 to-green-500 text-white text-sm font-bold shadow-lg shadow-green-200/50 hover:shadow-xl transition-all"
+              className="w-full h-12 rounded-2xl bg-[#9bce26] text-white text-sm font-bold shadow-lg shadow-[#9bce26]/20 hover:-translate-y-0.5 hover:shadow-xl transition-all disabled:cursor-not-allowed disabled:opacity-30"
             >
               {t("성분 분석하러 가기", "Start Analyzing")}
             </button>

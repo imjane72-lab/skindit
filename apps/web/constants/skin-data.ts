@@ -11,7 +11,7 @@ export const CONCERNS = [
     ko: "민감성",
     en: "Sensitive",
     icon: "🫧",
-    color: "bg-pastel-lavender text-green-800 border-green-200",
+    color: "bg-pastel-lavender text-lime-800 border-lime-200",
   },
   {
     id: "pores",
@@ -53,7 +53,7 @@ export const CONCERNS = [
     ko: "노화",
     en: "Anti-aging",
     icon: "🌿",
-    color: "bg-pastel-lilac text-green-800 border-green-200",
+    color: "bg-pastel-lilac text-lime-800 border-lime-200",
   },
   {
     id: "blackhead",
@@ -67,7 +67,7 @@ export const CONCERNS = [
     ko: "다크서클",
     en: "Dark Circles",
     icon: "👁",
-    color: "bg-green-50 text-green-800 border-green-200",
+    color: "bg-lime-50 text-lime-800 border-lime-200",
   },
   {
     id: "pigmentation",
@@ -105,7 +105,7 @@ export const TRENDING = [
     ko: "센텔라",
     en: "Centella",
     icon: "🌿",
-    gradient: "from-emerald-100 to-green-50",
+    gradient: "from-emerald-100 to-lime-50",
   },
   {
     id: "vitamin_c",
@@ -119,7 +119,7 @@ export const TRENDING = [
     ko: "나이아신아마이드",
     en: "Niacinamide",
     icon: "💧",
-    gradient: "from-green-100 to-lime-50",
+    gradient: "from-lime-100 to-lime-50",
   },
   {
     id: "ceramide",
@@ -170,11 +170,11 @@ export const SAMPLE_R = [
 
 export const CONCERN_BG = [
   "from-pink-100/80 to-rose-50/60",
-  "from-green-100/80 to-lime-50/60",
+  "from-lime-100/80 to-lime-50/60",
   "from-teal-100/80 to-cyan-50/60",
   "from-blue-100/80 to-sky-50/60",
   "from-amber-100/80 to-orange-50/60",
   "from-yellow-100/80 to-lime-50/60",
   "from-lime-100/80 to-fuchsia-50/60",
-  "from-green-100/80 to-emerald-50/60",
+  "from-lime-100/80 to-emerald-50/60",
 ]

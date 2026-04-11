@@ -23,7 +23,7 @@ export default function ScoreHero({
       <div
         className={`absolute inset-0 bg-linear-to-br ${scoreGradient(score)} opacity-10`}
       />
-      <div className="blob from-pastel-lavender to-pastel-rose absolute -top-7.5 -right-7.5 h-30 w-30 bg-linear-to-br" />
+      <div className="blob bg-[#9bce26]/15 absolute -top-7.5 -right-7.5 h-30 w-30 " />
 
       <div className="relative p-6">
         <span className="mb-5 inline-block text-[10px] font-bold tracking-widest text-gray-400 uppercase">

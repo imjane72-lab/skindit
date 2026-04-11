@@ -56,7 +56,7 @@ const CONCERNS = [
     ko: "민감성",
     en: "Sensitive",
     icon: "🫧",
-    color: "bg-pastel-lavender text-green-800 border-green-200",
+    color: "bg-pastel-lavender text-lime-800 border-lime-200",
   },
   {
     id: "pores",
@@ -98,7 +98,7 @@ const CONCERNS = [
     ko: "노화",
     en: "Anti-aging",
     icon: "🌿",
-    color: "bg-pastel-lilac text-green-800 border-green-200",
+    color: "bg-pastel-lilac text-lime-800 border-lime-200",
   },
   {
     id: "blackhead",
@@ -112,7 +112,7 @@ const CONCERNS = [
     ko: "다크서클",
     en: "Dark Circles",
     icon: "👁",
-    color: "bg-green-50 text-green-800 border-green-200",
+    color: "bg-lime-50 text-lime-800 border-lime-200",
   },
   {
     id: "pigmentation",
@@ -139,8 +139,7 @@ function NavBar() {
         onClick={() => router.push("/")}
         className="flex items-center gap-3 border-none bg-transparent p-0"
       >
-        <div className="bg-[#9bce26] shadow-md">
-          <div className="absolute inset-0 bg-linear-to-t from-white/10 to-transparent" />
+        <div className="relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-2xl bg-[#9bce26] shadow-md">
           <svg
             width="18"
             height="18"
@@ -148,24 +147,8 @@ function NavBar() {
             fill="none"
             className="relative"
           >
-            <circle
-              cx="11"
-              cy="11"
-              r="6"
-              stroke="white"
-              strokeWidth="2"
-              strokeOpacity="0.9"
-            />
-            <path
-              d="M16 16L20 20"
-              stroke="white"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeOpacity="0.9"
-            />
-            <circle cx="9.5" cy="9.5" r="1.5" fill="rgba(179,157,219,0.7)" />
-            <circle cx="13" cy="11" r="1" fill="rgba(244,143,177,0.6)" />
-            <circle cx="10.5" cy="13" r="0.8" fill="rgba(179,157,219,0.5)" />
+            <circle cx="11" cy="11" r="6" stroke="white" strokeWidth="2" />
+            <path d="M16 16L20 20" stroke="white" strokeWidth="2" strokeLinecap="round" />
           </svg>
         </div>
         <div className="flex items-baseline gap-0.5">
@@ -250,10 +233,10 @@ export default function ProfilePage() {
 
   if (status === "loading" || loadingProfile) {
     return (
-      <div className="via-pastel-lavender/20 to-pastel-rose/20 min-h-screen bg-linear-to-b from-white">
+      <div className="via-[#9bce26]/5 to-pastel-rose/20 min-h-screen bg-linear-to-b from-white">
         <NavBar />
         <div className="flex h-[60vh] items-center justify-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-3 border-green-200 border-t-green-500" />
+          <div className="h-8 w-8 animate-spin rounded-full border-3 border-[#9bce26]/30 border-t-[#9bce26]" />
         </div>
       </div>
     )
@@ -290,7 +273,7 @@ export default function ProfilePage() {
               <span className="font-normal tracking-normal text-gray-300 normal-case">
                 Skin Type
               </span>
-              <span className="ml-2 text-[11px] font-medium text-green-500">
+              <span className="ml-2 text-[11px] font-medium text-[#9bce26]">
                 최대 2개
               </span>
             </h2>
@@ -310,10 +293,10 @@ export default function ProfilePage() {
                     }}
                     className={`glass-card rounded-2xl p-4 text-left transition-all duration-200 ${
                       selected
-                        ? "border-green-200 shadow-lg ring-2 shadow-green-100/50 ring-green-500"
+                        ? "border-[#9bce26]/40 shadow-lg ring-2 shadow-[#9bce26]/10 ring-[#9bce26]"
                         : skinType.length >= 2
                           ? "opacity-40"
-                          : "hover:border-green-100 hover:shadow-md"
+                          : "hover:border-lime-100 hover:shadow-md"
                     }`}
                   >
                     <div className="flex items-center gap-3">
@@ -334,7 +317,7 @@ export default function ProfilePage() {
                       <div
                         className={`flex h-5 w-5 items-center justify-center rounded-full border-2 transition-all ${
                           selected
-                            ? "border-green-500 bg-green-500"
+                            ? "border-[#9bce26] bg-[#9bce26]"
                             : "border-gray-200"
                         }`}
                       >
@@ -418,7 +401,7 @@ export default function ProfilePage() {
               }}
               placeholder="알레르기, 복용 약, 특이사항 있으면 적어줘~"
               rows={4}
-              className="glass-card w-full resize-none rounded-2xl p-4 text-sm text-gray-700 transition-all placeholder:text-gray-300 focus:ring-2 focus:ring-green-300 focus:outline-none"
+              className="glass-card w-full resize-none rounded-2xl p-4 text-sm text-gray-700 transition-all placeholder:text-gray-300 focus:ring-2 focus:ring-[#9bce26]/30 focus:outline-none"
             />
           </section>
 
@@ -427,7 +410,7 @@ export default function ProfilePage() {
             <button
               onClick={handleSave}
               disabled={saving || skinType.length === 0}
-              className="bg-[#9bce26] text-sm font-bold tracking-wide text-white shadow-lg shadow-green-200/50 transition-all duration-300 hover:shadow-xl hover:shadow-green-300/50 disabled:cursor-not-allowed disabled:opacity-40"
+              className="font-display relative h-13 w-full overflow-hidden rounded-2xl bg-[#9bce26] text-sm font-bold tracking-wide text-white shadow-lg shadow-[#9bce26]/30 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-[#9bce26]/40 disabled:cursor-not-allowed disabled:opacity-40"
             >
               {saving ? (
                 <div className="flex items-center justify-center gap-2">

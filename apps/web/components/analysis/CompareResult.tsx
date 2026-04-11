@@ -16,8 +16,8 @@ export default function CompareResult({ cRes, t, reset, lang, historyId }: Compa
   return (
     <div className="anim-scale-in">
       {/* Summary */}
-      <div className="mb-5 rounded-2xl border border-green-200 bg-green-50 p-6 text-center shadow-sm">
-        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-linear-to-br from-green-500 to-green-500 text-2xl shadow-sm">
+      <div className="mb-5 rounded-2xl border border-lime-200 bg-lime-50 p-6 text-center shadow-sm">
+        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#9bce26] text-2xl shadow-sm">
           ⚖️
         </div>
         <p className="mb-2 text-sm font-bold text-gray-900">
@@ -53,12 +53,12 @@ export default function CompareResult({ cRes, t, reset, lang, historyId }: Compa
 
         {/* Only A / Only B */}
         <div className="grid grid-cols-2 gap-3">
-          <div className="rounded-2xl border border-green-200 bg-green-50 p-4 shadow-sm">
-            <div className="mb-3 flex items-center gap-1.5 border-b border-green-200 pb-2">
-              <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-linear-to-br from-green-500 to-green-500 text-[10px] font-bold text-white shadow-sm">
+          <div className="rounded-2xl border border-lime-200 bg-lime-50 p-4 shadow-sm">
+            <div className="mb-3 flex items-center gap-1.5 border-b border-lime-200 pb-2">
+              <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-[#9bce26] text-[10px] font-bold text-white shadow-sm">
                 A
               </span>
-              <span className="text-xs font-bold text-green-800">
+              <span className="text-xs font-bold text-lime-800">
                 {t("A에만 있는 성분", "Only in A")}
               </span>
             </div>
@@ -180,7 +180,7 @@ export default function CompareResult({ cRes, t, reset, lang, historyId }: Compa
               )
             }
           }}
-          className="flex flex-1 items-center justify-center gap-2 rounded-2xl border border-green-200 bg-green-50 py-3.5 text-sm font-semibold text-green-700 transition-all hover:bg-green-100"
+          className="flex flex-1 items-center justify-center gap-2 rounded-2xl border border-lime-200 bg-lime-50 py-3.5 text-sm font-semibold text-lime-700 transition-all hover:bg-lime-100"
         >
           <svg
             width="16"
@@ -198,7 +198,7 @@ export default function CompareResult({ cRes, t, reset, lang, historyId }: Compa
         </button>
         <button
           onClick={reset}
-          className="hover:bg-pastel-lavender/30 flex-1 rounded-2xl border border-gray-200 bg-white/80 py-3.5 text-sm font-semibold text-gray-500 backdrop-blur transition-all hover:border-green-200 hover:text-green-700"
+          className="hover:bg-[#9bce26]/10 flex-1 rounded-2xl border border-gray-200 bg-white/80 py-3.5 text-sm font-semibold text-gray-500 backdrop-blur transition-all hover:border-lime-200 hover:text-lime-700"
         >
           {t("← 새 비교", "← New")}
         </button>
