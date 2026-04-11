@@ -32,7 +32,7 @@ export default function RoutineResult({ rRes, t, reset, lang, historyId }: Routi
         {rRes.conflicts && rRes.conflicts.length > 0 && (
           <div className="rounded-2xl border border-rose-200 bg-rose-50 p-5 shadow-sm">
             <div className="mb-3 flex items-center gap-2.5 border-b border-rose-200 pb-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-linear-to-br from-rose-500 to-pink-400 shadow-sm">
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-linear-to-br from-rose-500 to-green-500 shadow-sm">
                 <span className="text-xs font-bold text-white">⚠</span>
               </div>
               <div>
@@ -170,16 +170,16 @@ export default function RoutineResult({ rRes, t, reset, lang, historyId }: Routi
 
         {/* ── Routine Timeline ── */}
         {rRes.timeline && rRes.timeline.length > 0 && (
-          <div className="rounded-2xl border border-purple-200 bg-purple-50 p-5 shadow-sm">
-            <div className="mb-4 flex items-center gap-2.5 border-b border-purple-200 pb-3">
+          <div className="rounded-2xl border border-green-200 bg-green-50 p-5 shadow-sm">
+            <div className="mb-4 flex items-center gap-2.5 border-b border-green-200 pb-3">
               <div className="from-pastel-lavender-dark to-pastel-rose-dark flex h-8 w-8 items-center justify-center rounded-xl bg-linear-to-br shadow-sm">
                 <span className="text-xs font-bold text-white">⏰</span>
               </div>
               <div>
-                <span className="text-sm font-bold text-purple-800">
+                <span className="text-sm font-bold text-green-900">
                   {t("루틴 타임라인", "Routine Timeline")}
                 </span>
-                <p className="text-[10px] text-purple-400">
+                <p className="text-[10px] text-green-500">
                   {t(
                     "아침/저녁 사용 추천",
                     "Morning/Evening recommendation"
@@ -217,7 +217,7 @@ export default function RoutineResult({ rRes, t, reset, lang, historyId }: Routi
                           <Md>{ti.reason}</Md>
                         </p>
                         {ti.timing === "both" && (
-                          <span className="mt-1 inline-block rounded bg-purple-100 px-1.5 py-0.5 text-[9px] font-bold text-purple-600">
+                          <span className="mt-1 inline-block rounded bg-green-100 px-1.5 py-0.5 text-[9px] font-bold text-green-700">
                             {t("아침/저녁", "AM/PM")}
                           </span>
                         )}
@@ -252,7 +252,7 @@ export default function RoutineResult({ rRes, t, reset, lang, historyId }: Routi
                           <Md>{ti.reason}</Md>
                         </p>
                         {ti.timing === "both" && (
-                          <span className="mt-1 inline-block rounded bg-purple-100 px-1.5 py-0.5 text-[9px] font-bold text-purple-600">
+                          <span className="mt-1 inline-block rounded bg-green-100 px-1.5 py-0.5 text-[9px] font-bold text-green-700">
                             {t("아침/저녁", "AM/PM")}
                           </span>
                         )}
@@ -318,7 +318,7 @@ export default function RoutineResult({ rRes, t, reset, lang, historyId }: Routi
               )
             }
           }}
-          className="flex flex-1 items-center justify-center gap-2 rounded-2xl border border-purple-200 bg-purple-50 py-3.5 text-sm font-semibold text-purple-600 transition-all hover:bg-purple-100"
+          className="flex flex-1 items-center justify-center gap-2 rounded-2xl border border-green-200 bg-green-50 py-3.5 text-sm font-semibold text-green-700 transition-all hover:bg-green-100"
         >
           <svg
             width="16"
@@ -336,7 +336,7 @@ export default function RoutineResult({ rRes, t, reset, lang, historyId }: Routi
         </button>
         <button
           onClick={reset}
-          className="hover:bg-pastel-lavender/30 flex-1 rounded-2xl border border-gray-200 bg-white/80 py-3.5 text-sm font-semibold text-gray-500 backdrop-blur transition-all hover:border-purple-200 hover:text-purple-600"
+          className="hover:bg-pastel-lavender/30 flex-1 rounded-2xl border border-gray-200 bg-white/80 py-3.5 text-sm font-semibold text-gray-500 backdrop-blur transition-all hover:border-green-200 hover:text-green-700"
         >
           {t("← 새 분석", "← New")}
         </button>

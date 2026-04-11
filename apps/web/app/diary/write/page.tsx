@@ -65,7 +65,7 @@ function NavBar() {
 /* ── Write Page ── */
 export default function DiaryWritePageWrapper() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center"><div className="h-8 w-8 rounded-full border-3 border-purple-200 border-t-purple-500 animate-spin" /></div>}>
+    <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center"><div className="h-8 w-8 rounded-full border-3 border-green-200 border-t-green-500 animate-spin" /></div>}>
       <DiaryWritePage />
     </Suspense>
   );
@@ -289,7 +289,7 @@ function DiaryWritePage() {
         <div className="mx-auto min-h-screen max-w-160 bg-white shadow-xl">
           <NavBar />
           <div className="flex h-[60vh] items-center justify-center">
-            <div className="h-8 w-8 rounded-full border-3 border-purple-200 border-t-purple-500 animate-spin" />
+            <div className="h-8 w-8 rounded-full border-3 border-green-200 border-t-green-500 animate-spin" />
           </div>
         </div>
       </div>
@@ -315,11 +315,11 @@ function DiaryWritePage() {
           </div>
 
           {/* 성분 연동 안내 배너 */}
-          <div className="mb-6 rounded-2xl border border-purple-100 bg-linear-to-br from-purple-50/60 to-pink-50/40 p-4 anim-fade-up" style={{ animationDelay: "0.05s" }}>
+          <div className="mb-6 rounded-2xl border border-green-100 bg-linear-to-br from-green-50/60 to-green-50/40 p-4 anim-fade-up" style={{ animationDelay: "0.05s" }}>
             <div className="flex items-start gap-3">
               <span className="mt-0.5 text-lg">🧬</span>
               <div>
-                <p className="text-xs font-bold text-purple-700 mb-1">{t("성분 분석한 제품은 자동 연동돼!", "Analyzed products auto-link!")}</p>
+                <p className="text-xs font-bold text-green-800 mb-1">{t("성분 분석한 제품은 자동 연동돼!", "Analyzed products auto-link!")}</p>
                 <p className="text-[11px] leading-relaxed text-gray-500">
                   {t("제품명 입력하면 분석 기록에서 성분을 자동으로 끌고 와~ 그래서 트러블 나면 어떤 성분 때문인지 리포트에서 딱 찾아줘!", "Enter a product name and ingredients auto-load from your analysis history~ So when trouble hits, the report finds the cause!")}
                 </p>
@@ -327,7 +327,7 @@ function DiaryWritePage() {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-purple-100/50 bg-white p-5 space-y-6 shadow-sm anim-scale-in">
+          <div className="rounded-2xl border border-green-100/50 bg-white p-5 space-y-6 shadow-sm anim-scale-in">
 
             {/* Date */}
             <div>
@@ -339,7 +339,7 @@ function DiaryWritePage() {
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
                 max={todayStr()}
-                className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-700 outline-none focus:ring-2 focus:ring-purple-300 focus:border-purple-300 transition-all"
+                className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-700 outline-none focus:ring-2 focus:ring-green-300 focus:border-green-300 transition-all"
               />
             </div>
 
@@ -386,11 +386,11 @@ function DiaryWritePage() {
                     }}
                     placeholder={t("제품명 입력 (분석한 제품은 자동 연동!)", "Product name (analyzed products auto-link!)")}
 
-                    className="flex-1 rounded-xl px-4 py-2.5 text-sm text-gray-700 placeholder:text-gray-300 border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-purple-300 focus:border-purple-300 transition-all"
+                    className="flex-1 rounded-xl px-4 py-2.5 text-sm text-gray-700 placeholder:text-gray-300 border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-green-300 focus:border-green-300 transition-all"
                   />
                   <button
                     onClick={() => addProduct()}
-                    className="shrink-0 rounded-xl bg-purple-50 px-4 py-2.5 text-sm font-bold text-purple-600 border border-purple-100 hover:bg-purple-100 transition-all"
+                    className="shrink-0 rounded-xl bg-green-50 px-4 py-2.5 text-sm font-bold text-green-700 border border-green-100 hover:bg-green-100 transition-all"
                   >
                     추가
                   </button>
@@ -398,21 +398,21 @@ function DiaryWritePage() {
 
                 {/* 자동완성 드롭다운 */}
                 {productSuggestions.length > 0 && (
-                  <div className="absolute left-0 right-0 top-full z-20 mt-1 rounded-xl border border-purple-200 bg-white shadow-lg overflow-hidden anim-fade-up">
-                    <p className="px-3 py-1.5 text-[10px] font-bold text-purple-400 bg-purple-50/50">이전에 기록한 제품이에요!</p>
+                  <div className="absolute left-0 right-0 top-full z-20 mt-1 rounded-xl border border-green-200 bg-white shadow-lg overflow-hidden anim-fade-up">
+                    <p className="px-3 py-1.5 text-[10px] font-bold text-green-500 bg-green-50/50">이전에 기록한 제품이에요!</p>
                     {productSuggestions.map(name => {
                       const isAnalyzed = allAnalyzedNames.some(n => n.toLowerCase() === name.toLowerCase() || n.toLowerCase().includes(name.toLowerCase()) || name.toLowerCase().includes(n.toLowerCase()));
                       return (
                         <button
                           key={name}
                           onClick={() => addProduct(name)}
-                          className="flex w-full items-center gap-2 border-none bg-transparent px-3 py-2.5 text-left text-sm text-gray-700 hover:bg-purple-50 transition-all"
+                          className="flex w-full items-center gap-2 border-none bg-transparent px-3 py-2.5 text-left text-sm text-gray-700 hover:bg-green-50 transition-all"
                         >
-                          <span className={`flex h-5 w-5 items-center justify-center rounded-md text-[10px] font-bold ${isAnalyzed ? "bg-purple-100 text-purple-600" : "bg-gray-100 text-gray-500"}`}>
+                          <span className={`flex h-5 w-5 items-center justify-center rounded-md text-[10px] font-bold ${isAnalyzed ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"}`}>
                             {isAnalyzed ? "🧬" : "📝"}
                           </span>
                           <span className="font-medium">{name}</span>
-                          <span className={`ml-auto text-[10px] ${isAnalyzed ? "text-purple-400" : "text-gray-400"}`}>
+                          <span className={`ml-auto text-[10px] ${isAnalyzed ? "text-green-500" : "text-gray-400"}`}>
                             {isAnalyzed ? "성분 연동" : "일지 기록"}
                           </span>
                         </button>
@@ -435,7 +435,7 @@ function DiaryWritePage() {
                           onClick={() => addProduct(p)}
                           className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1.5 text-[11px] font-medium transition-all ${
                             isAnalyzed
-                              ? "border-purple-200 bg-purple-50/50 text-purple-600 hover:bg-purple-100"
+                              ? "border-green-200 bg-green-50/50 text-green-700 hover:bg-green-100"
                               : "border-gray-200 bg-white text-gray-500 hover:bg-gray-50"
                           }`}
                         >
@@ -454,12 +454,12 @@ function DiaryWritePage() {
                   {products.map((p) => {
                     const linked = linkedIngredients[p];
                     return (
-                      <div key={p} className={`rounded-xl border p-3 anim-pop-in ${linked ? "border-purple-200 bg-purple-50/30" : "border-gray-100 bg-gray-50/50"}`}>
+                      <div key={p} className={`rounded-xl border p-3 anim-pop-in ${linked ? "border-green-200 bg-green-50/30" : "border-gray-100 bg-gray-50/50"}`}>
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            {linked && <span className="flex h-5 w-5 items-center justify-center rounded-md bg-purple-100 text-[9px] font-bold text-purple-600">🧬</span>}
+                            {linked && <span className="flex h-5 w-5 items-center justify-center rounded-md bg-green-100 text-[9px] font-bold text-green-700">🧬</span>}
                             <span className="text-xs font-bold text-gray-700">{p}</span>
-                            {linked && <span className="rounded-full bg-purple-100 px-1.5 py-0.5 text-[9px] font-bold text-purple-500">성분 연동됨</span>}
+                            {linked && <span className="rounded-full bg-green-100 px-1.5 py-0.5 text-[9px] font-bold text-green-500">성분 연동됨</span>}
                           </div>
                           <button onClick={() => removeProduct(p)} className="border-none bg-transparent text-gray-300 hover:text-rose-500 transition-colors text-sm">✕</button>
                         </div>
@@ -520,7 +520,7 @@ function DiaryWritePage() {
                     if (e.key === "Enter") { e.preventDefault(); addFood(); }
                   }}
                   placeholder="피부에 영향 줄 수 있는 음식 적어봐~"
-                  className="flex-1 rounded-xl px-4 py-2.5 text-sm text-gray-700 placeholder:text-gray-300 border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-purple-300 focus:border-purple-300 transition-all"
+                  className="flex-1 rounded-xl px-4 py-2.5 text-sm text-gray-700 placeholder:text-gray-300 border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-green-300 focus:border-green-300 transition-all"
                 />
                 <button
                   onClick={addFood}
@@ -575,7 +575,7 @@ function DiaryWritePage() {
                 onChange={(e) => setNote(e.target.value)}
                 placeholder="오늘 피부 상태에 대해 자유롭게 적어봐~"
                 rows={3}
-                className="w-full rounded-xl p-4 text-sm text-gray-700 placeholder:text-gray-300 resize-none border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-purple-300 focus:border-purple-300 transition-all"
+                className="w-full rounded-xl p-4 text-sm text-gray-700 placeholder:text-gray-300 resize-none border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-green-300 focus:border-green-300 transition-all"
               />
             </div>
           </div>
@@ -594,7 +594,7 @@ function DiaryWritePage() {
           <button
             onClick={handleSave}
             disabled={!condition || saving}
-            className="mt-6 w-full rounded-2xl from-pastel-lavender-dark via-purple-400 to-pastel-rose-dark bg-linear-to-r py-4 text-sm font-bold text-white shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-30"
+            className="mt-6 w-full rounded-2xl from-pastel-lavender-dark via-green-500 to-pastel-rose-dark bg-linear-to-r py-4 text-sm font-bold text-white shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-30"
           >
             {saving ? t("저장하는 중...", "Saving...") : t("기록 저장하기", "Save Entry")}
           </button>

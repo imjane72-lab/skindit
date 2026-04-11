@@ -71,7 +71,7 @@ function SharedResultView({ data }: { data: ShareData }) {
     return (
       <div className="space-y-3">
         {Boolean(rj.overall_comment) && (
-          <Section icon="💜" title="종합 의견" color="bg-purple-50">
+          <Section icon="🌿" title="종합 의견" color="bg-green-50">
             <p className="text-sm leading-relaxed text-gray-700"><Md>{String(rj.overall_comment)}</Md></p>
           </Section>
         )}
@@ -94,7 +94,7 @@ function SharedResultView({ data }: { data: ShareData }) {
           <Section icon="✨" title="주목 성분" color="bg-emerald-50/60">
             <div className="space-y-2">
               {starIngs.map((ing, i) => {
-                const extra = [ing.benefit || "", ing.best_time ? `⏰ 사용 시간: ${ing.best_time}` : "", ing.synergy ? `💜 시너지: ${ing.synergy.join(", ")}` : ""].filter(Boolean).join("\n\n")
+                const extra = [ing.benefit || "", ing.best_time ? `⏰ 사용 시간: ${ing.best_time}` : "", ing.synergy ? `🌿 시너지: ${ing.synergy.join(", ")}` : ""].filter(Boolean).join("\n\n")
                 return <Pill key={i} name={ing.name} detail={extra} good />
               })}
             </div>
@@ -145,7 +145,7 @@ function SharedResultView({ data }: { data: ShareData }) {
     return (
       <div className="space-y-3">
         {Boolean(rj.routine_comment) && (
-          <Section icon="💜" title="종합 의견" color="bg-purple-50">
+          <Section icon="🌿" title="종합 의견" color="bg-green-50">
             <p className="text-sm leading-relaxed text-gray-700"><Md>{String(rj.routine_comment)}</Md></p>
           </Section>
         )}
@@ -207,7 +207,7 @@ function SharedResultView({ data }: { data: ShareData }) {
   return (
     <div className="space-y-3">
       {Boolean(rj.summary) && (
-        <Section icon="💜" title="비교 요약" color="bg-purple-50">
+        <Section icon="🌿" title="비교 요약" color="bg-green-50">
           <p className="text-sm leading-relaxed text-gray-700"><Md>{String(rj.summary)}</Md></p>
         </Section>
       )}
@@ -218,8 +218,8 @@ function SharedResultView({ data }: { data: ShareData }) {
       )}
       {(onlyA.length > 0 || onlyB.length > 0) && (
         <div className="grid grid-cols-1 gap-2">
-          <div className="rounded-2xl bg-purple-50/50 p-4 border border-purple-100">
-            <p className="text-xs font-bold text-purple-600 mb-2">A 전용 성분</p>
+          <div className="rounded-2xl bg-green-50/50 p-4 border border-green-100">
+            <p className="text-xs font-bold text-green-700 mb-2">A 전용 성분</p>
             {onlyA.length > 0 ? onlyA.map((s, i) => (
               <div key={i} className="mb-1.5 last:mb-0">
                 <span className="text-sm font-medium text-gray-700">{s.name}</span>
@@ -275,7 +275,7 @@ export default function SharePage() {
         <div className="max-w-160 mx-auto bg-white min-h-screen shadow-xl">
           <Nav />
           <div className="flex items-center justify-center h-[60vh]">
-            <div className="w-8 h-8 border-3 border-purple-200 border-t-purple-500 rounded-full animate-spin" />
+            <div className="w-8 h-8 border-3 border-green-200 border-t-green-500 rounded-full animate-spin" />
           </div>
         </div>
       </div>
@@ -293,7 +293,7 @@ export default function SharePage() {
             <p className="text-xs text-gray-400 mb-6">링크가 만료되었거나 잘못된 링크일 수 있어요.</p>
             <button
               onClick={() => router.push("/")}
-              className="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-linear-to-r from-pastel-lavender-dark via-purple-400 to-pastel-rose-dark shadow-md"
+              className="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-linear-to-r from-pastel-lavender-dark via-green-500 to-pastel-rose-dark shadow-md"
             >
               skindit 홈으로
             </button>
@@ -317,7 +317,7 @@ export default function SharePage() {
 
         <div className="px-6 py-8 pb-24">
           {/* Header */}
-          <div className="bg-linear-to-r from-pastel-lavender-dark via-purple-400 to-pastel-rose-dark px-6 py-6 rounded-2xl mb-6">
+          <div className="bg-linear-to-r from-pastel-lavender-dark via-green-500 to-pastel-rose-dark px-6 py-6 rounded-2xl mb-6">
             <p className="text-white/60 text-[10px] font-bold uppercase tracking-widest mb-1">skindit 분석 결과</p>
             <h1 className="font-display text-white text-lg font-extrabold">{title}</h1>
             <div className="flex items-center gap-3 mt-2">
@@ -330,12 +330,12 @@ export default function SharePage() {
           <SharedResultView data={data} />
 
           {/* CTA */}
-          <div className="mt-8 rounded-2xl border border-purple-100 bg-purple-50/50 p-5 text-center">
+          <div className="mt-8 rounded-2xl border border-green-100 bg-green-50/50 p-5 text-center">
             <p className="text-sm font-bold text-gray-700 mb-1">나도 성분 분석해보고 싶다면?</p>
             <p className="text-xs text-gray-400 mb-4">화장품 성분을 AI가 분석해드려요</p>
             <button
               onClick={() => router.push("/")}
-              className="px-6 py-2.5 rounded-xl text-xs font-bold text-white bg-linear-to-r from-pastel-lavender-dark via-purple-400 to-pastel-rose-dark shadow-md hover:shadow-lg transition-all"
+              className="px-6 py-2.5 rounded-xl text-xs font-bold text-white bg-linear-to-r from-pastel-lavender-dark via-green-500 to-pastel-rose-dark shadow-md hover:shadow-lg transition-all"
             >
               skindit 시작하기
             </button>
@@ -352,7 +352,7 @@ function Nav() {
   return (
     <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-2xl border-b border-gray-100/80 h-14 px-6 flex items-center justify-between">
       <button onClick={() => router.push("/")} className="flex items-center gap-3 bg-transparent border-none p-0">
-        <div className="w-9 h-9 rounded-2xl bg-linear-to-br from-pastel-lavender-dark via-purple-400 to-pastel-rose-dark flex items-center justify-center shadow-md relative overflow-hidden">
+        <div className="w-9 h-9 rounded-2xl bg-linear-to-br from-pastel-lavender-dark via-green-500 to-pastel-rose-dark flex items-center justify-center shadow-md relative overflow-hidden">
           <div className="absolute inset-0 bg-linear-to-t from-white/10 to-transparent" />
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="relative">
             <circle cx="11" cy="11" r="6" stroke="white" strokeWidth="2" strokeOpacity="0.9" />

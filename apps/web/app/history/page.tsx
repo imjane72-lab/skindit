@@ -63,7 +63,7 @@ function FullResultView({ item, displayType }: { item: HistoryItem; displayType:
     return (
       <div className="space-y-3">
         {Boolean(rj.overall_comment) && (
-          <Section icon="💜" title="종합 의견" color="bg-purple-50">
+          <Section icon="🌿" title="종합 의견" color="bg-green-50">
             <p className="text-sm leading-relaxed text-gray-700"><Md>{String(rj.overall_comment)}</Md></p>
           </Section>
         )}
@@ -88,7 +88,7 @@ function FullResultView({ item, displayType }: { item: HistoryItem; displayType:
           <Section icon="⭐" title="주목 성분" color="bg-emerald-50/60">
             <div className="space-y-2">
               {starIngs.map((ing, i) => {
-                const extra = [ing.benefit || "", ing.best_time ? `⏰ 사용 시간: ${ing.best_time}` : "", ing.synergy ? `💜 시너지: ${ing.synergy.join(", ")}` : ""].filter(Boolean).join("\n\n")
+                const extra = [ing.benefit || "", ing.best_time ? `⏰ 사용 시간: ${ing.best_time}` : "", ing.synergy ? `🌿 시너지: ${ing.synergy.join(", ")}` : ""].filter(Boolean).join("\n\n")
                 return <HistoryPill key={i} name={ing.name} detail={extra} good />
               })}
             </div>
@@ -184,7 +184,7 @@ function FullResultView({ item, displayType }: { item: HistoryItem; displayType:
     return (
       <div className="space-y-3">
         {Boolean(rj.routine_comment) && (
-          <Section icon="💜" title="종합 의견" color="bg-purple-50">
+          <Section icon="🌿" title="종합 의견" color="bg-green-50">
             <p className="text-sm leading-relaxed text-gray-700"><Md>{String(rj.routine_comment)}</Md></p>
           </Section>
         )}
@@ -220,7 +220,7 @@ function FullResultView({ item, displayType }: { item: HistoryItem; displayType:
           </Section>
         )}
         {timeline.length > 0 && (
-          <Section icon="⏰" title="루틴 타임라인" color="bg-purple-50/60">
+          <Section icon="⏰" title="루틴 타임라인" color="bg-green-50/60">
             <div className="grid grid-cols-2 gap-2">
               {timeline.map((t, i) => (
                 <div key={i} className={`rounded-xl p-3 ${t.timing === "morning" || t.timing === "both" ? "bg-amber-50 border border-amber-100" : "bg-indigo-50 border border-indigo-100"}`}>
@@ -267,7 +267,7 @@ function FullResultView({ item, displayType }: { item: HistoryItem; displayType:
   return (
     <div className="space-y-3">
       {Boolean(rj.summary) && (
-        <Section icon="💜" title="비교 요약" color="bg-purple-50">
+        <Section icon="🌿" title="비교 요약" color="bg-green-50">
           <p className="text-sm leading-relaxed text-gray-700"><Md>{String(rj.summary)}</Md></p>
         </Section>
       )}
@@ -277,8 +277,8 @@ function FullResultView({ item, displayType }: { item: HistoryItem; displayType:
         </Section>
       )}
       <div className="grid grid-cols-1 gap-2">
-        <div className="rounded-2xl bg-purple-50/50 p-4 border border-purple-100">
-          <p className="text-xs font-bold text-purple-600 mb-2">A: {names.a}</p>
+        <div className="rounded-2xl bg-green-50/50 p-4 border border-green-100">
+          <p className="text-xs font-bold text-green-700 mb-2">A: {names.a}</p>
           {onlyA.length > 0 ? onlyA.map((s, i) => (
             <div key={i} className="mb-1.5 last:mb-0">
               <span className="text-sm font-medium text-gray-700">{s.name}</span>
@@ -363,10 +363,10 @@ const TYPE_CONFIG = {
   routine: {
     label: "루틴 분석",
     icon: "🧴",
-    bg: "bg-purple-50",
-    text: "text-purple-600",
-    border: "border-purple-200",
-    accent: "from-purple-400 to-violet-300",
+    bg: "bg-green-50",
+    text: "text-green-700",
+    border: "border-green-200",
+    accent: "from-green-500 to-lime-300",
   },
   compare: {
     label: "성분 비교",
@@ -410,7 +410,7 @@ function NavBar() {
   return (
     <nav className="sticky top-0 z-50 flex h-14 items-center justify-between border-b border-gray-100/80 bg-white/80 px-6 backdrop-blur-2xl">
       <button onClick={() => router.push("/")} className="flex items-center gap-3 border-none bg-transparent p-0">
-        <div className="from-pastel-lavender-dark to-pastel-rose-dark relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-2xl bg-linear-to-br via-purple-400 shadow-md">
+        <div className="from-pastel-lavender-dark to-pastel-rose-dark relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-2xl bg-linear-to-br via-green-500 shadow-md">
           <div className="absolute inset-0 bg-linear-to-t from-white/10 to-transparent" />
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="relative">
             <circle cx="11" cy="11" r="6" stroke="white" strokeWidth="2" strokeOpacity="0.9" />
@@ -586,7 +586,7 @@ export default function HistoryPage() {
         <div className="mx-auto min-h-screen max-w-160 bg-white shadow-xl">
           <NavBar />
           <div className="flex h-[60vh] items-center justify-center">
-            <div className="h-8 w-8 rounded-full border-3 border-purple-200 border-t-purple-500 animate-spin" />
+            <div className="h-8 w-8 rounded-full border-3 border-green-200 border-t-green-500 animate-spin" />
           </div>
         </div>
       </div>
@@ -625,7 +625,7 @@ export default function HistoryPage() {
                 className={`flex items-center gap-1.5 rounded-full border px-3.5 py-2 text-xs font-bold transition-all duration-200 ${
                   filter === f.id
                     ? "from-pastel-lavender-dark to-pastel-rose-dark border-transparent bg-linear-to-r text-white shadow-md"
-                    : "border-gray-200 bg-white text-gray-400 hover:border-purple-200 hover:text-purple-500"
+                    : "border-gray-200 bg-white text-gray-400 hover:border-green-200 hover:text-green-500"
                 }`}
               >
                 <span className="text-sm">{f.icon}</span>
@@ -637,7 +637,7 @@ export default function HistoryPage() {
           {/* Content */}
           {loading ? (
             <div className="flex flex-col items-center justify-center py-20">
-              <div className="h-8 w-8 rounded-full border-3 border-purple-200 border-t-purple-500 animate-spin" />
+              <div className="h-8 w-8 rounded-full border-3 border-green-200 border-t-green-500 animate-spin" />
               <p className="mt-4 text-xs text-gray-300">불러오는 중...</p>
             </div>
           ) : items.length === 0 ? (
@@ -645,7 +645,7 @@ export default function HistoryPage() {
               <div className="relative mb-6">
                 <div className="bg-pastel-lavender/50 flex h-24 w-24 items-center justify-center rounded-full">
                   <div className="bg-pastel-lavender anim-float flex h-16 w-16 items-center justify-center rounded-full">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" className="text-purple-300">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" className="text-green-300">
                       <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                       <rect x="9" y="3" width="6" height="4" rx="1" stroke="currentColor" strokeWidth="1.5" />
                       <path d="M9 12h6M9 16h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
@@ -772,7 +772,7 @@ export default function HistoryPage() {
                                 alert("공유 링크가 복사되었어요!")
                               }
                             }}
-                            className="flex items-center gap-1.5 text-xs text-purple-400 transition-colors hover:text-purple-600"
+                            className="flex items-center gap-1.5 text-xs text-green-500 transition-colors hover:text-green-700"
                           >
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                               <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13" />
@@ -808,7 +808,7 @@ export default function HistoryPage() {
               <button
                 onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={page <= 1}
-                className="flex h-9 w-9 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-400 transition-all hover:border-purple-200 hover:text-purple-500 disabled:cursor-not-allowed disabled:opacity-30"
+                className="flex h-9 w-9 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-400 transition-all hover:border-green-200 hover:text-green-500 disabled:cursor-not-allowed disabled:opacity-30"
               >
                 <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
                   <path d="M10 4L6 8L10 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -827,7 +827,7 @@ export default function HistoryPage() {
                         className={`flex h-9 w-9 items-center justify-center rounded-xl border text-xs font-bold transition-all ${
                           p === page
                             ? "from-pastel-lavender-dark to-pastel-rose-dark border-transparent bg-linear-to-r text-white shadow-md"
-                            : "border-gray-200 bg-white text-gray-400 hover:border-purple-200 hover:text-purple-500"
+                            : "border-gray-200 bg-white text-gray-400 hover:border-green-200 hover:text-green-500"
                         }`}
                       >
                         {p}
@@ -839,7 +839,7 @@ export default function HistoryPage() {
               <button
                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                 disabled={page >= totalPages}
-                className="flex h-9 w-9 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-400 transition-all hover:border-purple-200 hover:text-purple-500 disabled:cursor-not-allowed disabled:opacity-30"
+                className="flex h-9 w-9 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-400 transition-all hover:border-green-200 hover:text-green-500 disabled:cursor-not-allowed disabled:opacity-30"
               >
                 <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
                   <path d="M6 4L10 8L6 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />

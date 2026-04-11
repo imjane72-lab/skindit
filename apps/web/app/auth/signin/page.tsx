@@ -31,7 +31,7 @@ function SignInContent() {
       <div className="relative glass-card rounded-3xl p-8 w-full max-w-95 shadow-xl anim-scale-in">
         {/* Logo */}
         <div className="flex flex-col items-center mb-8">
-          <div className="w-14 h-14 rounded-2xl bg-linear-to-br from-pastel-lavender-dark via-purple-400 to-pastel-rose-dark flex items-center justify-center shadow-lg relative overflow-hidden mb-5 anim-pop-in">
+          <div className="w-14 h-14 rounded-2xl bg-linear-to-br from-pastel-lavender-dark via-green-500 to-pastel-rose-dark flex items-center justify-center shadow-lg relative overflow-hidden mb-5 anim-pop-in">
             <div className="absolute inset-0 bg-linear-to-t from-white/10 to-transparent" />
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" className="relative">
               <circle cx="11" cy="11" r="6" stroke="white" strokeWidth="2" strokeOpacity="0.9" />
@@ -135,7 +135,7 @@ function SignInContent() {
 
       {/* 하단 링크 */}
       <div className="mt-8 anim-fade-up" style={{ animationDelay: "0.4s" }}>
-        <a href="/" className="text-xs text-gray-400 hover:text-purple-500 transition-colors">
+        <a href="/" className="text-xs text-gray-400 hover:text-green-500 transition-colors">
           {t("← 홈으로 돌아가기", "← Back to Home")}
         </a>
       </div>

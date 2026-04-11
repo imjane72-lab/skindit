@@ -37,7 +37,7 @@ export default function ApiDocsPage() {
 
   if (!spec) return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-      <div className="w-8 h-8 border-2 border-gray-200 border-t-purple-500 rounded-full" style={{ animation: "spin 1s linear infinite" }} />
+      <div className="w-8 h-8 border-2 border-gray-200 border-t-green-500 rounded-full" style={{ animation: "spin 1s linear infinite" }} />
     </div>
   )
 
@@ -49,9 +49,9 @@ export default function ApiDocsPage() {
           <div className="flex items-center gap-3 mb-3">
             <a href="/" className="flex items-baseline gap-0.5 no-underline">
               <span className="font-display text-xl font-extrabold text-gray-900">skin</span>
-              <span className="font-accent text-xl font-semibold italic text-transparent bg-clip-text bg-linear-to-r from-purple-500 to-pink-500">dit</span>
+              <span className="font-accent text-xl font-semibold italic text-transparent bg-clip-text bg-linear-to-r from-green-500 to-green-600">dit</span>
             </a>
-            <span className="text-xs font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full">API v{spec.info.version}</span>
+            <span className="text-xs font-bold text-green-700 bg-green-50 px-2 py-0.5 rounded-full">API v{spec.info.version}</span>
           </div>
           <h1 className="font-display text-3xl font-extrabold text-gray-900 mb-2">API Documentation</h1>
           <p className="text-sm text-gray-500">{spec.info.description}</p>
@@ -98,7 +98,7 @@ export default function ApiDocsPage() {
                           <p className="text-[11px] font-bold text-gray-400 uppercase mb-2">Parameters</p>
                           {detail.parameters.map(p => (
                             <div key={p.name} className="flex items-center gap-2 text-xs mb-1">
-                              <code className="font-semibold text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded">{p.name}</code>
+                              <code className="font-semibold text-green-700 bg-green-50 px-1.5 py-0.5 rounded">{p.name}</code>
                               <span className="text-gray-400">{p.in}</span>
                               <span className="text-gray-400">{p.schema.type}</span>
                             </div>

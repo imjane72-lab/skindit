@@ -136,7 +136,7 @@ export default function DiaryReportPage() {
         <div className="max-w-160 mx-auto bg-white min-h-screen shadow-xl">
           <NavBar />
           <div className="flex items-center justify-center h-[60vh]">
-            <div className="w-8 h-8 border-3 border-purple-200 border-t-purple-500 rounded-full animate-spin" />
+            <div className="w-8 h-8 border-3 border-green-200 border-t-green-500 rounded-full animate-spin" />
           </div>
         </div>
       </div>
@@ -159,7 +159,7 @@ export default function DiaryReportPage() {
               <p className="text-sm text-gray-400">기록을 분석해서 피부 패턴을 알려드려요</p>
             </div>
 
-            <div className="bg-white border-2 border-purple-100 rounded-2xl p-8 text-center shadow-sm anim-scale-in">
+            <div className="bg-white border-2 border-green-100 rounded-2xl p-8 text-center shadow-sm anim-scale-in">
               <div className="text-4xl mb-4">📝</div>
               <p className="text-sm font-bold text-gray-800 mb-1">리포트까지 {5 - entryCount}일 남았어요!</p>
               <p className="text-xs text-gray-400 leading-relaxed mb-2">
@@ -169,12 +169,12 @@ export default function DiaryReportPage() {
               </p>
               <div className="flex justify-center gap-1 mb-4">
                 {Array.from({ length: 5 }).map((_, i) => (
-                  <div key={i} className={`w-8 h-2 rounded-full ${i < entryCount ? "bg-purple-400" : "bg-gray-200"}`} />
+                  <div key={i} className={`w-8 h-2 rounded-full ${i < entryCount ? "bg-green-500" : "bg-gray-200"}`} />
                 ))}
               </div>
               <button
                 onClick={() => router.push("/diary/write")}
-                className="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-linear-to-r from-pastel-lavender-dark via-purple-400 to-pastel-rose-dark shadow-md hover:shadow-lg transition-all"
+                className="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-linear-to-r from-pastel-lavender-dark via-green-500 to-pastel-rose-dark shadow-md hover:shadow-lg transition-all"
               >
                 기록하러 가기
               </button>
@@ -201,9 +201,9 @@ export default function DiaryReportPage() {
 
             <div className="rounded-2xl p-30 text-center anim-scale-in">
               <div className="flex items-center justify-center gap-3 mb-14">
-                <div className="w-4 h-4 rounded-full" style={{ background: "#b39ddb", animation: "bounce-dot 1.2s ease-in-out infinite" }} />
-                <div className="w-4 h-4 rounded-full" style={{ background: "#ce93d8", animation: "bounce-dot 1.2s ease-in-out 0.2s infinite" }} />
-                <div className="w-4 h-4 rounded-full" style={{ background: "#f48fb1", animation: "bounce-dot 1.2s ease-in-out 0.4s infinite" }} />
+                <div className="w-4 h-4 rounded-full" style={{ background: "#7ba428", animation: "bounce-dot 1.2s ease-in-out infinite" }} />
+                <div className="w-4 h-4 rounded-full" style={{ background: "#8fb83a", animation: "bounce-dot 1.2s ease-in-out 0.2s infinite" }} />
+                <div className="w-4 h-4 rounded-full" style={{ background: "#a3c44d", animation: "bounce-dot 1.2s ease-in-out 0.4s infinite" }} />
               </div>
               <p className="text-sm font-bold text-gray-800 mb-1">스킨딧이 피부를 분석하고 있어요</p>
               <p className="text-xs text-gray-400" style={{ animation: "pulse-text 1.6s ease infinite" }}>최근 기록을 바탕으로 리포트를 작성 중...</p>
@@ -242,7 +242,7 @@ export default function DiaryReportPage() {
                   onClick={() => setSelectedMonth(key)}
                   className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
                     isSelected
-                      ? "bg-purple-100 text-purple-700 border border-purple-200"
+                      ? "bg-green-100 text-green-800 border border-green-200"
                       : "bg-gray-50 text-gray-400 border border-gray-100 hover:border-gray-200"
                   }`}
                 >
@@ -255,7 +255,7 @@ export default function DiaryReportPage() {
           {reportData ? (
             <div className="rounded-2xl overflow-hidden shadow-sm anim-scale-in">
               {/* Header — 은은한 파스텔 */}
-              <div className="bg-linear-to-r from-pastel-lavender-dark via-purple-400 to-pastel-rose-dark px-6 py-6 rounded-t-2xl">
+              <div className="bg-linear-to-r from-pastel-lavender-dark via-green-500 to-pastel-rose-dark px-6 py-6 rounded-t-2xl">
                 <h3 className="font-display text-white text-lg font-extrabold">
                   {session?.user?.name || ""}님의 피부 리포트 📑
                 </h3>
@@ -337,7 +337,7 @@ export default function DiaryReportPage() {
                       {reportData.top_products.map((p: string, i: number) => (
                         <span
                           key={i}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-pastel-lavender text-purple-700 border border-purple-100"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-pastel-lavender text-green-800 border border-green-100"
                         >
                           {p}
                         </span>
@@ -375,9 +375,9 @@ export default function DiaryReportPage() {
                       {reportData.recommendations.map((rec: string, i: number) => (
                         <div
                           key={i}
-                          className="flex gap-2.5 text-xs text-gray-600 leading-relaxed bg-purple-50/40 rounded-xl p-3 border border-purple-100/30"
+                          className="flex gap-2.5 text-xs text-gray-600 leading-relaxed bg-green-50/40 rounded-xl p-3 border border-green-100/30"
                         >
-                          <span className="text-purple-400 font-bold shrink-0">{i + 1}.</span>
+                          <span className="text-green-500 font-bold shrink-0">{i + 1}.</span>
                           <span>{rec}</span>
                         </div>
                       ))}
@@ -406,7 +406,7 @@ export default function DiaryReportPage() {
                     <p className="text-[10px] text-gray-500 leading-relaxed">
                       {(reportData.unanalyzed_products as string[]).join(", ")} — 성분 분석을 하시면 다음 리포트에서 더 정확하게 원인을 추적해 드릴게요~
                     </p>
-                    <a href="/" className="mt-2 inline-block text-[11px] font-bold text-purple-600 no-underline hover:underline">
+                    <a href="/" className="mt-2 inline-block text-[11px] font-bold text-green-700 no-underline hover:underline">
                       성분 분석하러 가기 →
                     </a>
                   </div>
@@ -426,7 +426,7 @@ export default function DiaryReportPage() {
                         alert("리포트가 복사되었어요!")
                       }
                     }}
-                    className="flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl text-sm font-bold text-purple-600 bg-purple-50 border border-purple-200 hover:bg-purple-100 transition-all"
+                    className="flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl text-sm font-bold text-green-700 bg-green-50 border border-green-200 hover:bg-green-100 transition-all"
                   >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13" />
@@ -450,7 +450,7 @@ export default function DiaryReportPage() {
               <p className="text-xs text-gray-400 leading-relaxed mb-4">다시 한번 시도해 주세요!</p>
               <button
                 onClick={fetchReport}
-                className="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-linear-to-r from-pastel-lavender-dark via-purple-400 to-pastel-rose-dark shadow-md hover:shadow-lg transition-all"
+                className="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-linear-to-r from-pastel-lavender-dark via-green-500 to-pastel-rose-dark shadow-md hover:shadow-lg transition-all"
               >
                 다시 시도
               </button>

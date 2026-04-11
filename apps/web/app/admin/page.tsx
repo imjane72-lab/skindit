@@ -28,7 +28,7 @@ function NavBar() {
   return (
     <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-2xl border-b border-gray-100/80 h-14 px-6 flex items-center justify-between">
       <button onClick={() => router.push("/")} className="flex items-center gap-3 bg-transparent border-none p-0">
-        <div className="w-9 h-9 rounded-2xl bg-linear-to-br from-pastel-lavender-dark via-purple-400 to-pastel-rose-dark flex items-center justify-center shadow-md relative overflow-hidden">
+        <div className="w-9 h-9 rounded-2xl bg-linear-to-br from-pastel-lavender-dark via-green-500 to-pastel-rose-dark flex items-center justify-center shadow-md relative overflow-hidden">
           <div className="absolute inset-0 bg-linear-to-t from-white/10 to-transparent" />
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="relative">
             <circle cx="11" cy="11" r="6" stroke="white" strokeWidth="2" strokeOpacity="0.9" />
@@ -126,7 +126,7 @@ export default function AdminPage() {
       <div className="min-h-screen bg-linear-to-b from-white via-pastel-lavender/20 to-pastel-rose/20">
         <NavBar />
         <div className="flex items-center justify-center h-[60vh]">
-          <div className="w-8 h-8 border-3 border-purple-200 border-t-purple-500 rounded-full animate-spin" />
+          <div className="w-8 h-8 border-3 border-green-200 border-t-green-500 rounded-full animate-spin" />
         </div>
       </div>
     );
@@ -197,7 +197,7 @@ export default function AdminPage() {
                           </p>
                           <ProviderBadge provider={user.provider} />
                           {user.role === "admin" && (
-                            <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold border bg-purple-50 text-purple-600 border-purple-200">
+                            <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold border bg-green-50 text-green-700 border-green-200">
                               admin
                             </span>
                           )}

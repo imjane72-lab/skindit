@@ -785,14 +785,14 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
   const canC = compareA.trim().length > 10 && compareB.trim().length > 10
 
   const STEP_COLORS = [
-    "from-pastel-lavender/60 to-purple-50/40",
+    "from-pastel-lavender/60 to-green-50/40",
     "from-pastel-peach/60 to-orange-50/40",
     "from-pastel-mint/60 to-teal-50/40",
     "from-pastel-sky/60 to-blue-50/40",
     "from-pastel-lemon/60 to-yellow-50/40",
   ]
   const STEP_BORDERS = [
-    "border-purple-100",
+    "border-green-100",
     "border-orange-100",
     "border-teal-100",
     "border-blue-100",
@@ -808,7 +808,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
           className="flex items-center gap-3 border-none bg-transparent p-0"
         >
           {/* 로고 마크 — 돋보기 + 피부 세포 */}
-          <div className="from-pastel-lavender-dark to-pastel-rose-dark relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-2xl bg-linear-to-br via-purple-400 shadow-md">
+          <div className="from-pastel-lavender-dark to-pastel-rose-dark relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-2xl bg-linear-to-br via-green-500 shadow-md">
             <div className="absolute inset-0 bg-linear-to-t from-white/10 to-transparent" />
             <svg
               width="18"
@@ -832,9 +832,9 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                 strokeLinecap="round"
                 strokeOpacity="0.9"
               />
-              <circle cx="9.5" cy="9.5" r="1.5" fill="rgba(179,157,219,0.7)" />
-              <circle cx="13" cy="11" r="1" fill="rgba(244,143,177,0.6)" />
-              <circle cx="10.5" cy="13" r="0.8" fill="rgba(179,157,219,0.5)" />
+              <circle cx="9.5" cy="9.5" r="1.5" fill="rgba(123,164,40,0.7)" />
+              <circle cx="13" cy="11" r="1" fill="rgba(163,196,77,0.6)" />
+              <circle cx="10.5" cy="13" r="0.8" fill="rgba(123,164,40,0.5)" />
             </svg>
           </div>
           <div className="flex items-baseline gap-0.5">
@@ -848,7 +848,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
         </button>
         <button
           onClick={() => switchLang(lang === "ko" ? "en" : "ko")}
-          className="hover:bg-pastel-lavender/30 rounded-xl border border-gray-100 bg-gray-50 px-3 py-1.5 text-xs font-bold text-gray-400 transition-all hover:border-purple-200 hover:text-purple-600"
+          className="hover:bg-pastel-lavender/30 rounded-xl border border-gray-100 bg-gray-50 px-3 py-1.5 text-xs font-bold text-gray-400 transition-all hover:border-green-200 hover:text-green-700"
         >
           {lang === "ko" ? "EN" : "KO"}
         </button>
@@ -857,48 +857,14 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
       {/* ── HERO ── */}
       {phase === "setup" && (
         <div className="relative overflow-hidden border-b border-gray-100/50 px-6 pt-14 pb-12">
-          {/* 오로라 웨이브 배경 */}
-          <div className="pointer-events-none absolute inset-0 overflow-hidden">
-            {/* 기본 그라디언트 — 천천히 전환 */}
-            <div className="anim-gradient-flow absolute inset-0 bg-linear-to-br from-purple-200/50 via-white via-40% to-pink-200/40" />
-
-            {/* 오로라 블롭 1 — 큰 퍼플, 느린 이동 */}
-            <div
-              className="pointer-events-none absolute h-100 w-100 rounded-full"
-              style={{
-                background:
-                  "radial-gradient(circle, rgba(167,139,250,0.45) 0%, rgba(167,139,250,0.1) 50%, transparent 70%)",
-                top: "-15%",
-                right: "-10%",
-                filter: "blur(40px)",
-                animation: "aurora-move-1 12s ease-in-out infinite",
-              }}
-            />
-            {/* 오로라 블롭 2 — 로즈 핑크, 다른 리듬 */}
-            <div
-              className="pointer-events-none absolute h-87.5 w-87.5 rounded-full"
-              style={{
-                background:
-                  "radial-gradient(circle, rgba(244,114,182,0.35) 0%, rgba(244,114,182,0.08) 50%, transparent 70%)",
-                bottom: "-10%",
-                left: "-12%",
-                filter: "blur(35px)",
-                animation: "aurora-move-2 10s ease-in-out infinite",
-              }}
-            />
-            {/* 오로라 블롭 3 — 민트 포인트 */}
-            <div
-              className="pointer-events-none absolute h-62.5 w-62.5 rounded-full"
-              style={{
-                background:
-                  "radial-gradient(circle, rgba(94,234,212,0.25) 0%, rgba(94,234,212,0.05) 50%, transparent 70%)",
-                top: "35%",
-                left: "25%",
-                filter: "blur(30px)",
-                animation: "aurora-move-3 14s ease-in-out infinite",
-              }}
-            />
-          </div>
+          {/* 미니멀 메시 그라디언트 배경 */}
+          <div
+            className="pointer-events-none absolute inset-0"
+            style={{
+              background:
+                "radial-gradient(ellipse 80% 60% at 20% 0%, rgba(123,164,40,0.08) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 100%, rgba(163,196,77,0.06) 0%, transparent 50%)",
+            }}
+          />
 
           <div className="relative">
             {/* Profile / Login circle */}
@@ -910,7 +876,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                       onClick={() => setProfileOpen((o) => !o)}
                       className="flex items-center gap-3 rounded-full border-none bg-transparent transition-all"
                     >
-                      <div className="bg-pastel-lavender flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full border-3 border-purple-200 transition-all hover:scale-105 hover:border-purple-300 hover:shadow-lg">
+                      <div className="bg-pastel-lavender flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full border-3 border-green-200 transition-all hover:scale-105 hover:border-green-300 hover:shadow-lg">
                         {session?.user?.image ? (
                           <img
                             src={session.user.image}
@@ -918,7 +884,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                             className="h-full w-full object-cover"
                           />
                         ) : (
-                          <span className="text-[10px] font-bold text-purple-500">
+                          <span className="text-[10px] font-bold text-green-500">
                             {session?.user?.name?.[0]?.toUpperCase() || "U"}
                           </span>
                         )}
@@ -938,7 +904,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                             WebkitBackdropFilter: "blur(40px) saturate(1.6)",
                             border: "1px solid rgba(255,255,255,0.6)",
                             boxShadow:
-                              "0 8px 40px rgba(120,80,200,0.12), 0 2px 8px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.8)",
+                              "0 8px 40px rgba(80,120,40,0.12), 0 2px 8px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.8)",
                           }}
                         >
                           <div className="mb-1.5 border-b border-white/30 px-3 py-2.5">
@@ -979,7 +945,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                           </a>
                           <a
                             href="/pricing"
-                            className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-medium text-purple-600 no-underline transition-all hover:bg-purple-50/50"
+                            className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-medium text-green-700 no-underline transition-all hover:bg-green-50/50"
                           >
                             <span className="text-sm">💎</span>{" "}
                             {t("프로 플랜", "Pro Plan")}
@@ -1009,19 +975,19 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                 ) : (
                   <button
                     onClick={() => signIn()}
-                    className="bg-pastel-lavender/60 hover:bg-pastel-lavender flex h-11 w-11 items-center justify-center rounded-full border-2 border-purple-200 transition-all"
+                    className="bg-pastel-lavender/60 hover:bg-pastel-lavender flex h-11 w-11 items-center justify-center rounded-full border-2 border-green-200 transition-all"
                   >
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                       <circle
                         cx="12"
                         cy="8"
                         r="4"
-                        stroke="#b39ddb"
+                        stroke="#7ba428"
                         strokeWidth="2"
                       />
                       <path
                         d="M4 20c0-3.3 3.6-6 8-6s8 2.7 8 6"
-                        stroke="#b39ddb"
+                        stroke="#7ba428"
                         strokeWidth="2"
                         strokeLinecap="round"
                       />
@@ -1032,7 +998,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
             </div>
 
             {/* 소제목 (작게) */}
-            <p className="anim-fade-up mb-4 text-sm font-semibold tracking-wide text-purple-500">
+            <p className="anim-fade-up mb-4 text-sm font-semibold tracking-wide text-green-500">
               {t(
                 "2만 개+ 성분 데이터 기반 AI 분석",
                 "AI Analysis Powered by 20K+ Ingredients"
@@ -1136,7 +1102,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                     icon: "💬",
                     label: t("상담", "Consult"),
                     sub: t("1:1 AI 상담", "1:1 AI consult"),
-                    bg: "bg-purple-50",
+                    bg: "bg-green-50",
                     href: "/chat",
                     scroll: false,
                   },
@@ -1191,8 +1157,8 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                     trendOpen === tr.id
                       ? "bg-linear-to-r " +
                         tr.gradient +
-                        " border-purple-200 shadow-sm"
-                      : "border-gray-200 bg-white text-gray-500 hover:border-purple-200 hover:bg-gray-50"
+                        " border-green-200 shadow-sm"
+                      : "border-gray-200 bg-white text-gray-500 hover:border-green-200 hover:bg-gray-50"
                   }`}
                 >
                   <span>{tr.icon}</span>
@@ -1201,7 +1167,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
               ))}
             </div>
             {trendOpen && (
-              <div className="anim-fade-up mt-3 rounded-2xl border border-purple-100/60 bg-linear-to-br from-purple-50/50 to-pink-50/30 p-4">
+              <div className="anim-fade-up mt-3 rounded-2xl border border-green-100/60 bg-linear-to-br from-green-50/50 to-lime-50/30 p-4">
                 <div className="mb-2 flex items-center gap-2">
                   <span className="text-lg">
                     {TRENDING.find((t) => t.id === trendOpen)?.icon}
@@ -1215,7 +1181,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                 {trendLoading ? (
                   <div className="flex items-center gap-2 text-xs text-gray-400">
                     <span
-                      className="inline-block h-3.5 w-3.5 rounded-full border-2 border-purple-200 border-t-purple-500"
+                      className="inline-block h-3.5 w-3.5 rounded-full border-2 border-green-200 border-t-green-500"
                       style={{ animation: "spin 1s linear infinite" }}
                     />
                     {t("알아보는 중...", "Loading...")}
@@ -1348,7 +1314,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                     "Search by product name"
                   )}
                   disabled={oyLoading}
-                  className="flex-1 rounded-xl border border-gray-200 bg-gray-50/50 px-4 py-3 text-sm text-gray-900 transition-all outline-none placeholder:text-gray-400 focus:border-purple-300 focus:bg-white focus:ring-2 focus:ring-purple-100 disabled:opacity-50"
+                  className="flex-1 rounded-xl border border-gray-200 bg-gray-50/50 px-4 py-3 text-sm text-gray-900 transition-all outline-none placeholder:text-gray-400 focus:border-green-300 focus:bg-white focus:ring-2 focus:ring-green-100 disabled:opacity-50"
                 />
                 <button
                   onClick={handleOySearch}
@@ -1417,17 +1383,17 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                   "예) 에스트라 아토배리어365 크림",
                   "e.g. Aestura Atobarrier 365 Cream"
                 )}
-                className="w-full rounded-xl border border-gray-200 bg-gray-50/50 px-4 py-3 text-sm text-gray-900 transition-all outline-none placeholder:text-gray-400 focus:border-purple-300 focus:bg-white focus:ring-2 focus:ring-purple-100"
+                className="w-full rounded-xl border border-gray-200 bg-gray-50/50 px-4 py-3 text-sm text-gray-900 transition-all outline-none placeholder:text-gray-400 focus:border-green-300 focus:bg-white focus:ring-2 focus:ring-green-100"
               />
             </div>
 
             {/* ── 📷 성분표 스캔 (메인) ── */}
             <div className="mb-8">
               {ocrLoading ? (
-                <div className="flex flex-col items-center gap-3 rounded-2xl border-2 border-purple-200 bg-linear-to-br from-purple-50 to-pink-50 p-6">
+                <div className="flex flex-col items-center gap-3 rounded-2xl border-2 border-green-200 bg-linear-to-br from-green-50 to-lime-50 p-6">
                   <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow-sm">
                     <span
-                      className="inline-block h-6 w-6 rounded-full border-3 border-purple-200 border-t-purple-600"
+                      className="inline-block h-6 w-6 rounded-full border-3 border-green-200 border-t-green-700"
                       style={{ animation: "spin 1s linear infinite" }}
                     />
                   </div>
@@ -1436,7 +1402,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                   </p>
                 </div>
               ) : (
-                <label className="from-pastel-lavender/40 via-pastel-rose/20 to-pastel-peach/30 flex cursor-pointer flex-col items-center gap-3 rounded-2xl border border-purple-100/60 bg-linear-to-br p-6 transition-all hover:border-purple-200 hover:shadow-sm">
+                <label className="from-pastel-lavender/40 via-pastel-rose/20 to-pastel-peach/30 flex cursor-pointer flex-col items-center gap-3 rounded-2xl border border-green-100/60 bg-linear-to-br p-6 transition-all hover:border-green-200 hover:shadow-sm">
                   <div className="from-pastel-lavender to-pastel-rose flex h-14 w-14 items-center justify-center rounded-2xl bg-linear-to-br text-2xl">
                     📷
                   </div>
@@ -1497,13 +1463,13 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                   "e.g. Water, Glycerin, Niacinamide..."
                 )}
                 rows={6}
-                className="w-full resize-y rounded-2xl border border-gray-200 bg-gray-50/50 px-4 py-3.5 text-sm leading-relaxed text-gray-900 transition-all outline-none placeholder:text-gray-400 focus:border-purple-300 focus:bg-white focus:ring-2 focus:ring-purple-100"
+                className="w-full resize-y rounded-2xl border border-gray-200 bg-gray-50/50 px-4 py-3.5 text-sm leading-relaxed text-gray-900 transition-all outline-none placeholder:text-gray-400 focus:border-green-300 focus:bg-white focus:ring-2 focus:ring-green-100"
               />
               <button
                 onClick={() =>
                   setIngs(lang === "ko" ? SAMPLE_S_KO : SAMPLE_S_EN)
                 }
-                className="mt-2 border-none bg-transparent p-0 text-xs font-medium text-gray-400 underline underline-offset-2 transition-colors hover:text-purple-500"
+                className="mt-2 border-none bg-transparent p-0 text-xs font-medium text-gray-400 underline underline-offset-2 transition-colors hover:text-green-500"
               >
                 {t("샘플로 한번 해볼래? →", "Try with sample →")}
               </button>
@@ -1512,7 +1478,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
             <button
               onClick={analyzeSingle}
               disabled={!canS}
-              className="pastel-lavender-dark to-pastel-rose-dark w-full rounded-2xl bg-linear-to-r via-purple-400 py-4 text-sm font-bold text-white shadow-md transition-all hover:-translate-y-0.5 hover:opacity-90 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:translate-y-0 disabled:hover:shadow-none"
+              className="pastel-lavender-dark to-pastel-rose-dark w-full rounded-2xl bg-linear-to-r via-green-500 py-4 text-sm font-bold text-white shadow-md transition-all hover:-translate-y-0.5 hover:opacity-90 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:translate-y-0 disabled:hover:shadow-none"
             >
               {t("분석해볼까요?", "Analyze Ingredients")}
             </button>
@@ -1582,7 +1548,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                           "🛒 Search product"
                         )}
                         disabled={routineOyLoading[p.id]}
-                        className="flex-1 rounded-xl border border-white/70 bg-white/60 px-3 py-2 text-xs transition-all outline-none placeholder:text-gray-400 focus:border-purple-300 focus:bg-white disabled:opacity-50"
+                        className="flex-1 rounded-xl border border-white/70 bg-white/60 px-3 py-2 text-xs transition-all outline-none placeholder:text-gray-400 focus:border-green-300 focus:bg-white disabled:opacity-50"
                       />
                       <button
                         onClick={() => handleRoutineOySearch(p.id)}
@@ -1617,14 +1583,14 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                         "제품 이름 (선택)",
                         "Product name (optional)"
                       )}
-                      className="mb-2 w-full rounded-xl border border-white/70 bg-white/60 px-3 py-2 text-sm transition-all outline-none placeholder:text-gray-400 focus:border-purple-300 focus:bg-white"
+                      className="mb-2 w-full rounded-xl border border-white/70 bg-white/60 px-3 py-2 text-sm transition-all outline-none placeholder:text-gray-400 focus:border-green-300 focus:bg-white"
                     />
 
                     {/* ── 성분 입력: 카메라 촬영 / 사진 선택 ── */}
-                    <label className="hover:bg-pastel-lavender/30 mb-2 flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-purple-100 bg-white/60 px-3 py-2.5 text-[11px] font-semibold text-purple-500 transition-all hover:border-purple-200">
+                    <label className="hover:bg-pastel-lavender/30 mb-2 flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-green-100 bg-white/60 px-3 py-2.5 text-[11px] font-semibold text-green-500 transition-all hover:border-green-200">
                       {routineOcrLoading[p.id] ? (
                         <span
-                          className="inline-block h-3.5 w-3.5 rounded-full border-2 border-purple-300 border-t-purple-600"
+                          className="inline-block h-3.5 w-3.5 rounded-full border-2 border-green-300 border-t-green-700"
                           style={{ animation: "spin 1s linear infinite" }}
                         />
                       ) : (
@@ -1662,7 +1628,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                         "Ingredients auto-fill here, or paste manually"
                       )}
                       rows={3}
-                      className="w-full resize-y rounded-xl border border-white/70 bg-white/60 px-3 py-2 text-xs leading-relaxed transition-all outline-none placeholder:text-gray-400 focus:border-purple-300 focus:bg-white"
+                      className="w-full resize-y rounded-xl border border-white/70 bg-white/60 px-3 py-2 text-xs leading-relaxed transition-all outline-none placeholder:text-gray-400 focus:border-green-300 focus:bg-white"
                     />
                   </div>
                 ))}
@@ -1675,13 +1641,13 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                       { id: Date.now(), name: "", ingredients: "" },
                     ])
                   }
-                  className="hover:bg-pastel-lavender/30 rounded-xl border border-gray-200 bg-white px-4 py-2 text-xs font-medium text-gray-500 transition-all hover:border-purple-200 hover:text-purple-600"
+                  className="hover:bg-pastel-lavender/30 rounded-xl border border-gray-200 bg-white px-4 py-2 text-xs font-medium text-gray-500 transition-all hover:border-green-200 hover:text-green-700"
                 >
                   + {t("제품 추가", "Add product")}
                 </button>
                 <button
                   onClick={() => setProducts(SAMPLE_R)}
-                  className="border-none bg-transparent p-0 text-xs font-medium text-gray-400 underline underline-offset-2 transition-colors hover:text-purple-500"
+                  className="border-none bg-transparent p-0 text-xs font-medium text-gray-400 underline underline-offset-2 transition-colors hover:text-green-500"
                 >
                   {t("샘플로 해볼래? →", "Try sample →")}
                 </button>
@@ -1690,7 +1656,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
             <button
               onClick={analyzeRoutine}
               disabled={!canR}
-              className="from-pastel-lavender-dark to-pastel-rose-dark w-full rounded-2xl bg-linear-to-r via-purple-400 py-4 text-sm font-bold text-white shadow-md transition-all hover:-translate-y-0.5 hover:opacity-90 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:translate-y-0 disabled:hover:shadow-none"
+              className="from-pastel-lavender-dark to-pastel-rose-dark w-full rounded-2xl bg-linear-to-r via-green-500 py-4 text-sm font-bold text-white shadow-md transition-all hover:-translate-y-0.5 hover:opacity-90 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:translate-y-0 disabled:hover:shadow-none"
             >
               {t("궁합 체크해볼까요?", "Check Compatibility")}
             </button>
@@ -1723,8 +1689,8 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                     set: setCompareA,
                     name: compareNameA,
                     setName: setCompareNameA,
-                    gradient: "from-pastel-lavender/60 to-purple-50/40",
-                    border: "border-purple-100",
+                    gradient: "from-pastel-lavender/60 to-green-50/40",
+                    border: "border-green-100",
                   },
                   {
                     label: "B" as const,
@@ -1768,7 +1734,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                           "🛒 Search product"
                         )}
                         disabled={compareOyLoading[p.label]}
-                        className="flex-1 rounded-xl border border-white/70 bg-white/60 px-3 py-2 text-xs transition-all outline-none placeholder:text-gray-400 focus:border-purple-300 focus:bg-white disabled:opacity-50"
+                        className="flex-1 rounded-xl border border-white/70 bg-white/60 px-3 py-2 text-xs transition-all outline-none placeholder:text-gray-400 focus:border-green-300 focus:bg-white disabled:opacity-50"
                       />
                       <button
                         onClick={() => handleCompareOySearch(p.label)}
@@ -1797,13 +1763,13 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                         "제품 이름 (선택)",
                         "Product name (optional)"
                       )}
-                      className="mb-2 w-full rounded-xl border border-white/70 bg-white/60 px-3 py-2 text-sm transition-all outline-none placeholder:text-gray-400 focus:border-purple-300 focus:bg-white"
+                      className="mb-2 w-full rounded-xl border border-white/70 bg-white/60 px-3 py-2 text-sm transition-all outline-none placeholder:text-gray-400 focus:border-green-300 focus:bg-white"
                     />
                     {/* ── 성분 입력: 카메라 촬영 / 사진 선택 ── */}
-                    <label className="hover:bg-pastel-lavender/30 mb-2 flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-purple-100 bg-white/60 px-3 py-2.5 text-[11px] font-semibold text-purple-500 transition-all hover:border-purple-200">
+                    <label className="hover:bg-pastel-lavender/30 mb-2 flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-green-100 bg-white/60 px-3 py-2.5 text-[11px] font-semibold text-green-500 transition-all hover:border-green-200">
                       {compareOcrLoading === p.label ? (
                         <span
-                          className="inline-block h-3.5 w-3.5 rounded-full border-2 border-purple-300 border-t-purple-600"
+                          className="inline-block h-3.5 w-3.5 rounded-full border-2 border-green-300 border-t-green-700"
                           style={{ animation: "spin 1s linear infinite" }}
                         />
                       ) : (
@@ -1832,7 +1798,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                         "Ingredients auto-fill here, or paste manually"
                       )}
                       rows={3}
-                      className="w-full resize-y rounded-xl border border-white/70 bg-white/60 px-3 py-2 text-xs leading-relaxed transition-all outline-none placeholder:text-gray-400 focus:border-purple-300 focus:bg-white"
+                      className="w-full resize-y rounded-xl border border-white/70 bg-white/60 px-3 py-2 text-xs leading-relaxed transition-all outline-none placeholder:text-gray-400 focus:border-green-300 focus:bg-white"
                     />
                   </div>
                 ))}
@@ -1841,7 +1807,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
             <button
               onClick={analyzeCompare}
               disabled={!canC}
-              className="from-pastel-lavender-dark to-pastel-rose-dark w-full rounded-2xl bg-linear-to-r via-purple-400 py-4 text-sm font-bold text-white shadow-md transition-all hover:-translate-y-0.5 hover:opacity-90 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:translate-y-0 disabled:hover:shadow-none"
+              className="from-pastel-lavender-dark to-pastel-rose-dark w-full rounded-2xl bg-linear-to-r via-green-500 py-4 text-sm font-bold text-white shadow-md transition-all hover:-translate-y-0.5 hover:opacity-90 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:translate-y-0 disabled:hover:shadow-none"
             >
               {t("비교하기", "Compare Ingredients")}
             </button>
@@ -1909,7 +1875,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
       {/* ── PWA Install Banner ── */}
       {showPwaBanner && phase === "setup" && (
         <div className="anim-fade-up fixed right-0 bottom-6 left-0 z-50 mx-auto max-w-140 px-4">
-          <div className="flex items-center gap-3 rounded-2xl border border-purple-200 bg-white/95 p-4 shadow-xl backdrop-blur">
+          <div className="flex items-center gap-3 rounded-2xl border border-green-200 bg-white/95 p-4 shadow-xl backdrop-blur">
             <div className="from-pastel-lavender-dark to-pastel-rose-dark flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-linear-to-br shadow-md">
               <svg
                 width="18"
@@ -1994,25 +1960,25 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                 </p>
                 <a
                   href="/chat"
-                  className="block text-gray-400 no-underline hover:text-purple-500"
+                  className="block text-gray-400 no-underline hover:text-green-500"
                 >
                   {t("AI 상담", "AI Chat")}
                 </a>
                 <a
                   href="/diary"
-                  className="block text-gray-400 no-underline hover:text-purple-500"
+                  className="block text-gray-400 no-underline hover:text-green-500"
                 >
                   {t("피부 일지", "Skin Diary")}
                 </a>
                 <a
                   href="/diary/report"
-                  className="block text-gray-400 no-underline hover:text-purple-500"
+                  className="block text-gray-400 no-underline hover:text-green-500"
                 >
                   {t("피부 리포트", "Report")}
                 </a>
                 <a
                   href="/history"
-                  className="block text-gray-400 no-underline hover:text-purple-500"
+                  className="block text-gray-400 no-underline hover:text-green-500"
                 >
                   {t("분석 기록", "History")}
                 </a>
@@ -2023,13 +1989,13 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                 </p>
                 <a
                   href="/profile"
-                  className="block text-gray-400 no-underline hover:text-purple-500"
+                  className="block text-gray-400 no-underline hover:text-green-500"
                 >
                   {t("피부 프로필", "Skin Profile")}
                 </a>
                 <a
                   href="/pricing"
-                  className="block text-gray-400 no-underline hover:text-purple-500"
+                  className="block text-gray-400 no-underline hover:text-green-500"
                 >
                   {t("프로 플랜", "Pro Plan")}
                 </a>

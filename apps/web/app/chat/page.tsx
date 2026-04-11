@@ -58,7 +58,7 @@ function NavBar() {
   return (
     <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-2xl border-b border-gray-100/80 h-14 px-6 flex items-center justify-between">
       <button onClick={() => router.push("/")} className="flex items-center gap-3 bg-transparent border-none p-0">
-        <div className="w-9 h-9 rounded-2xl bg-linear-to-br from-pastel-lavender-dark via-purple-400 to-pastel-rose-dark flex items-center justify-center shadow-md relative overflow-hidden">
+        <div className="w-9 h-9 rounded-2xl bg-linear-to-br from-pastel-lavender-dark via-green-500 to-pastel-rose-dark flex items-center justify-center shadow-md relative overflow-hidden">
           <div className="absolute inset-0 bg-linear-to-t from-white/10 to-transparent" />
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="relative">
             <circle cx="11" cy="11" r="6" stroke="white" strokeWidth="2" strokeOpacity="0.9" />
@@ -278,8 +278,8 @@ export default function ChatPage() {
                 onClick={() => sendMessage(chip)}
                 disabled={isTyping}
                 className="shrink-0 px-3.5 py-2 rounded-full text-[12.5px] font-medium
-                  bg-pastel-lavender/50 text-purple-700 border border-purple-100
-                  hover:bg-pastel-lavender hover:border-purple-200 hover:shadow-sm
+                  bg-pastel-lavender/50 text-green-800 border border-green-100
+                  hover:bg-pastel-lavender hover:border-green-200 hover:shadow-sm
                   active:scale-95 transition-all duration-150
                   disabled:opacity-50 disabled:cursor-not-allowed"
               >
@@ -307,9 +307,9 @@ export default function ChatPage() {
             type="submit"
             disabled={!input.trim() || isTyping}
             className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0
-              bg-linear-to-br from-pastel-lavender-dark via-purple-400 to-pastel-rose-dark
-              text-white shadow-lg shadow-purple-200/50
-              hover:shadow-xl hover:shadow-purple-300/50 hover:scale-105
+              bg-linear-to-br from-pastel-lavender-dark via-green-500 to-pastel-rose-dark
+              text-white shadow-lg shadow-green-200/50
+              hover:shadow-xl hover:shadow-green-300/50 hover:scale-105
               active:scale-95 transition-all duration-200
               disabled:opacity-40 disabled:shadow-none disabled:hover:scale-100"
           >

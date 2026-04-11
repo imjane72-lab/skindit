@@ -56,7 +56,7 @@ const CONCERNS = [
     ko: "민감성",
     en: "Sensitive",
     icon: "🫧",
-    color: "bg-pastel-lavender text-purple-700 border-purple-200",
+    color: "bg-pastel-lavender text-green-800 border-green-200",
   },
   {
     id: "pores",
@@ -98,7 +98,7 @@ const CONCERNS = [
     ko: "노화",
     en: "Anti-aging",
     icon: "🌿",
-    color: "bg-pastel-lilac text-purple-700 border-purple-200",
+    color: "bg-pastel-lilac text-green-800 border-green-200",
   },
   {
     id: "blackhead",
@@ -112,7 +112,7 @@ const CONCERNS = [
     ko: "다크서클",
     en: "Dark Circles",
     icon: "👁",
-    color: "bg-purple-50 text-purple-700 border-purple-200",
+    color: "bg-green-50 text-green-800 border-green-200",
   },
   {
     id: "pigmentation",
@@ -139,7 +139,7 @@ function NavBar() {
         onClick={() => router.push("/")}
         className="flex items-center gap-3 border-none bg-transparent p-0"
       >
-        <div className="from-pastel-lavender-dark to-pastel-rose-dark relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-2xl bg-linear-to-br via-purple-400 shadow-md">
+        <div className="from-pastel-lavender-dark to-pastel-rose-dark relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-2xl bg-linear-to-br via-green-500 shadow-md">
           <div className="absolute inset-0 bg-linear-to-t from-white/10 to-transparent" />
           <svg
             width="18"
@@ -253,7 +253,7 @@ export default function ProfilePage() {
       <div className="via-pastel-lavender/20 to-pastel-rose/20 min-h-screen bg-linear-to-b from-white">
         <NavBar />
         <div className="flex h-[60vh] items-center justify-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-3 border-purple-200 border-t-purple-500" />
+          <div className="h-8 w-8 animate-spin rounded-full border-3 border-green-200 border-t-green-500" />
         </div>
       </div>
     )
@@ -290,7 +290,7 @@ export default function ProfilePage() {
               <span className="font-normal tracking-normal text-gray-300 normal-case">
                 Skin Type
               </span>
-              <span className="ml-2 text-[11px] font-medium text-purple-400">
+              <span className="ml-2 text-[11px] font-medium text-green-500">
                 최대 2개
               </span>
             </h2>
@@ -310,10 +310,10 @@ export default function ProfilePage() {
                     }}
                     className={`glass-card rounded-2xl p-4 text-left transition-all duration-200 ${
                       selected
-                        ? "border-purple-200 shadow-lg ring-2 shadow-purple-100/50 ring-purple-400"
+                        ? "border-green-200 shadow-lg ring-2 shadow-green-100/50 ring-green-500"
                         : skinType.length >= 2
                           ? "opacity-40"
-                          : "hover:border-purple-100 hover:shadow-md"
+                          : "hover:border-green-100 hover:shadow-md"
                     }`}
                   >
                     <div className="flex items-center gap-3">
@@ -334,7 +334,7 @@ export default function ProfilePage() {
                       <div
                         className={`flex h-5 w-5 items-center justify-center rounded-full border-2 transition-all ${
                           selected
-                            ? "border-purple-400 bg-purple-400"
+                            ? "border-green-500 bg-green-500"
                             : "border-gray-200"
                         }`}
                       >
@@ -418,7 +418,7 @@ export default function ProfilePage() {
               }}
               placeholder="알레르기, 복용 약, 특이사항 있으면 적어줘~"
               rows={4}
-              className="glass-card w-full resize-none rounded-2xl p-4 text-sm text-gray-700 transition-all placeholder:text-gray-300 focus:ring-2 focus:ring-purple-300 focus:outline-none"
+              className="glass-card w-full resize-none rounded-2xl p-4 text-sm text-gray-700 transition-all placeholder:text-gray-300 focus:ring-2 focus:ring-green-300 focus:outline-none"
             />
           </section>
 
@@ -427,7 +427,7 @@ export default function ProfilePage() {
             <button
               onClick={handleSave}
               disabled={saving || skinType.length === 0}
-              className="from-pastel-lavender-dark to-pastel-rose-dark font-display relative h-13 w-full overflow-hidden rounded-2xl bg-linear-to-r via-purple-400 text-sm font-bold tracking-wide text-white shadow-lg shadow-purple-200/50 transition-all duration-300 hover:shadow-xl hover:shadow-purple-300/50 disabled:cursor-not-allowed disabled:opacity-40"
+              className="from-pastel-lavender-dark to-pastel-rose-dark font-display relative h-13 w-full overflow-hidden rounded-2xl bg-linear-to-r via-green-500 text-sm font-bold tracking-wide text-white shadow-lg shadow-green-200/50 transition-all duration-300 hover:shadow-xl hover:shadow-green-300/50 disabled:cursor-not-allowed disabled:opacity-40"
             >
               {saving ? (
                 <div className="flex items-center justify-center gap-2">
