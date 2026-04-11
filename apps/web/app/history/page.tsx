@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { SITE_URL } from "@/lib/constants"
+import NavBar from "@/components/ui/NavBar"
 
 /* ── 마크다운 파서 ── */
 function Md({ children }: { children: string }) {
@@ -404,31 +405,6 @@ function MiniScoreRing({ score, size = 44 }: { score: number; size?: number }) {
   )
 }
 
-/* ── 네비게이션 바 ── */
-function NavBar() {
-  const router = useRouter()
-  return (
-    <nav className="sticky top-0 z-50 flex h-14 items-center justify-between border-b border-gray-100/80 bg-white/80 px-6 backdrop-blur-2xl">
-      <button onClick={() => router.push("/")} className="flex items-center gap-3 border-none bg-transparent p-0">
-        <div className="bg-[#9bce26] shadow-md">
-          <div className="absolute inset-0 bg-linear-to-t from-white/10 to-transparent" />
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="relative">
-            <circle cx="11" cy="11" r="6" stroke="white" strokeWidth="2" strokeOpacity="0.9" />
-            <path d="M16 16L20 20" stroke="white" strokeWidth="2" strokeLinecap="round" strokeOpacity="0.9" />
-            <circle cx="9.5" cy="9.5" r="1.5" fill="rgba(179,157,219,0.7)" />
-            <circle cx="13" cy="11" r="1" fill="rgba(244,143,177,0.6)" />
-            <circle cx="10.5" cy="13" r="0.8" fill="rgba(179,157,219,0.5)" />
-          </svg>
-        </div>
-        <div className="flex items-baseline gap-0.5">
-          <span className="font-display text-[17px] font-extrabold tracking-tight text-gray-900">skin</span>
-          <span className="font-accent from-pastel-lavender-dark to-pastel-rose-dark bg-linear-to-r bg-clip-text text-[17px] font-semibold text-transparent italic">dit</span>
-        </div>
-      </button>
-      <span className="text-xs font-bold tracking-widest text-gray-400 uppercase">History</span>
-    </nav>
-  )
-}
 
 /* ── 파싱 유틸 ── */
 function getProductName(item: HistoryItem): string {
@@ -584,7 +560,7 @@ export default function HistoryPage() {
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="mx-auto min-h-screen max-w-160 bg-white shadow-xl">
-          <NavBar />
+          <NavBar title="History" />
           <div className="flex h-[60vh] items-center justify-center">
             <div className="h-8 w-8 rounded-full border-3 border-[#9bce26]/30 border-t-[#9bce26] animate-spin" />
           </div>
@@ -602,7 +578,7 @@ export default function HistoryPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="relative mx-auto min-h-screen max-w-160 overflow-hidden bg-white shadow-xl">
-        <NavBar />
+        <NavBar title="History" />
 
         <div className="px-6 py-8 pb-24">
           {/* Header */}

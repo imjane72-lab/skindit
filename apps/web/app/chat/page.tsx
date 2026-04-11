@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import NavBar from "@/components/ui/NavBar";
 
 /* ── 타입 정의 ── */
 interface Message {
@@ -51,32 +52,6 @@ const uid = () => Math.random().toString(36).slice(2, 10);
 
 const formatTime = (d: Date) =>
   d.toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit", hour12: true });
-
-/* ── 네비게이션 바 ── */
-function NavBar() {
-  const router = useRouter();
-  return (
-    <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-2xl border-b border-gray-100/80 h-14 px-6 flex items-center justify-between">
-      <button onClick={() => router.push("/")} className="flex items-center gap-3 bg-transparent border-none p-0">
-        <div className="w-9 h-9 rounded-2xl bg-[#9bce26] flex items-center justify-center shadow-md relative overflow-hidden">
-          <div className="absolute inset-0 bg-linear-to-t from-white/10 to-transparent" />
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="relative">
-            <circle cx="11" cy="11" r="6" stroke="white" strokeWidth="2" strokeOpacity="0.9" />
-            <path d="M16 16L20 20" stroke="white" strokeWidth="2" strokeLinecap="round" strokeOpacity="0.9" />
-            <circle cx="9.5" cy="9.5" r="1.5" fill="rgba(179,157,219,0.7)" />
-            <circle cx="13" cy="11" r="1" fill="rgba(244,143,177,0.6)" />
-            <circle cx="10.5" cy="13" r="0.8" fill="rgba(179,157,219,0.5)" />
-          </svg>
-        </div>
-        <div className="flex items-baseline gap-0.5">
-          <span className="font-display text-[17px] font-extrabold text-gray-900 tracking-tight">skin</span>
-          <span className="font-accent text-[17px] font-semibold italic text-transparent bg-clip-text bg-linear-to-r from-pastel-lavender-dark to-pastel-rose-dark">dit</span>
-        </div>
-      </button>
-      <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Chat</span>
-    </nav>
-  );
-}
 
 /* ── 타이핑 인디케이터 ── */
 function TypingIndicator() {
@@ -252,7 +227,7 @@ export default function ChatPage() {
 
   return (
     <div className="max-w-160 mx-auto bg-white min-h-screen shadow-xl flex flex-col relative">
-      <NavBar />
+      <NavBar title="Chat" />
 
       {/* ── 장식용 블롭 ── */}
       <div className="blob w-48 h-48 bg-pastel-lavender top-24 -left-16 fixed" />

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import NavBar from "@/components/ui/NavBar";
 
 /* ── 타입 정의 ── */
 interface RecentUser {
@@ -20,32 +21,6 @@ interface AdminStats {
   totalDiary: number;
   totalChats: number;
   recentUsers: RecentUser[];
-}
-
-/* ── 네비게이션 바 ── */
-function NavBar() {
-  const router = useRouter();
-  return (
-    <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-2xl border-b border-gray-100/80 h-14 px-6 flex items-center justify-between">
-      <button onClick={() => router.push("/")} className="flex items-center gap-3 bg-transparent border-none p-0">
-        <div className="w-9 h-9 rounded-2xl bg-[#9bce26] flex items-center justify-center shadow-md relative overflow-hidden">
-          <div className="absolute inset-0 bg-linear-to-t from-white/10 to-transparent" />
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="relative">
-            <circle cx="11" cy="11" r="6" stroke="white" strokeWidth="2" strokeOpacity="0.9" />
-            <path d="M16 16L20 20" stroke="white" strokeWidth="2" strokeLinecap="round" strokeOpacity="0.9" />
-            <circle cx="9.5" cy="9.5" r="1.5" fill="rgba(179,157,219,0.7)" />
-            <circle cx="13" cy="11" r="1" fill="rgba(244,143,177,0.6)" />
-            <circle cx="10.5" cy="13" r="0.8" fill="rgba(179,157,219,0.5)" />
-          </svg>
-        </div>
-        <div className="flex items-baseline gap-0.5">
-          <span className="font-display text-[17px] font-extrabold text-gray-900 tracking-tight">skin</span>
-          <span className="font-accent text-[17px] font-semibold italic text-transparent bg-clip-text bg-linear-to-r from-pastel-lavender-dark to-pastel-rose-dark">dit</span>
-        </div>
-      </button>
-      <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Admin</span>
-    </nav>
-  );
 }
 
 /* ── 통계 카드 ── */
@@ -124,7 +99,7 @@ export default function AdminPage() {
   if (status === "loading" || (status === "authenticated" && loading)) {
     return (
       <div className="min-h-screen bg-linear-to-b from-white via-[#9bce26]/5 to-pastel-rose/20">
-        <NavBar />
+        <NavBar title="Admin" />
         <div className="flex items-center justify-center h-[60vh]">
           <div className="w-8 h-8 border-3 border-[#9bce26]/30 border-t-[#9bce26] rounded-full animate-spin" />
         </div>
@@ -138,7 +113,7 @@ export default function AdminPage() {
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-160 mx-auto bg-white min-h-screen shadow-xl relative overflow-hidden">
-          <NavBar />
+          <NavBar title="Admin" />
           <div className="px-6 py-8 text-center">
             <p className="text-sm text-red-500">{error}</p>
           </div>
@@ -150,7 +125,7 @@ export default function AdminPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-160 mx-auto bg-white min-h-screen shadow-xl relative overflow-hidden">
-        <NavBar />
+        <NavBar title="Admin" />
 
         <div className="px-6 py-8 pb-24">
           {/* Header */}

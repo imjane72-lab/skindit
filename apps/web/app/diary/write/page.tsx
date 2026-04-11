@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback, Suspense } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
+import NavBar from "@/components/ui/NavBar";
 
 /* ── Constants ── */
 const CONDITIONS = [
@@ -43,24 +44,6 @@ const todayStr = () => {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 };
-
-/* ── NavBar ── */
-function NavBar() {
-  const router = useRouter();
-  return (
-    <nav className="sticky top-0 z-50 flex h-14 items-center justify-between border-b border-gray-100/80 bg-white/80 px-6 backdrop-blur-2xl">
-      <button onClick={() => router.push("/diary")} className="flex items-center gap-3 border-none bg-transparent p-0">
-        <div className="flex h-9 w-9 items-center justify-center rounded-2xl border border-gray-100 bg-gray-50">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-600">
-            <path d="M15 18l-6-6 6-6" />
-          </svg>
-        </div>
-        <span className="font-display text-sm font-bold text-gray-700">돌아가기</span>
-      </button>
-      <span className="text-xs font-bold tracking-widest text-gray-400 uppercase">Write</span>
-    </nav>
-  );
-}
 
 /* ── Write Page ── */
 export default function DiaryWritePageWrapper() {
@@ -287,7 +270,7 @@ function DiaryWritePage() {
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="mx-auto min-h-screen max-w-160 bg-white shadow-xl">
-          <NavBar />
+          <NavBar title="Diary" />
           <div className="flex h-[60vh] items-center justify-center">
             <div className="h-8 w-8 rounded-full border-3 border-[#9bce26]/30 border-t-[#9bce26] animate-spin" />
           </div>
@@ -303,7 +286,7 @@ function DiaryWritePage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="mx-auto min-h-screen max-w-160 bg-white shadow-xl">
-        <NavBar />
+        <NavBar title="Diary" />
 
         <div className="px-6 py-8 pb-24">
           {/* Header */}

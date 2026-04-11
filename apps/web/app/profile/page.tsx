@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
+import NavBar from "@/components/ui/NavBar"
 
 /* ── 피부 타입 데이터 ── */
 const SKIN_TYPES = [
@@ -130,42 +131,6 @@ const CONCERNS = [
   },
 ]
 
-/* ── 네비게이션 바 ── */
-function NavBar() {
-  const router = useRouter()
-  return (
-    <nav className="sticky top-0 z-50 flex h-14 items-center justify-between border-b border-gray-100/80 bg-white/80 px-6 backdrop-blur-2xl">
-      <button
-        onClick={() => router.push("/")}
-        className="flex items-center gap-3 border-none bg-transparent p-0"
-      >
-        <div className="relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-2xl bg-[#9bce26] shadow-md">
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            className="relative"
-          >
-            <circle cx="11" cy="11" r="6" stroke="white" strokeWidth="2" />
-            <path d="M16 16L20 20" stroke="white" strokeWidth="2" strokeLinecap="round" />
-          </svg>
-        </div>
-        <div className="flex items-baseline gap-0.5">
-          <span className="font-display text-[17px] font-extrabold tracking-tight text-gray-900">
-            skin
-          </span>
-          <span className="font-accent bg-[#9bce26] bg-clip-text text-[17px] font-semibold text-transparent italic">
-            dit
-          </span>
-        </div>
-      </button>
-      <span className="text-xs font-bold tracking-widest text-gray-400 uppercase">
-        Profile
-      </span>
-    </nav>
-  )
-}
 
 export default function ProfilePage() {
   const { data: session, status } = useSession()
@@ -234,7 +199,7 @@ export default function ProfilePage() {
   if (status === "loading" || loadingProfile) {
     return (
       <div className="via-[#9bce26]/5 to-pastel-rose/20 min-h-screen bg-linear-to-b from-white">
-        <NavBar />
+        <NavBar title="Profile" />
         <div className="flex h-[60vh] items-center justify-center">
           <div className="h-8 w-8 animate-spin rounded-full border-3 border-[#9bce26]/30 border-t-[#9bce26]" />
         </div>
@@ -247,7 +212,7 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="relative mx-auto min-h-screen max-w-160 overflow-hidden bg-white shadow-xl">
-        <NavBar />
+        <NavBar title="Profile" />
 
         <div className="px-6 py-8 pb-24">
           {/* Header */}
@@ -363,7 +328,7 @@ export default function ProfilePage() {
                   <button
                     key={c.id}
                     onClick={() => toggleConcern(c.id)}
-                    className={`inline-flex items-center gap-1.5 rounded-full border px-4 py-2.5 text-sm font-semibold transition-all duration-200 ${
+                    className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-2 text-xs font-semibold transition-all duration-200 ${
                       active
                         ? `${c.color} scale-105 shadow-md`
                         : "border-gray-200 bg-white/60 text-gray-400 hover:border-gray-300 hover:bg-white"
@@ -401,7 +366,7 @@ export default function ProfilePage() {
               }}
               placeholder="알레르기, 복용 약, 특이사항 있으면 적어줘~"
               rows={4}
-              className="glass-card w-full resize-none rounded-2xl p-4 text-sm text-gray-700 transition-all placeholder:text-gray-300 focus:ring-2 focus:ring-[#9bce26]/30 focus:outline-none"
+              className="w-full resize-none rounded-2xl border border-[#9bce26]/30 bg-white p-4 text-sm text-gray-700 transition-all placeholder:text-gray-300 focus:outline-none"
             />
           </section>
 

@@ -992,7 +992,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
             </div>
 
             {/* 소제목 (작게) */}
-            <p className="anim-fade-up mb-4 text-sm font-semibold tracking-wide text-[#9bce26]">
+            <p className="anim-fade-up mb-4 text-sm font-semibold tracking-wide text-[#8B6914]">
               {t(
                 "2만 개+ 성분 데이터 기반 AI 분석",
                 "AI Analysis Powered by 20K+ Ingredients"
@@ -1040,7 +1040,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
 
             {/* 설명 문구 (중간) */}
             <p
-              className="anim-fade-up mb-8 max-w-145 text-[17px] leading-relaxed font-medium text-gray-700"
+              className="anim-fade-up mb-8 max-w-145 text-[17px] leading-relaxed font-medium text-[#8B6914]/80"
               style={{ animationDelay: "100ms" }}
             >
               {t(
@@ -1149,10 +1149,8 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                   }
                   className={`flex shrink-0 items-center gap-1.5 rounded-full border px-3.5 py-2 text-xs font-semibold transition-all ${
                     trendOpen === tr.id
-                      ? "bg-linear-to-r " +
-                        tr.gradient +
-                        " border-lime-200 shadow-sm"
-                      : "border-gray-200 bg-white text-gray-500 hover:border-lime-200 hover:bg-gray-50"
+                      ? "bg-[#9bce26]/10 border-[#9bce26]/40 text-gray-800 shadow-sm"
+                      : "border-gray-200 bg-white text-gray-500 hover:border-[#9bce26]/30 hover:bg-[#9bce26]/5"
                   }`}
                 >
                   <span>{tr.icon}</span>
@@ -1161,7 +1159,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
               ))}
             </div>
             {trendOpen && (
-              <div className="anim-fade-up mt-3 rounded-2xl border border-lime-100/60 bg-linear-to-br from-lime-50/50 to-lime-50/30 p-4">
+              <div className="anim-fade-up mt-3 rounded-2xl border border-[#9bce26]/20 bg-[#9bce26]/5 p-4">
                 <div className="mb-2 flex items-center gap-2">
                   <span className="text-lg">
                     {TRENDING.find((t) => t.id === trendOpen)?.icon}

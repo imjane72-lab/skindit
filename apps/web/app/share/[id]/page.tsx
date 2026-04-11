@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useParams, useRouter } from "next/navigation"
+import NavBar from "@/components/ui/NavBar"
 
 /* ── 마크다운 파서 ── */
 function Md({ children }: { children: string }) {
@@ -273,7 +274,7 @@ export default function SharePage() {
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-160 mx-auto bg-white min-h-screen shadow-xl">
-          <Nav />
+          <NavBar title="Share" />
           <div className="flex items-center justify-center h-[60vh]">
             <div className="w-8 h-8 border-3 border-[#9bce26]/30 border-t-[#9bce26] rounded-full animate-spin" />
           </div>
@@ -286,7 +287,7 @@ export default function SharePage() {
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-160 mx-auto bg-white min-h-screen shadow-xl">
-          <Nav />
+          <NavBar title="Share" />
           <div className="px-6 py-16 text-center">
             <div className="text-4xl mb-4">🔍</div>
             <p className="text-sm font-bold text-gray-700 mb-1">분석 결과를 찾을 수 없어요</p>
@@ -313,7 +314,7 @@ export default function SharePage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-160 mx-auto bg-white min-h-screen shadow-xl">
-        <Nav />
+        <NavBar title="Share" />
 
         <div className="px-6 py-8 pb-24">
           {/* Header */}
@@ -346,25 +347,3 @@ export default function SharePage() {
   )
 }
 
-/* ── 네비게이션 바 ── */
-function Nav() {
-  const router = useRouter()
-  return (
-    <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-2xl border-b border-gray-100/80 h-14 px-6 flex items-center justify-between">
-      <button onClick={() => router.push("/")} className="flex items-center gap-3 bg-transparent border-none p-0">
-        <div className="w-9 h-9 rounded-2xl bg-[#9bce26] flex items-center justify-center shadow-md relative overflow-hidden">
-          <div className="absolute inset-0 bg-linear-to-t from-white/10 to-transparent" />
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="relative">
-            <circle cx="11" cy="11" r="6" stroke="white" strokeWidth="2" strokeOpacity="0.9" />
-            <path d="M16 16L20 20" stroke="white" strokeWidth="2" strokeLinecap="round" strokeOpacity="0.9" />
-          </svg>
-        </div>
-        <div className="flex items-baseline gap-0.5">
-          <span className="font-display text-[17px] font-extrabold text-gray-900 tracking-tight">skin</span>
-          <span className="font-accent text-[17px] font-semibold italic text-transparent bg-clip-text bg-linear-to-r from-pastel-lavender-dark to-pastel-rose-dark">dit</span>
-        </div>
-      </button>
-      <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Shared</span>
-    </nav>
-  )
-}

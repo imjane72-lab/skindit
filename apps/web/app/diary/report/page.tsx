@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import NavBar from "@/components/ui/NavBar";
 import { SITE_URL } from "@/lib/constants";
 
 /* ── 성분 연결 카드 (접기/펼치기) ── */
@@ -39,24 +40,6 @@ function IngredientLinkCard({ link }: { link: { product: string; watchOut: strin
         </div>
       )}
     </div>
-  );
-}
-
-/* ── 네비게이션 바 (뒤로가기) ── */
-function NavBar() {
-  const router = useRouter();
-  return (
-    <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-2xl border-b border-gray-100/80 h-14 px-6 flex items-center justify-between">
-      <button onClick={() => router.push("/diary")} className="flex items-center gap-3 bg-transparent border-none p-0">
-        <div className="w-9 h-9 rounded-2xl bg-gray-50 border border-gray-100 flex items-center justify-center">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-600">
-            <path d="M15 18l-6-6 6-6" />
-          </svg>
-        </div>
-        <span className="font-display text-sm font-bold text-gray-700">돌아가기</span>
-      </button>
-      <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Report</span>
-    </nav>
   );
 }
 
@@ -134,7 +117,7 @@ export default function DiaryReportPage() {
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-160 mx-auto bg-white min-h-screen shadow-xl">
-          <NavBar />
+          <NavBar title="Diary" />
           <div className="flex items-center justify-center h-[60vh]">
             <div className="w-8 h-8 border-3 border-[#9bce26]/30 border-t-[#9bce26] rounded-full animate-spin" />
           </div>
@@ -150,7 +133,7 @@ export default function DiaryReportPage() {
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-160 mx-auto bg-white min-h-screen shadow-xl">
-          <NavBar />
+          <NavBar title="Diary" />
           <div className="px-6 py-8">
             <div className="mb-8 anim-fade-up">
               <h1 className="font-display text-2xl font-extrabold text-gray-900 mb-3">
@@ -190,7 +173,7 @@ export default function DiaryReportPage() {
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-160 mx-auto bg-white min-h-screen shadow-xl">
-          <NavBar />
+          <NavBar title="Diary" />
           <div className="px-6 py-8">
             <div className="mb-8 anim-fade-up">
               <h1 className="font-display text-2xl font-extrabold text-gray-900 mb-3">
@@ -218,7 +201,7 @@ export default function DiaryReportPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-160 mx-auto bg-white min-h-screen shadow-xl">
-        <NavBar />
+        <NavBar title="Diary" />
 
         <div className="px-6 py-8 pb-24">
           <div className="mb-6 anim-fade-up">
