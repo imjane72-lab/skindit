@@ -56,7 +56,7 @@ export default function SingleResult({ res, t, reset, lang, historyId, productNa
   return (
     <div className="anim-scale-in space-y-5">
       {/* ── Hero: 그라디언트 헤더 ── */}
-      <div className="bg-linear-to-r from-[#9bce26] via-[#E8B830] to-[#8B6914] px-6 py-6 rounded-2xl">
+      <div className="bg-linear-to-r from-[#c5e384] via-[#f0d078] to-[#c4a35a] px-6 py-6 rounded-2xl">
         <p className="text-white/60 text-[10px] font-bold uppercase tracking-widest mb-1">
           skindit {t("분석 결과", "Analysis Result")}
         </p>
@@ -84,11 +84,6 @@ export default function SingleResult({ res, t, reset, lang, historyId, productNa
         <div className="rounded-2xl bg-lime-50/60 p-5">
           <SectionHeader icon="🤎" title={t("종합 의견", "Summary")} />
           <p className="text-[13px] leading-relaxed text-gray-700"><Md>{res.overall_comment}</Md></p>
-          {res.verdict && (
-            <div className="mt-3 rounded-xl bg-linear-to-r from-lime-50 to-lime-50 p-3.5">
-              <p className="text-[13px] leading-relaxed text-lime-900 font-medium"><Md>{res.verdict}</Md></p>
-            </div>
-          )}
         </div>
       )}
 
@@ -121,7 +116,7 @@ export default function SingleResult({ res, t, reset, lang, historyId, productNa
               const extra: string[] = []
               if (ing.benefit) extra.push(ing.benefit)
               if (ing.best_time) extra.push(`⏰ ${ing.best_time}`)
-              if (ing.synergy) extra.push(`💜 시너지: ${ing.synergy.join(", ")}`)
+              if (ing.synergy) extra.push(`🤎 시너지: ${ing.synergy.join(", ")}`)
               return <ResultPill key={i} name={ing.name} detail={extra.join("\n\n")} good />
             })}
           </div>

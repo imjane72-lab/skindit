@@ -238,7 +238,7 @@ export default function DiaryReportPage() {
           {reportData ? (
             <div className="rounded-2xl overflow-hidden shadow-sm anim-scale-in">
               {/* Header — 은은한 파스텔 */}
-              <div className="bg-linear-to-r from-[#9bce26] via-[#E8B830] to-[#8B6914] px-6 py-6 rounded-t-2xl">
+              <div className="bg-linear-to-r from-[#c5e384] via-[#f0d078] to-[#c4a35a] px-6 py-6 rounded-t-2xl">
                 <h3 className="font-display text-white text-lg font-extrabold">
                   {session?.user?.name || ""}님의 피부 리포트 📑
                 </h3>

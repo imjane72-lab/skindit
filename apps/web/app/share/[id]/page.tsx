@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react"
 import { useParams, useRouter } from "next/navigation"
 import NavBar from "@/components/ui/NavBar"
+import ScoreRing from "@/components/ui/ScoreRing"
+import { scoreColor } from "@/lib/score-utils"
 
 /* ── 마크다운 파서 ── */
 function Md({ children }: { children: string }) {
@@ -68,11 +70,23 @@ function SharedResultView({ data }: { data: ShareData }) {
     const watchOut = (rj.watch_out as Array<{name: string; reason?: string; alternative?: string}>) || []
     const safetyRatings = (rj.safety_ratings as Array<{name: string; score: number; note?: string}>) || []
     const concernAnalysis = (rj.concern_analysis as Array<{concern: string; score: number; comment: string}>) || []
+    const forbiddenCombos = (rj.forbidden_combos as Array<{ingredients: string; reason: string}>) || []
+    const usageGuide = rj.usage_guide as {best_time?: string; effect_timeline?: string; beginner_tips?: string[]} | undefined
 
     return (
       <div className="space-y-3">
+        {/* ── 점수 ── */}
+        <div className="text-center py-2">
+          <div className="flex justify-center mb-2">
+            <ScoreRing score={data.score} size={180} />
+          </div>
+          <p className={`text-sm font-bold ${scoreColor(data.score)}`}>
+            {data.score >= 80 ? "우수" : data.score >= 60 ? "보통" : "주의"}
+          </p>
+        </div>
+
         {Boolean(rj.overall_comment) && (
-          <Section icon="🌿" title="종합 의견" color="bg-lime-50">
+          <Section icon="🤎" title="종합 의견" color="bg-lime-50">
             <p className="text-sm leading-relaxed text-gray-700"><Md>{String(rj.overall_comment)}</Md></p>
           </Section>
         )}
@@ -95,7 +109,7 @@ function SharedResultView({ data }: { data: ShareData }) {
           <Section icon="✨" title="주목 성분" color="bg-emerald-50/60">
             <div className="space-y-2">
               {starIngs.map((ing, i) => {
-                const extra = [ing.benefit || "", ing.best_time ? `⏰ 사용 시간: ${ing.best_time}` : "", ing.synergy ? `🌿 시너지: ${ing.synergy.join(", ")}` : ""].filter(Boolean).join("\n\n")
+                const extra = [ing.benefit || "", ing.best_time ? `⏰ 사용 시간: ${ing.best_time}` : "", ing.synergy ? `🤎 시너지: ${ing.synergy.join(", ")}` : ""].filter(Boolean).join("\n\n")
                 return <Pill key={i} name={ing.name} detail={extra} good />
               })}
             </div>
@@ -128,9 +142,45 @@ function SharedResultView({ data }: { data: ShareData }) {
             </div>
           </Section>
         )}
-        {Boolean(rj.verdict) && (
-          <Section icon="✨" title="Verdict" color="bg-amber-50">
-            <p className="text-sm leading-relaxed text-gray-700"><Md>{String(rj.verdict)}</Md></p>
+        {forbiddenCombos.length > 0 && (
+          <Section icon="🚫" title="주의 콤보" color="bg-rose-50/50">
+            <div className="space-y-2">
+              {forbiddenCombos.map((combo, i) => (
+                <div key={i} className="rounded-xl border border-rose-100 bg-white/60 p-3.5">
+                  <p className="text-xs font-bold text-rose-600 mb-1">{combo.ingredients}</p>
+                  <p className="text-[12px] leading-relaxed text-gray-600"><Md>{combo.reason}</Md></p>
+                </div>
+              ))}
+            </div>
+          </Section>
+        )}
+        {usageGuide && (
+          <Section icon="📋" title="사용 가이드" color="bg-blue-50/50">
+            <div className="space-y-3">
+              {usageGuide.best_time && (
+                <div className="flex gap-3 items-start">
+                  <span className="shrink-0 w-8 h-8 rounded-xl bg-blue-100/60 flex items-center justify-center text-sm">⏰</span>
+                  <div><p className="text-[11px] font-bold text-blue-700 mb-0.5">최적 사용 시간</p><p className="text-xs text-gray-600 leading-relaxed">{usageGuide.best_time}</p></div>
+                </div>
+              )}
+              {usageGuide.effect_timeline && (
+                <div className="flex gap-3 items-start">
+                  <span className="shrink-0 w-8 h-8 rounded-xl bg-blue-100/60 flex items-center justify-center text-sm">📅</span>
+                  <div><p className="text-[11px] font-bold text-blue-700 mb-0.5">효과 체감 시기</p><p className="text-xs text-gray-600 leading-relaxed">{usageGuide.effect_timeline}</p></div>
+                </div>
+              )}
+              {usageGuide.beginner_tips && usageGuide.beginner_tips.length > 0 && (
+                <div className="flex gap-3 items-start">
+                  <span className="shrink-0 w-8 h-8 rounded-xl bg-blue-100/60 flex items-center justify-center text-sm">💡</span>
+                  <div>
+                    <p className="text-[11px] font-bold text-blue-700 mb-1">초보자 주의사항</p>
+                    {usageGuide.beginner_tips.map((tip, i) => (
+                      <p key={i} className="text-xs text-gray-600 leading-relaxed mb-0.5 font-medium">· {tip.replace(/\*\*/g, "")}</p>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </Section>
         )}
       </div>
@@ -191,11 +241,6 @@ function SharedResultView({ data }: { data: ShareData }) {
             ))}
           </Section>
         )}
-        {Boolean(rj.verdict) && (
-          <Section icon="✨" title="Verdict" color="bg-amber-50">
-            <p className="text-sm leading-relaxed text-gray-700"><Md>{String(rj.verdict)}</Md></p>
-          </Section>
-        )}
       </div>
     )
   }
@@ -238,11 +283,6 @@ function SharedResultView({ data }: { data: ShareData }) {
             )) : <p className="text-xs text-gray-400">고유 성분 없음</p>}
           </div>
         </div>
-      )}
-      {Boolean(rj.verdict) && (
-        <Section icon="✨" title="Verdict" color="bg-amber-50">
-          <p className="text-sm leading-relaxed text-gray-700"><Md>{String(rj.verdict)}</Md></p>
-        </Section>
       )}
     </div>
   )
@@ -318,7 +358,7 @@ export default function SharePage() {
 
         <div className="px-6 py-8 pb-24">
           {/* Header */}
-          <div className="bg-linear-to-r from-[#9bce26] via-[#E8B830] to-[#8B6914] px-6 py-6 rounded-2xl mb-6">
+          <div className="bg-linear-to-r from-[#c5e384] via-[#f0d078] to-[#c4a35a] px-6 py-6 rounded-2xl mb-6">
             <p className="text-white/60 text-[10px] font-bold uppercase tracking-widest mb-1">skindit 분석 결과</p>
             <h1 className="font-display text-white text-lg font-extrabold">{title}</h1>
             <div className="flex items-center gap-3 mt-2">
