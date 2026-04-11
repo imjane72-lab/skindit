@@ -136,8 +136,8 @@ function formatFullDate(d: string) {
 }
 
 function parseEntry(e: DiaryEntry): DiaryEntry {
-  if (e.note && e.note.includes("💜 skindit tip:")) {
-    const [realNote, tipPart] = e.note.split("💜 skindit tip:")
+  if (e.note && e.note.includes("🤎 skindit tip:")) {
+    const [realNote, tipPart] = e.note.split("🤎 skindit tip:")
     return {
       ...e,
       note: realNote?.replace(/\n+$/, "").trim() || "",
@@ -289,8 +289,8 @@ export default function DiaryPage() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             note: memo
-              ? `${memo}\n\n💜 skindit tip: ${tip}`
-              : `💜 skindit tip: ${tip}`,
+              ? `${memo}\n\n🤎 skindit tip: ${tip}`
+              : `🤎 skindit tip: ${tip}`,
           }),
         }).catch(() => {})
       }
@@ -302,7 +302,7 @@ export default function DiaryPage() {
   const startEdit = (entry: DiaryEntry) => {
     setEditingId(entry.id)
     const cleanNote =
-      entry.note?.replace(/\n*💜 skindit tip:.*$/, "").trim() || ""
+      entry.note?.replace(/\n*🤎 skindit tip:.*$/, "").trim() || ""
     setEditNote(cleanNote)
     setEditCondition(entry.condition)
   }
@@ -758,7 +758,7 @@ export default function DiaryPage() {
                     <div
                       className={`mt-3 rounded-xl px-3 py-2.5 text-[11px] leading-relaxed ${conditionTipBg(selectedEntry.condition)}`}
                     >
-                      <span className="font-bold">💜 skindit tip</span>
+                      <span className="font-bold">🤎 skindit tip</span>
                       {" · "}
                       {selectedEntry.tip ||
                         (selectedEntry.condition === "good"

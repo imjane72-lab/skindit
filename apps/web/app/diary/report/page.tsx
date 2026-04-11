@@ -147,7 +147,7 @@ export default function DiaryReportPage() {
               <p className="text-sm font-bold text-gray-800 mb-1">리포트까지 {5 - entryCount}일 남았어요!</p>
               <p className="text-xs text-gray-400 leading-relaxed mb-2">
                 {entryCount === 0
-                  ? "5일간 피부 상태를 기록하시면 스킨딧이 리포트를 만들어 드려요 💜"
+                  ? "5일간 피부 상태를 기록하시면 스킨딧이 리포트를 만들어 드려요 🤎"
                   : `지금 ${entryCount}일 기록하셨어요~ ${5 - entryCount}일만 더 하시면 리포트를 받아보실 수 있어요!`}
               </p>
               <div className="flex justify-center gap-1 mb-4">
@@ -238,7 +238,7 @@ export default function DiaryReportPage() {
           {reportData ? (
             <div className="rounded-2xl overflow-hidden shadow-sm anim-scale-in">
               {/* Header — 은은한 파스텔 */}
-              <div className="bg-[#9bce26] px-6 py-6 rounded-t-2xl">
+              <div className="bg-linear-to-r from-[#9bce26] via-[#E8B830] to-[#8B6914] px-6 py-6 rounded-t-2xl">
                 <h3 className="font-display text-white text-lg font-extrabold">
                   {session?.user?.name || ""}님의 피부 리포트 📑
                 </h3>
@@ -352,7 +352,7 @@ export default function DiaryReportPage() {
                 {reportData.recommendations && reportData.recommendations.length > 0 && (
                   <div>
                     <h4 className="text-xs font-bold text-gray-700 mb-2 flex items-center gap-1.5">
-                      <span>💜</span> 맞춤 조언
+                      <span>🤎</span> 맞춤 조언
                     </h4>
                     <div className="space-y-2">
                       {reportData.recommendations.map((rec: string, i: number) => (
@@ -401,7 +401,7 @@ export default function DiaryReportPage() {
                     onClick={() => {
                       const title = `skindit 피부 리포트`
                       const recs = (reportData?.recommendations || []).map((r: string, i: number) => `${i + 1}. ${r}`).join("\n")
-                      const text = `📑 ${title}\n\n${reportData?.summary || ""}\n\n💜 맞춤 조언\n${recs}`.trim()
+                      const text = `📑 ${title}\n\n${reportData?.summary || ""}\n\n🤎 맞춤 조언\n${recs}`.trim()
                       if (navigator.share) {
                         navigator.share({ title, text, url: SITE_URL }).catch(() => {})
                       } else {

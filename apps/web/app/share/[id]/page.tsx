@@ -318,7 +318,7 @@ export default function SharePage() {
 
         <div className="px-6 py-8 pb-24">
           {/* Header */}
-          <div className="bg-[#9bce26] px-6 py-6 rounded-2xl mb-6">
+          <div className="bg-linear-to-r from-[#9bce26] via-[#E8B830] to-[#8B6914] px-6 py-6 rounded-2xl mb-6">
             <p className="text-white/60 text-[10px] font-bold uppercase tracking-widest mb-1">skindit 분석 결과</p>
             <h1 className="font-display text-white text-lg font-extrabold">{title}</h1>
             <div className="flex items-center gap-3 mt-2">

@@ -1394,7 +1394,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                   </p>
                 </div>
               ) : (
-                <label className="flex cursor-pointer flex-col items-center gap-3 rounded-2xl border border-[#9bce26]/20 bg-[#9bce26]/5 p-6 transition-all hover:border-[#9bce26]/40 hover:shadow-sm">
+                <label className="flex cursor-pointer flex-col items-center gap-3 rounded-2xl border border-[#9bce26]/20 bg-linear-to-br from-[#9bce26]/8 via-[#E8B830]/5 to-[#8B6914]/3 p-6 transition-all hover:border-[#9bce26]/40 hover:shadow-sm">
                   <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#9bce26]/15 text-2xl">
                     📷
                   </div>

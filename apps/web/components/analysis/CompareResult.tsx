@@ -16,14 +16,14 @@ export default function CompareResult({ cRes, t, reset, lang, historyId }: Compa
   return (
     <div className="anim-scale-in">
       {/* Summary */}
-      <div className="mb-5 rounded-2xl border border-lime-200 bg-lime-50 p-6 text-center shadow-sm">
-        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#9bce26] text-2xl shadow-sm">
+      <div className="mb-5 rounded-2xl bg-linear-to-r from-[#9bce26] via-[#E8B830] to-[#8B6914] p-6 text-center shadow-sm">
+        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-white/20 text-2xl shadow-sm">
           ⚖️
         </div>
-        <p className="mb-2 text-sm font-bold text-gray-900">
+        <p className="mb-2 text-sm font-bold text-white">
           <Md>{cRes.summary}</Md>
         </p>
-        <p className="text-sm leading-relaxed text-gray-600">
+        <p className="text-sm leading-relaxed text-white/80">
           <Md>{cRes.recommendation}</Md>
         </p>
       </div>
