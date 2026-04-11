@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 
-/* ── Data ── */
+/* ── 피부 타입 데이터 ── */
 const SKIN_TYPES = [
   {
     id: "DRY",
@@ -130,7 +130,7 @@ const CONCERNS = [
   },
 ]
 
-/* ── NavBar ── */
+/* ── 네비게이션 바 ── */
 function NavBar() {
   const router = useRouter()
   return (
@@ -195,14 +195,14 @@ export default function ProfilePage() {
   const [saved, setSaved] = useState(false)
   const [loadingProfile, setLoadingProfile] = useState(true)
 
-  // Redirect if not logged in
+  // 로그인 안 되어 있으면 리다이렉트
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/auth/signin")
     }
   }, [status, router])
 
-  // Load existing profile
+  // 기존 프로필 불러오기
   useEffect(() => {
     if (status !== "authenticated") return
     ;(async () => {
@@ -216,7 +216,7 @@ export default function ProfilePage() {
           if (data.note || data.notes) setNotes(data.note || data.notes)
         }
       } catch {
-        /* first time user */
+        /* 첫 방문 사용자 */
       } finally {
         setLoadingProfile(false)
       }

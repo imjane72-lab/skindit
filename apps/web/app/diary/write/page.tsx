@@ -529,7 +529,7 @@ function DiaryWritePage() {
                   추가
                 </button>
               </div>
-              {/* Quick food chips */}
+              {/* 빠른 음식 선택 칩 */}
               <div className="flex flex-wrap gap-2 mt-3">
                 {QUICK_FOODS.map((f) => {
                   const active = foods.includes(f.value);
@@ -590,7 +590,7 @@ function DiaryWritePage() {
             </div>
           )}
 
-          {/* Save button */}
+          {/* 저장 버튼 */}
           <button
             onClick={handleSave}
             disabled={!condition || saving}

@@ -35,7 +35,7 @@ export async function GET() {
     take: 50,
   })
 
-  // Return in ascending order (oldest first) for chat display
+  // 채팅 표시용으로 오래된 순서(오름차순)로 반환
   return apiResponse(messages.reverse())
 }
 

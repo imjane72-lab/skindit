@@ -83,21 +83,21 @@ export default function Page() {
     { id: 2, name: "", ingredients: "" },
   ])
   const [rRes, setRRes] = useState<RoutineRes | null>(null)
-  // Trending ingredients
+  // 트렌드 성분
   const [trendOpen, setTrendOpen] = useState<string | null>(null)
   const [trendInfo, setTrendInfo] = useState<Record<string, string>>({})
   const [trendLoading, setTrendLoading] = useState(false)
-  // Compare
+  // 비교 분석
   const [compareA, setCompareA] = useState("")
   const [compareB, setCompareB] = useState("")
   const [compareNameA, setCompareNameA] = useState("")
   const [compareNameB, setCompareNameB] = useState("")
   const [cRes, setCRes] = useState<CompareRes | null>(null)
-  // Keep last analysis inputs for re-analysis on language switch
+  // 언어 전환 시 재분석을 위한 마지막 입력값 보관
   const [lastIngs, setLastIngs] = useState("")
   const [lastConcerns, setLastConcerns] = useState<string[]>([])
   const [lastProducts, setLastProducts] = useState<Product[]>([])
-  // PWA install
+  // PWA 설치
   const [showPwaBanner, setShowPwaBanner] = useState(false)
   const [deferredPrompt, setDeferredPrompt] = useState<Event | null>(null)
 
@@ -108,7 +108,7 @@ export default function Page() {
       setShowPwaBanner(true)
     }
     window.addEventListener("beforeinstallprompt", handler)
-    // iOS Safari: no beforeinstallprompt, show manual guide
+    // iOS Safari: beforeinstallprompt 미지원, 수동 가이드 표시
     const isIos = /iphone|ipad|ipod/.test(navigator.userAgent.toLowerCase())
     const isStandalone = window.matchMedia("(display-mode: standalone)").matches
     if (isIos && !isStandalone) setShowPwaBanner(true)
@@ -240,7 +240,7 @@ export default function Page() {
     setCompareOyLoading((p) => ({ ...p, [target]: false }))
   }
 
-  // Camera scan (OCR)
+  // 카메라 스캔 (OCR)
   const [ocrLoading, setOcrLoading] = useState(false)
   const [routineOcrLoading, setRoutineOcrLoading] = useState<
     Record<number, boolean>
@@ -291,7 +291,7 @@ export default function Page() {
     }
   }
 
-  // Trending ingredient AI lookup
+  // 트렌드 성분 AI 조회
   const loadTrendInfo = async (id: string, name: string) => {
     if (trendInfo[id]) {
       setTrendOpen(trendOpen === id ? null : id)
@@ -331,7 +331,7 @@ export default function Page() {
     setTrendLoading(false)
   }
 
-  // Compare OCR handler
+  // 비교 분석 OCR 핸들러
   const [compareOcrLoading, setCompareOcrLoading] = useState<"A" | "B" | null>(
     null
   )
@@ -377,7 +377,7 @@ export default function Page() {
     setCompareOcrLoading(null)
   }
 
-  // Compare analysis
+  // 비교 분석 실행
   const runCompareAnalysis = async (
     useLang: string,
     textA: string,
@@ -404,7 +404,7 @@ JSON only. Schema:{"summary":"2-3줄","shared":[max 5,{"name":"","inA":true,"inB
       )
       setCRes(raw)
       saveResultState("compare", null, null, raw)
-      // 히스토리 저장
+      // 분석 기록 저장
       setHistoryId(null)
       if (status === "authenticated") {
         fetch("/api/history", {
@@ -445,7 +445,7 @@ JSON only. Schema:{"summary":"2-3줄","shared":[max 5,{"name":"","inA":true,"inB
     setPhase("result")
   }
 
-  // Camera OCR handler
+  // 카메라 OCR 핸들러
   const handleOcr = async (file: File) => {
     setOcrLoading(true)
     try {
@@ -454,7 +454,7 @@ JSON only. Schema:{"summary":"2-3줄","shared":[max 5,{"name":"","inA":true,"inB
         reader.onload = () => resolve(reader.result as string)
         reader.readAsDataURL(file)
       })
-      // Resize to max 1500px
+      // 최대 1500px로 리사이즈
       const resized = await new Promise<string>((resolve) => {
         const img = new Image()
         img.onload = () => {
@@ -487,7 +487,7 @@ JSON only. Schema:{"summary":"2-3줄","shared":[max 5,{"name":"","inA":true,"inB
     setOcrLoading(false)
   }
 
-  // Routine: per-product OCR handler
+  // 루틴: 제품별 OCR 핸들러
   const handleRoutineOcr = async (productId: number, file: File) => {
     setRoutineOcrLoading((p) => ({ ...p, [productId]: true }))
     try {
@@ -577,7 +577,7 @@ safety_ratings 점수 기준 (엄격히 따를 것):
         )
       setSRes(raw)
       saveResultState("single", raw, null, null)
-      // Save to history if logged in
+      // 로그인 시 히스토리 저장
       setHistoryId(null)
       if (status === "authenticated") {
         fetch("/api/history", {
@@ -643,7 +643,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
         raw.routine_score = raw.routine_score * 10
       setRRes(raw)
       saveResultState("routine", null, raw, null)
-      // Save to history if logged in
+      // 로그인 시 히스토리 저장
       setHistoryId(null)
       if (status === "authenticated") {
         fetch("/api/history", {
@@ -674,7 +674,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
     setPhase("result")
   }
 
-  // Save pending analysis to sessionStorage before login redirect
+  // 로그인 리다이렉트 전 분석 대기 데이터를 sessionStorage에 저장
   const savePending = (type: string) => {
     if (typeof window === "undefined") return
     const data =
@@ -684,7 +684,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
     sessionStorage.setItem("skindit_pending", JSON.stringify(data))
   }
 
-  // Restore and run pending analysis after login
+  // 로그인 후 대기 중인 분석 복원 및 실행
   useEffect(() => {
     if (status !== "authenticated" || typeof window === "undefined") return
     const raw = sessionStorage.getItem("skindit_pending")
@@ -710,7 +710,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
     }
   }, [status])
 
-  // Load saved skin profile on login
+  // 로그인 시 저장된 피부 프로필 불러오기
   useEffect(() => {
     if (status !== "authenticated") return
     fetch("/api/profile")
@@ -761,7 +761,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
     runCompareAnalysis(lang, compareA, compareB)
   }
 
-  // Language switch: re-analyze if on result page
+  // 언어 전환: 결과 페이지에서 재분석
   const switchLang = (newLang: string) => {
     setLang(newLang)
     try {
@@ -807,7 +807,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
           onClick={reset}
           className="flex items-center gap-3 border-none bg-transparent p-0"
         >
-          {/* Logo mark — magnifier + skin cells */}
+          {/* 로고 마크 — 돋보기 + 피부 세포 */}
           <div className="from-pastel-lavender-dark to-pastel-rose-dark relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-2xl bg-linear-to-br via-purple-400 shadow-md">
             <div className="absolute inset-0 bg-linear-to-t from-white/10 to-transparent" />
             <svg
@@ -857,12 +857,12 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
       {/* ── HERO ── */}
       {phase === "setup" && (
         <div className="relative overflow-hidden border-b border-gray-100/50 px-6 pt-14 pb-12">
-          {/* Aurora wave background */}
+          {/* 오로라 웨이브 배경 */}
           <div className="pointer-events-none absolute inset-0 overflow-hidden">
-            {/* Base gradient — slowly shifting */}
+            {/* 기본 그라디언트 — 천천히 전환 */}
             <div className="anim-gradient-flow absolute inset-0 bg-linear-to-br from-purple-200/50 via-white via-40% to-pink-200/40" />
 
-            {/* Aurora blob 1 — large purple, slow drift */}
+            {/* 오로라 블롭 1 — 큰 퍼플, 느린 이동 */}
             <div
               className="pointer-events-none absolute h-100 w-100 rounded-full"
               style={{
@@ -874,7 +874,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                 animation: "aurora-move-1 12s ease-in-out infinite",
               }}
             />
-            {/* Aurora blob 2 — rose pink, different rhythm */}
+            {/* 오로라 블롭 2 — 로즈 핑크, 다른 리듬 */}
             <div
               className="pointer-events-none absolute h-87.5 w-87.5 rounded-full"
               style={{
@@ -886,7 +886,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                 animation: "aurora-move-2 10s ease-in-out infinite",
               }}
             />
-            {/* Aurora blob 3 — mint accent */}
+            {/* 오로라 블롭 3 — 민트 포인트 */}
             <div
               className="pointer-events-none absolute h-62.5 w-62.5 rounded-full"
               style={{

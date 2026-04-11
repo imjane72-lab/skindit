@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-/* ── NavBar ── */
+/* ── 네비게이션 바 ── */
 function NavBar() {
   const router = useRouter();
   return (
@@ -29,7 +29,7 @@ function NavBar() {
   );
 }
 
-/* ── Feature Row ── */
+/* ── 기능 항목 ── */
 function Feature({ text }: { text: string }) {
   return (
     <div className="flex items-start gap-2.5 py-1.5">
@@ -39,7 +39,7 @@ function Feature({ text }: { text: string }) {
   );
 }
 
-/* ── Page ── */
+/* ── 요금제 페이지 ── */
 export default function PricingPage() {
   const [lang, setLang] = useState("ko");
   useEffect(() => { setLang(localStorage.getItem("skindit_lang") || "ko"); }, []);

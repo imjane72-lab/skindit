@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { ALLOWED_ORIGINS } from "@/lib/constants"
 
-/* ── Rate Limiter (shared across all API routes) ── */
+/* ── 요청 횟수 제한 (모든 API 라우트 공용) ── */
 const WINDOW_MS = 60 * 1000
 const MAX_PER_WINDOW = 5
 const DAILY_LIMIT = 50
@@ -36,7 +36,7 @@ export function rateLimit(ip: string): { ok: boolean; msg?: string } {
   return { ok: true }
 }
 
-/* ── Response helpers ── */
+/* ── 응답 헬퍼 ── */
 export function apiResponse(data: unknown, status = 200) {
   return NextResponse.json(data, { status })
 }
@@ -45,7 +45,7 @@ export function apiError(message: string, status: number) {
   return NextResponse.json({ error: { message } }, { status })
 }
 
-/* ── IP extraction ── */
+/* ── IP 추출 ── */
 export function getIp(headers: Headers): string {
   return headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown"
 }
@@ -93,7 +93,7 @@ export function apiGuard(req: NextRequest): NextResponse | null {
   return null // 통과
 }
 
-// CORS 헤더 추가
+// CORS 응답 헤더 추가
 export function withCors(response: NextResponse, req: NextRequest): NextResponse {
   const origin = req.headers.get("origin") || ""
   if (ALLOWED_ORIGINS.includes(origin)) {

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { useParams, useRouter } from "next/navigation"
 
-/* ── Markdown parser ── */
+/* ── 마크다운 파서 ── */
 function Md({ children }: { children: string }) {
   if (!children) return null
   if (!children.includes("**") && !children.includes("\n")) return <>{children}</>
@@ -14,7 +14,7 @@ function Md({ children }: { children: string }) {
   )}</>
 }
 
-/* ── Section component ── */
+/* ── 섹션 컴포넌트 ── */
 function Section({ icon, title, color, children }: { icon: string; title: string; color: string; children: React.ReactNode }) {
   return (
     <div className={`rounded-2xl ${color} p-4 mb-3`}>
@@ -24,7 +24,7 @@ function Section({ icon, title, color, children }: { icon: string; title: string
   )
 }
 
-/* ── Pill ── */
+/* ── 성분 알약 버튼 ── */
 function Pill({ name, detail, good }: { name: string; detail: string; good: boolean }) {
   const [open, setOpen] = useState(false)
   return (
@@ -45,7 +45,7 @@ function Pill({ name, detail, good }: { name: string; detail: string; good: bool
   )
 }
 
-/* ── Types ── */
+/* ── 타입 정의 ── */
 interface ShareData {
   id: string
   type: "SINGLE" | "ROUTINE"
@@ -55,14 +55,14 @@ interface ShareData {
   createdAt: string
 }
 
-/* ── Result View ── */
+/* ── 결과 뷰 ── */
 function SharedResultView({ data }: { data: ShareData }) {
   const rj = data.resultJson || {}
   const isRoutine = data.type === "ROUTINE"
   const isCompare = rj.type === "compare"
 
   if (!isRoutine && !isCompare) {
-    // Single analysis
+    // 단일 성분 분석
     const starIngs = (rj.star_ingredients as Array<{name: string; benefit?: string; best_time?: string; synergy?: string[]}>) || []
     const watchOut = (rj.watch_out as Array<{name: string; reason?: string; alternative?: string}>) || []
     const safetyRatings = (rj.safety_ratings as Array<{name: string; score: number; note?: string}>) || []
@@ -199,7 +199,7 @@ function SharedResultView({ data }: { data: ShareData }) {
     )
   }
 
-  // Compare
+  // 비교 분석
   const shared = (rj.shared as Array<{name: string}>) || []
   const onlyA = (rj.only_a as Array<{name: string; note?: string}>) || []
   const onlyB = (rj.only_b as Array<{name: string; note?: string}>) || []
@@ -247,7 +247,7 @@ function SharedResultView({ data }: { data: ShareData }) {
   )
 }
 
-/* ── Share Page ── */
+/* ── 공유 페이지 ── */
 export default function SharePage() {
   const params = useParams()
   const router = useRouter()
@@ -346,7 +346,7 @@ export default function SharePage() {
   )
 }
 
-/* ── NavBar ── */
+/* ── 네비게이션 바 ── */
 function Nav() {
   const router = useRouter()
   return (

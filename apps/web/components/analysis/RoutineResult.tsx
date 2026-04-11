@@ -104,7 +104,7 @@ export default function RoutineResult({ rRes, t, reset, lang, historyId }: Routi
           </div>
         )}
 
-        {/* Order suggestion */}
+        {/* 추천 순서 */}
         {rRes.order_suggestion && rRes.order_suggestion.length > 0 && (
           <div className="rounded-2xl border border-blue-200 bg-blue-50 p-5 shadow-sm">
             <div className="mb-3 flex items-center gap-2.5 border-b border-blue-200 pb-3">

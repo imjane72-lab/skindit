@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
-/* ── Types ── */
+/* ── 타입 정의 ── */
 interface RecentUser {
   id: string;
   name: string | null;
@@ -22,7 +22,7 @@ interface AdminStats {
   recentUsers: RecentUser[];
 }
 
-/* ── NavBar ── */
+/* ── 네비게이션 바 ── */
 function NavBar() {
   const router = useRouter();
   return (
@@ -48,7 +48,7 @@ function NavBar() {
   );
 }
 
-/* ── Stat Card ── */
+/* ── 통계 카드 ── */
 function StatCard({ label, value, icon }: { label: string; value: number; icon: string }) {
   return (
     <div className="glass-card rounded-2xl p-5 flex items-center gap-4">
@@ -65,7 +65,7 @@ function StatCard({ label, value, icon }: { label: string; value: number; icon: 
   );
 }
 
-/* ── Provider Badge ── */
+/* ── 로그인 제공자 뱃지 ── */
 function ProviderBadge({ provider }: { provider: string }) {
   const colors: Record<string, string> = {
     google: "bg-blue-50 text-blue-600 border-blue-100",
@@ -79,7 +79,7 @@ function ProviderBadge({ provider }: { provider: string }) {
   );
 }
 
-/* ── Main Page ── */
+/* ── 관리자 메인 페이지 ── */
 export default function AdminPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -91,7 +91,7 @@ export default function AdminPage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const userRole = (session?.user as any)?.role;
 
-  // Redirect if not admin
+  // 관리자가 아니면 리다이렉트
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/auth/signin");
@@ -101,7 +101,7 @@ export default function AdminPage() {
     }
   }, [status, userRole, router]);
 
-  // Fetch stats
+  // 통계 데이터 불러오기
   useEffect(() => {
     if (status !== "authenticated" || userRole !== "admin") return;
     (async () => {

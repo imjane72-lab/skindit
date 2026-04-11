@@ -56,14 +56,14 @@ export async function POST(req: NextRequest) {
   const cost = parsed.data.cost ?? CREDIT_COSTS[type]
   const userId = session.user.id
 
-  // Check if this type has daily free uses
+  // 일일 무료 사용 가능 여부 확인
   const freeKey = type as keyof typeof DAILY_FREE
   const dailyFreeLimit = DAILY_FREE[freeKey] ?? 0
 
   let usedFree = false
 
   if (dailyFreeLimit > 0) {
-    // Count today's free uses for this type
+    // 오늘 해당 타입의 무료 사용 횟수 조회
     const startOfDay = new Date()
     startOfDay.setHours(0, 0, 0, 0)
 
@@ -77,7 +77,7 @@ export async function POST(req: NextRequest) {
     })
 
     if (freeUsesToday < dailyFreeLimit) {
-      // Use a free slot
+      // 무료 사용 차감
       await prisma.creditTransaction.create({
         data: {
           userId,
@@ -91,7 +91,7 @@ export async function POST(req: NextRequest) {
   }
 
   if (!usedFree) {
-    // Need to deduct credits
+    // 크레딧 차감 필요
     const balance = await prisma.creditBalance.upsert({
       where: { userId },
       create: { userId, credits: 0 },
@@ -102,7 +102,7 @@ export async function POST(req: NextRequest) {
       return apiError("insufficient_credits", 400)
     }
 
-    // Deduct credits and record transaction atomically
+    // 크레딧 차감 및 트랜잭션 기록 (원자적 처리)
     await prisma.$transaction([
       prisma.creditBalance.update({
         where: { userId },
@@ -119,7 +119,7 @@ export async function POST(req: NextRequest) {
     ])
   }
 
-  // Fetch updated state
+  // 업데이트된 상태 조회
   const updatedBalance = await prisma.creditBalance.findUnique({
     where: { userId },
   })

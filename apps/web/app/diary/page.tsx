@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 
-/* ── Types ── */
+/* ── 타입 정의 ── */
 interface DiaryEntry {
   id: string
   date: string
@@ -18,7 +18,7 @@ interface DiaryEntry {
   createdAt?: string
 }
 
-/* ── Constants ── */
+/* ── 상수 ── */
 const TROUBLES = [
   {
     id: "redness",
@@ -93,7 +93,7 @@ const conditionTipBg = (c: string) =>
       ? "bg-amber-50 text-amber-700"
       : "bg-rose-50 text-rose-700"
 
-/* ── Helpers ── */
+/* ── 유틸 함수 ── */
 function getMonthKey(d: Date) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`
 }
@@ -105,15 +105,15 @@ function getCalendarDays(year: number, month: number) {
 
   const days: { day: number; current: boolean }[] = []
 
-  // Previous month trailing days
+  // 이전 달 마지막 날짜들
   for (let i = firstDay - 1; i >= 0; i--) {
     days.push({ day: prevMonthDays - i, current: false })
   }
-  // Current month
+  // 이번 달 날짜들
   for (let i = 1; i <= daysInMonth; i++) {
     days.push({ day: i, current: true })
   }
-  // Next month leading days
+  // 다음 달 시작 날짜들
   const remaining = 7 - (days.length % 7)
   if (remaining < 7) {
     for (let i = 1; i <= remaining; i++) {
@@ -146,7 +146,7 @@ function parseEntry(e: DiaryEntry): DiaryEntry {
   return e
 }
 
-/* ── NavBar ── */
+/* ── 네비게이션 바 ── */
 function NavBar() {
   const router = useRouter()
   return (
@@ -200,7 +200,7 @@ function NavBar() {
   )
 }
 
-/* ── Main Page ── */
+/* ── 일지 메인 페이지 ── */
 export default function DiaryPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
@@ -216,19 +216,19 @@ export default function DiaryPage() {
   const [loading, setLoading] = useState(true)
   const [selectedDate, setSelectedDate] = useState<number | null>(null)
 
-  // Edit state
+  // 수정 상태
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editNote, setEditNote] = useState("")
   const [editCondition, setEditCondition] = useState("")
   const [editSaving, setEditSaving] = useState(false)
   const [deletingId, setDeletingId] = useState<string | null>(null)
 
-  /* ── Auth redirect ── */
+  /* ── 인증 리다이렉트 ── */
   useEffect(() => {
     if (status === "unauthenticated") router.push("/auth/signin")
   }, [status, router])
 
-  /* ── Fetch entries for current month ── */
+  /* ── 이번 달 일지 불러오기 ── */
   const fetchEntries = useCallback(async () => {
     setLoading(true)
     try {
@@ -252,13 +252,13 @@ export default function DiaryPage() {
     if (status === "authenticated") fetchEntries()
   }, [status, fetchEntries])
 
-  // Reset selected date when month changes
+  // 월 변경 시 선택 날짜 초기화
   useEffect(() => {
     setSelectedDate(null)
     setEditingId(null)
   }, [viewYear, viewMonth])
 
-  /* ── Month navigation ── */
+  /* ── 월 이동 ── */
   const prevMonth = () => {
     if (viewMonth === 0) {
       setViewYear(viewYear - 1)
@@ -280,7 +280,7 @@ export default function DiaryPage() {
       viewMonth === 11
         ? `${viewYear + 1}-01`
         : `${viewYear}-${String(viewMonth + 2).padStart(2, "0")}`
-    if (next > current) return // Don't go past current month
+    if (next > current) return // 이번 달 이후로는 이동 불가
     if (viewMonth === 11) {
       setViewYear(viewYear + 1)
       setViewMonth(0)
@@ -289,7 +289,7 @@ export default function DiaryPage() {
     }
   }
 
-  /* ── Entry lookup by day ── */
+  /* ── 날짜별 일지 조회 ── */
   const entryByDay = new Map<number, DiaryEntry>()
   entries.forEach((e) => {
     const d = new Date(e.date)
@@ -300,7 +300,7 @@ export default function DiaryPage() {
 
   const selectedEntry = selectedDate ? entryByDay.get(selectedDate) : null
 
-  /* ── Handlers ── */
+  /* ── 이벤트 핸들러 ── */
   const generateTip = async (
     entryId: string,
     cond: string,
@@ -413,7 +413,7 @@ export default function DiaryPage() {
     }
   }
 
-  /* ── Calendar data ── */
+  /* ── 캘린더 데이터 ── */
   const calendarDays = getCalendarDays(viewYear, viewMonth)
   const today = now.getDate()
   const isCurrentMonth =
@@ -422,12 +422,12 @@ export default function DiaryPage() {
     getMonthKey(new Date(viewYear, viewMonth + 1, 1)) >
     getMonthKey(new Date(now.getFullYear(), now.getMonth() + 1, 1))
 
-  // Monthly summary
+  // 월간 요약
   const goodCount = entries.filter((e) => e.condition === "good").length
   const normalCount = entries.filter((e) => e.condition === "normal").length
   const badCount = entries.filter((e) => e.condition === "bad").length
 
-  /* ── Loading ── */
+  /* ── 로딩 상태 ── */
   if (status === "loading") {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -480,7 +480,7 @@ export default function DiaryPage() {
             className="anim-fade-up overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm"
             style={{ animationDelay: "0.1s" }}
           >
-            {/* Month navigation */}
+            {/* 월 이동 버튼 */}
             <div className="flex items-center justify-between border-b border-gray-50 px-5 py-4">
               <button
                 onClick={prevMonth}
@@ -534,7 +534,7 @@ export default function DiaryPage() {
               </button>
             </div>
 
-            {/* Weekday headers */}
+            {/* 요일 헤더 */}
             <div className="grid grid-cols-7 px-2 pt-3 pb-2">
               {WEEKDAYS.map((w, i) => (
                 <div
@@ -546,7 +546,7 @@ export default function DiaryPage() {
               ))}
             </div>
 
-            {/* Calendar grid */}
+            {/* 캘린더 그리드 */}
             <div className="grid grid-cols-7 gap-1.5 px-2 pb-4">
               {calendarDays.map((d, idx) => {
                 const entry = d.current ? entryByDay.get(d.day) : undefined
@@ -554,7 +554,7 @@ export default function DiaryPage() {
                 const isSelected = d.current && d.day === selectedDate
                 const isFuture = d.current && isCurrentMonth && d.day > today
 
-                // Cell background based on condition
+                // 피부 상태에 따른 셀 배경색
                 const cellBg = entry
                   ? entry.condition === "good"
                     ? "bg-emerald-50 border-emerald-200"
@@ -563,7 +563,7 @@ export default function DiaryPage() {
                       : "bg-rose-50 border-rose-200"
                   : "bg-white border-transparent"
 
-                // Text color based on condition
+                // 피부 상태에 따른 텍스트 색상
                 const numColor = entry
                   ? entry.condition === "good"
                     ? "text-emerald-700"
@@ -590,14 +590,14 @@ export default function DiaryPage() {
                           : ""
                     } ${isToday && !isSelected ? "border-purple-300 bg-purple-50/40" : ""} `}
                   >
-                    {/* Day number */}
+                    {/* 날짜 숫자 */}
                     <span
                       className={`text-[13px] leading-none font-semibold ${!d.current ? "text-gray-200" : ""} ${d.current && !entry ? "text-gray-400" : ""} ${d.current && entry ? numColor : ""} ${isToday ? "font-extrabold" : ""} ${isSelected && !entry ? "font-bold text-purple-600" : ""} `}
                     >
                       {d.day}
                     </span>
 
-                    {/* Condition emoji — clear visual */}
+                    {/* 피부 상태 이모지 */}
                     {entry && (
                       <span className="mt-0.5 text-[15px] leading-none">
                         {entry.condition === "good"
@@ -608,7 +608,7 @@ export default function DiaryPage() {
                       </span>
                     )}
 
-                    {/* Today label */}
+                    {/* 오늘 표시 */}
                     {isToday && (
                       <span className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 text-[8px] font-extrabold tracking-tight text-purple-400">
                         today
@@ -619,7 +619,7 @@ export default function DiaryPage() {
               })}
             </div>
 
-            {/* Monthly summary bar */}
+            {/* 월간 요약 바 */}
             {entries.length > 0 && (
               <div className="flex items-center gap-3 border-t border-gray-100 px-5 py-3.5">
                 <div className="flex flex-1 items-center gap-3">
@@ -655,7 +655,7 @@ export default function DiaryPage() {
             )}
           </div>
 
-          {/* Loading overlay for month transition */}
+          {/* 월 전환 시 로딩 오버레이 */}
           {loading && (
             <div className="flex justify-center py-6">
               <div className="h-6 w-6 animate-spin rounded-full border-2 border-purple-200 border-t-purple-500" />
@@ -667,7 +667,7 @@ export default function DiaryPage() {
             <div className="anim-pop-in mt-4">
               {selectedEntry ? (
                 <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
-                  {/* Color bar */}
+                  {/* 컬러 바 */}
                   <div
                     className={`h-1.5 ${conditionBar(selectedEntry.condition)}`}
                   />
@@ -806,7 +806,7 @@ export default function DiaryPage() {
                       </div>
                     )}
 
-                    {/* Skindit tip */}
+                    {/* 스킨딧 팁 */}
                     <div
                       className={`mt-3 rounded-xl px-3 py-2.5 text-[11px] leading-relaxed ${conditionTipBg(selectedEntry.condition)}`}
                     >
@@ -820,7 +820,7 @@ export default function DiaryPage() {
                             : "오늘은 피부가 쉴 시간이 필요해요, 순한 제품으로 진정시켜 주세요 🛡️")}
                     </div>
 
-                    {/* Edit form */}
+                    {/* 수정 폼 */}
                     {editingId === selectedEntry.id && (
                       <div className="anim-fade-up mt-4 border-t border-gray-100 pt-4">
                         <div className="mb-2 flex gap-2">
@@ -868,7 +868,7 @@ export default function DiaryPage() {
                   </div>
                 </div>
               ) : (
-                /* No entry for this date */
+                /* 이 날짜에 기록 없음 */
                 <div className="rounded-2xl bg-white p-8 text-center">
                   <p className="mb-2 text-2xl">📝</p>
                   <p className="mb-1 text-sm font-bold text-gray-600">

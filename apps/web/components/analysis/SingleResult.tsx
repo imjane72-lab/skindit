@@ -18,7 +18,7 @@ interface SingleResultProps {
   productName?: string
 }
 
-/* ── Pill ── */
+/* ── 성분 알약 버튼 ── */
 function ResultPill({ name, detail, good }: { name: string; detail: string; good: boolean }) {
   const [open, setOpen] = useState(false)
   return (
@@ -39,7 +39,7 @@ function ResultPill({ name, detail, good }: { name: string; detail: string; good
   )
 }
 
-/* ── Section Header ── */
+/* ── 섹션 헤더 ── */
 function SectionHeader({ icon, title }: { icon: string; title: string }) {
   return (
     <div className="flex items-center gap-2 mb-3">
@@ -197,7 +197,7 @@ export default function SingleResult({ res, t, reset, lang, historyId, productNa
         </div>
       )}
 
-      {/* ── Buttons ── */}
+      {/* ── 버튼 영역 ── */}
       <div className="flex gap-2 pt-2">
         <button
           onClick={() => {

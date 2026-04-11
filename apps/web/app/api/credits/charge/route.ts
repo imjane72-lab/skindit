@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
   const userId = session.user.id
   const { credits } = PACKAGES[pkg]
 
-  // Add credits and record transaction atomically
+  // 크레딧 추가 및 트랜잭션 기록 (원자적 처리)
   const [balance] = await prisma.$transaction([
     prisma.creditBalance.upsert({
       where: { userId },

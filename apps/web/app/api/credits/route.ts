@@ -25,14 +25,14 @@ export async function GET() {
 
   const userId = session.user.id
 
-  // Get or create credit balance
+  // 크레딧 잔액 조회 또는 생성
   const balance = await prisma.creditBalance.upsert({
     where: { userId },
     create: { userId, credits: 0 },
     update: {},
   })
 
-  // Calculate today's free usage from transactions
+  // 오늘의 무료 사용량 트랜잭션에서 계산
   const startOfDay = new Date()
   startOfDay.setHours(0, 0, 0, 0)
 

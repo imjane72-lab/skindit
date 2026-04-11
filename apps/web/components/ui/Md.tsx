@@ -19,12 +19,12 @@ export default function Md({ children }: { children: string }) {
       {lines.map((line, li) => {
         const trimmed = line.trim()
         if (!trimmed) return <br key={li} />
-        // Any line starting with # → bold title (remove all # symbols)
+        // # 으로 시작하는 줄 → 볼드 제목으로 변환
         if (/^#{1,3}/.test(trimmed)) {
           const text = trimmed.replace(/^#{1,3}\s*/, "")
           return <p key={li} className="mt-3 mb-1 text-sm font-extrabold text-gray-800">{text}</p>
         }
-        // Bullet lists
+        // 불릿 리스트 처리
         if (trimmed.startsWith("- ")) {
           const content = trimmed.slice(2)
           return (
@@ -34,15 +34,15 @@ export default function Md({ children }: { children: string }) {
             </div>
           )
         }
-        // Star ratings
+        // 별점 표시
         if (trimmed.includes("★")) {
           return <p key={li} className="font-bold text-amber-600 mt-1">{trimmed}</p>
         }
-        // Section headers (bold line ending with :)
+        // 섹션 헤더 (콜론으로 끝나는 짧은 볼드 줄)
         if (trimmed.endsWith(":") && !trimmed.includes(" ") === false && trimmed.length < 30) {
           return <p key={li} className="mt-2.5 mb-1 text-xs font-extrabold text-purple-600">{trimmed}</p>
         }
-        // Regular text with bold parsing
+        // 일반 텍스트 (볼드 파싱 포함)
         return <span key={li}>{parseBold(trimmed)}{li < lines.length - 1 ? " " : ""}</span>
       })}
     </>

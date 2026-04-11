@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-/* ── Rate Limiter ── */
+/* ── 요청 횟수 제한 ── */
 const WINDOW_MS = 60 * 1000;
 const MAX_PER_WINDOW = 5;
 const DAILY_LIMIT = 50;
@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Strip data URL prefix: "data:image/png;base64,..." -> media_type + base64 data
+  // 데이터 URL 접두사 분리: "data:image/png;base64,..." → media_type + base64 데이터
   const match = image.match(/^data:(image\/[a-zA-Z+]+);base64,(.+)$/s);
   if (!match) {
     return NextResponse.json(

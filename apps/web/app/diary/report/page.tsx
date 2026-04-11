@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { SITE_URL } from "@/lib/constants";
 
-/* ── Ingredient Link Card (접기/펼치기) ── */
+/* ── 성분 연결 카드 (접기/펼치기) ── */
 function IngredientLinkCard({ link }: { link: { product: string; watchOut: string[]; starIngredients: string[] } }) {
   const [open, setOpen] = useState(false);
   return (
@@ -42,7 +42,7 @@ function IngredientLinkCard({ link }: { link: { product: string; watchOut: strin
   );
 }
 
-/* ── NavBar with back arrow ── */
+/* ── 네비게이션 바 (뒤로가기) ── */
 function NavBar() {
   const router = useRouter();
   return (
@@ -60,12 +60,12 @@ function NavBar() {
   );
 }
 
-/* ── Report Page ── */
+/* ── 리포트 페이지 ── */
 export default function DiaryReportPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
 
-  // Language
+  // 언어 설정
   const [lang, setLang] = useState("ko");
   useEffect(() => { setLang(localStorage.getItem("skindit_lang") || "ko"); }, []);
   const t = (ko: string, en: string) => lang === "ko" ? ko : en;
@@ -85,7 +85,7 @@ export default function DiaryReportPage() {
     if (status === "unauthenticated") router.push("/auth/signin");
   }, [status, router]);
 
-  /* ── Fetch entry count first ── */
+  /* ── 일지 개수 먼저 조회 ── */
   const fetchEntryCount = useCallback(async () => {
     try {
       const res = await fetch("/api/diary?page=1&limit=1");
@@ -102,7 +102,7 @@ export default function DiaryReportPage() {
     if (status === "authenticated") fetchEntryCount();
   }, [status, fetchEntryCount]);
 
-  /* ── Fetch report ── */
+  /* ── 리포트 불러오기 ── */
   const fetchReport = useCallback(async () => {
     if (entryCount !== null && entryCount < 5) return;
     if (reportCache[selectedMonth]) return; // 이미 캐시됨
@@ -129,7 +129,7 @@ export default function DiaryReportPage() {
     }
   }, [loadingEntries, entryCount, fetchReport, selectedMonth]);
 
-  /* ── Loading ── */
+  /* ── 로딩 상태 ── */
   if (status === "loading" || loadingEntries) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -145,7 +145,7 @@ export default function DiaryReportPage() {
 
   if (status === "unauthenticated") return null;
 
-  /* ── Not enough entries ── */
+  /* ── 일지가 부족한 경우 ── */
   if (entryCount !== null && entryCount < 5) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -185,7 +185,7 @@ export default function DiaryReportPage() {
     );
   }
 
-  /* ── Report loading ── */
+  /* ── 리포트 로딩 중 ── */
   if (reportLoading) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -214,7 +214,7 @@ export default function DiaryReportPage() {
     );
   }
 
-  /* ── Report data ── */
+  /* ── 리포트 데이터 렌더링 ── */
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-160 mx-auto bg-white min-h-screen shadow-xl">

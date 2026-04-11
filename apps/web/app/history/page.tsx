@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { SITE_URL } from "@/lib/constants"
 
-/* ── Markdown parser ── */
+/* ── 마크다운 파서 ── */
 function Md({ children }: { children: string }) {
   if (!children) return null
   if (!children.includes("**") && !children.includes("\n")) return <>{children}</>
@@ -16,7 +16,7 @@ function Md({ children }: { children: string }) {
   )}</>
 }
 
-/* ── Section component ── */
+/* ── 섹션 컴포넌트 ── */
 function Section({ icon, title, color, children }: { icon: string; title: string; color: string; children: React.ReactNode }) {
   return (
     <div className={`rounded-2xl ${color} p-4 mb-3`}>
@@ -26,7 +26,7 @@ function Section({ icon, title, color, children }: { icon: string; title: string
   )
 }
 
-/* ── Pill for ingredients ── */
+/* ── 성분 알약 버튼 ── */
 function HistoryPill({ name, detail, good }: { name: string; detail: string; good: boolean }) {
   const [open, setOpen] = useState(false)
   return (
@@ -47,11 +47,11 @@ function HistoryPill({ name, detail, good }: { name: string; detail: string; goo
   )
 }
 
-/* ── Full Result View ── */
+/* ── 전체 결과 뷰 ── */
 function FullResultView({ item, displayType }: { item: HistoryItem; displayType: DisplayType }) {
   const rj = item.resultJson || {}
 
-  // Single analysis
+  // 단일 성분 분석
   if (displayType === "single") {
     const starIngs = (rj.star_ingredients as Array<{name: string; benefit?: string; best_time?: string; synergy?: string[]}>) || []
     const watchOut = (rj.watch_out as Array<{name: string; reason?: string; alternative?: string}>) || []
@@ -172,7 +172,7 @@ function FullResultView({ item, displayType }: { item: HistoryItem; displayType:
     )
   }
 
-  // Routine analysis
+  // 루틴 분석
   if (displayType === "routine") {
     const conflicts = (rj.conflicts as Array<{ingredients?: string[]; products?: string[]; severity: string; reason: string}>) || []
     const synergies = (rj.synergies as Array<{ingredients?: string[]; products?: string[]; reason: string}>) || []
@@ -256,7 +256,7 @@ function FullResultView({ item, displayType }: { item: HistoryItem; displayType:
     )
   }
 
-  // Compare
+  // 비교 분석
   const names = getCompareNames(item)
   const shared = (rj.shared as Array<{name: string; note?: string}>) || []
   const onlyA = (rj.only_a as Array<{name: string; note?: string}>) || []
@@ -327,7 +327,7 @@ function FullResultView({ item, displayType }: { item: HistoryItem; displayType:
   )
 }
 
-/* ── Types ── */
+/* ── 타입 정의 ── */
 interface HistoryItem {
   id: string
   date: string
@@ -341,7 +341,7 @@ interface HistoryItem {
 
 type DisplayType = "single" | "routine" | "compare"
 
-/* ── Helpers ── */
+/* ── 유틸 함수 ── */
 const getDisplayType = (item: HistoryItem): DisplayType => {
   if (item.type === "ROUTINE") return "routine"
   if (item.resultJson?.type === "compare") return "compare"
@@ -378,7 +378,7 @@ const TYPE_CONFIG = {
   },
 }
 
-/* ── Mini Score Ring ── */
+/* ── 미니 점수 링 ── */
 function MiniScoreRing({ score, size = 44 }: { score: number; size?: number }) {
   const sw = 3
   const r = (size - sw * 2) / 2
@@ -404,7 +404,7 @@ function MiniScoreRing({ score, size = 44 }: { score: number; size?: number }) {
   )
 }
 
-/* ── NavBar ── */
+/* ── 네비게이션 바 ── */
 function NavBar() {
   const router = useRouter()
   return (
@@ -430,7 +430,7 @@ function NavBar() {
   )
 }
 
-/* ── Parse helpers ── */
+/* ── 파싱 유틸 ── */
 function getProductName(item: HistoryItem): string {
   return (item.resultJson?.productName as string) || ""
 }
@@ -442,7 +442,7 @@ function getRoutineProducts(item: HistoryItem): string[] {
 }
 
 function getCompareNames(item: HistoryItem): { a: string; b: string } {
-  // 1) resultJson에서 이름 가져오기 (최신 형식)
+  // resultJson에서 이름 가져오기 (최신 형식)
   const rA = item.resultJson?.compareNameA as string | undefined
   const rB = item.resultJson?.compareNameB as string | undefined
   const cleanName = (n: string | undefined) => n && n !== "A 제품" && n !== "B 제품" ? n : ""
@@ -451,7 +451,7 @@ function getCompareNames(item: HistoryItem): { a: string; b: string } {
     return { a: cleanName(rA) || "A", b: cleanName(rB) || "B" }
   }
 
-  // 2) ingredients 문자열에서 파싱 (새 형식: [이름]: 성분...)
+  // ingredients 문자열에서 파싱 (새 형식: [이름]: 성분...)
   const ings = item.ingredients || ""
   const bracketMatch = ings.match(/\[비교\]\s*\[([^\]]+)\]:.*\/\s*\[([^\]]+)\]:/)
   if (bracketMatch) {
@@ -461,7 +461,7 @@ function getCompareNames(item: HistoryItem): { a: string; b: string } {
     }
   }
 
-  // 3) 옛날 형식 폴백
+  // 옛날 형식 폴백
   const aMatch = ings.match(/A:\s*(.+?)\.{3}/)
   const bMatch = ings.match(/B:\s*(.+?)\.{3}/)
   return {
@@ -472,10 +472,10 @@ function getCompareNames(item: HistoryItem): { a: string; b: string } {
 
 function getCompareIngredients(item: HistoryItem): { a: string; b: string } {
   const ings = item.ingredients || ""
-  // New format: [비교] [이름]: 성분... / [이름]: 성분...
+  // 새 형식: [비교] [이름]: 성분... / [이름]: 성분...
   const newMatch = ings.match(/\[비교\]\s*\[[^\]]*\]:\s*(.*?)\s*\/\s*\[[^\]]*\]:\s*(.*)/)
   if (newMatch) return { a: (newMatch[1] || "").trim(), b: (newMatch[2] || "").trim() }
-  // Old format: [비교] A: 성분... / B: 성분...
+  // 이전 형식: [비교] A: 성분... / B: 성분...
   const oldMatch = ings.match(/\[비교\]\s*A:\s*(.*?)\s*\/\s*B:\s*(.*)/)
   if (oldMatch) return { a: (oldMatch[1] || "").trim(), b: (oldMatch[2] || "").trim() }
   return { a: "", b: "" }
@@ -495,7 +495,7 @@ function formatFullDate(dateStr: string) {
   return d.toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric" })
 }
 
-/* ── Main Page ── */
+/* ── 히스토리 메인 페이지 ── */
 export default function HistoryPage() {
   const { status } = useSession()
   const router = useRouter()
@@ -523,7 +523,7 @@ export default function HistoryPage() {
   const fetchHistory = useCallback(async () => {
     setLoading(true)
     try {
-      // compare와 single이 모두 SINGLE 타입으로 저장되므로, 전체를 가져와서 클라이언트에서 분류
+      // 비교와 단일 분석이 모두 SINGLE 타입으로 저장되므로, 전체를 가져와서 클라이언트에서 분류
       const apiType = filter === "routine" ? "ROUTINE" : filter === "single" || filter === "compare" ? "SINGLE" : undefined
       const params = new URLSearchParams({
         page: "1",
@@ -535,7 +535,7 @@ export default function HistoryPage() {
         const data = await res.json()
         let raw: HistoryItem[] = data.data || data.items || []
 
-        // Client-side filter for compare vs single
+        // 클라이언트에서 비교/단일 분류 필터링
         if (filter === "compare") {
           raw = raw.filter(item => item.resultJson?.type === "compare")
         } else if (filter === "single") {
@@ -595,7 +595,7 @@ export default function HistoryPage() {
 
   if (status === "unauthenticated") return null
 
-  // Summary counts
+  // 요약 카운트
   const typeCounts = { single: 0, routine: 0, compare: 0 }
   items.forEach(item => { typeCounts[getDisplayType(item)]++ })
 
@@ -611,7 +611,7 @@ export default function HistoryPage() {
             <p className="text-sm text-gray-400">{t("분석했던 성분이랑 결과를 다시 볼 수 있어요~", "Review your past analyses~")}</p>
           </div>
 
-          {/* Filter pills */}
+          {/* 필터 버튼 */}
           <div className="mb-6 flex gap-2 anim-fade-up" style={{ animationDelay: "0.05s" }}>
             {([
               { id: "all" as const, label: "전체", icon: "📋" },
@@ -663,7 +663,7 @@ export default function HistoryPage() {
               </button>
             </div>
           ) : (
-            /* Card list */
+            /* 카드 리스트 */
             <div className="flex flex-col gap-3">
               {items.map((item, idx) => {
                 const displayType = getDisplayType(item)
@@ -677,12 +677,12 @@ export default function HistoryPage() {
                     className="anim-fade-up overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition-all duration-200 hover:shadow-md"
                     style={{ animationDelay: `${0.04 * (idx + 1)}s` }}
                   >
-                    {/* Card header */}
+                    {/* 카드 헤더 */}
                     <button
                       onClick={() => setExpandedId(isExpanded ? null : item.id)}
                       className="flex w-full items-center gap-3.5 border-none bg-transparent p-4 text-left"
                     >
-                      {/* Score ring or compare icon */}
+                      {/* 점수 링 또는 비교 아이콘 */}
                       {isCompare ? (
                         <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl ${config.bg}`}>
                           <span className="text-lg">{config.icon}</span>
@@ -692,7 +692,7 @@ export default function HistoryPage() {
                       )}
 
                       <div className="min-w-0 flex-1">
-                        {/* Type tag + date */}
+                        {/* 분석 타입 태그 + 날짜 */}
                         <div className="mb-1 flex items-center gap-2">
                           <span className={`inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-bold ${config.bg} ${config.text}`}>
                             {config.icon} {config.label}
@@ -720,7 +720,7 @@ export default function HistoryPage() {
                           )
                         })()}
 
-                        {/* Preview text */}
+                        {/* 미리보기 텍스트 */}
                         <p className="mt-0.5 line-clamp-1 text-[11px] text-gray-400">
                           {displayType === "routine"
                             ? String(item.resultJson?.routine_comment || "루틴 분석 결과")
@@ -730,7 +730,7 @@ export default function HistoryPage() {
                         </p>
                       </div>
 
-                      {/* Score badge for non-compare */}
+                      {/* 비교 분석 외 점수 뱃지 */}
                       {!isCompare && (
                         <div className={`shrink-0 rounded-lg px-2 py-1 text-center ${item.score >= 80 ? "bg-emerald-50" : item.score >= 60 ? "bg-amber-50" : "bg-rose-50"}`}>
                           <span className={`text-xs font-extrabold ${scoreColor(item.score)}`}>{item.score}</span>
@@ -746,7 +746,7 @@ export default function HistoryPage() {
                       </svg>
                     </button>
 
-                    {/* Expanded detail */}
+                    {/* 펼쳐진 상세 내용 */}
                     {isExpanded && (
                       <div className="border-t border-gray-100 p-4 anim-fade-up">
                         {/* Date */}

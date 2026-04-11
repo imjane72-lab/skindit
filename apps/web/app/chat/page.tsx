@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
-/* ── Types ── */
+/* ── 타입 정의 ── */
 interface Message {
   id: string;
   role: "ai" | "user";
@@ -19,7 +19,7 @@ interface SkinProfile {
   [key: string]: unknown;
 }
 
-/* ── Constants ── */
+/* ── 상수 ── */
 const SYSTEM_PROMPT = `너는 피부과 경력 30년차 유쾌한 여자 의사야. 말투는 친한 언니처럼 친근하되, 문장 끝은 반드시 존댓말로 마무리해. 예: "좋아요", "바르세요", "추천해요", "해보세요".
 
 절대 규칙:
@@ -46,13 +46,13 @@ const QUICK_CHIPS = [
   "성분 추천해주세요 ✨",
 ];
 
-/* ── Helpers ── */
+/* ── 유틸 함수 ── */
 const uid = () => Math.random().toString(36).slice(2, 10);
 
 const formatTime = (d: Date) =>
   d.toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit", hour12: true });
 
-/* ── NavBar ── */
+/* ── 네비게이션 바 ── */
 function NavBar() {
   const router = useRouter();
   return (
@@ -78,7 +78,7 @@ function NavBar() {
   );
 }
 
-/* ── Typing Indicator ── */
+/* ── 타이핑 인디케이터 ── */
 function TypingIndicator() {
   return (
     <div className="flex items-end gap-2.5 anim-fade-up">
@@ -89,7 +89,7 @@ function TypingIndicator() {
           <path d="M16 16L20 20" stroke="white" strokeWidth="2" strokeLinecap="round" strokeOpacity="0.9" />
         </svg>
       </div>
-      {/* Dots bubble */}
+      {/* 점 말풍선 */}
       <div className="bg-pastel-lavender/50 rounded-2xl rounded-bl-md px-5 py-3.5 skindit-loading">
         <div className="dot" />
         <div className="dot" />
@@ -99,7 +99,7 @@ function TypingIndicator() {
   );
 }
 
-/* ── Message Bubble ── */
+/* ── 메시지 말풍선 ── */
 function MessageBubble({ message }: { message: Message }) {
   const isAI = message.role === "ai";
 
@@ -133,7 +133,7 @@ function MessageBubble({ message }: { message: Message }) {
   );
 }
 
-/* ── Main Page ── */
+/* ── 상담 메인 페이지 ── */
 export default function ChatPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -142,7 +142,7 @@ export default function ChatPage() {
   useEffect(() => { setLang(localStorage.getItem("skindit_lang") || "ko"); }, []);
   const t = (ko: string, en: string) => lang === "ko" ? ko : en;
 
-  /* ── State ── */
+  /* ── 상태 관리 ── */
   const [messages, setMessages] = useState<Message[]>([
     { id: uid(), role: "ai", text: INITIAL_GREETING, timestamp: new Date() },
   ]);
@@ -153,12 +153,12 @@ export default function ChatPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  /* ── Auth guard ── */
+  /* ── 인증 확인 ── */
   useEffect(() => {
     if (status === "unauthenticated") router.replace("/auth/signin");
   }, [status, router]);
 
-  /* ── Fetch skin profile ── */
+  /* ── 피부 프로필 불러오기 ── */
   useEffect(() => {
     if (status !== "authenticated") return;
     fetch("/api/profile")
@@ -169,7 +169,7 @@ export default function ChatPage() {
       .catch(() => {});
   }, [status]);
 
-  /* ── Auto-scroll ── */
+  /* ── 자동 스크롤 ── */
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, []);
@@ -178,7 +178,7 @@ export default function ChatPage() {
     scrollToBottom();
   }, [messages, isTyping, scrollToBottom]);
 
-  /* ── Build system prompt with profile ── */
+  /* ── 프로필 포함 시스템 프롬프트 생성 ── */
   const buildSystemPrompt = useCallback(() => {
     let prompt = SYSTEM_PROMPT;
     if (skinProfile) {
@@ -193,7 +193,7 @@ export default function ChatPage() {
     return prompt;
   }, [skinProfile]);
 
-  /* ── Send message ── */
+  /* ── 메시지 전송 ── */
   const sendMessage = useCallback(
     async (text: string) => {
       const trimmed = text.trim();
@@ -233,13 +233,13 @@ export default function ChatPage() {
     [isTyping, buildSystemPrompt],
   );
 
-  /* ── Handle submit ── */
+  /* ── 폼 제출 처리 ── */
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     sendMessage(input);
   };
 
-  /* ── Loading / Auth states ── */
+  /* ── 로딩 / 인증 상태 ── */
   if (status === "loading") {
     return (
       <div className="min-h-screen flex items-center justify-center bg-linear-to-b from-pastel-lavender/30 to-white">
@@ -254,11 +254,11 @@ export default function ChatPage() {
     <div className="max-w-160 mx-auto bg-white min-h-screen shadow-xl flex flex-col relative">
       <NavBar />
 
-      {/* ── Decorative blobs ── */}
+      {/* ── 장식용 블롭 ── */}
       <div className="blob w-48 h-48 bg-pastel-lavender top-24 -left-16 fixed" />
       <div className="blob w-36 h-36 bg-pastel-rose top-64 -right-10 fixed" />
 
-      {/* ── Messages Area ── */}
+      {/* ── 메시지 영역 ── */}
       <div className="flex-1 overflow-y-auto px-4 pt-4 pb-4 flex flex-col gap-4 hide-scrollbar">
         {messages.map((msg) => (
           <MessageBubble key={msg.id} message={msg} />
@@ -267,9 +267,9 @@ export default function ChatPage() {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* ── Bottom Input Area ── */}
+      {/* ── 하단 입력 영역 ── */}
       <div className="sticky bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-gray-100 z-40 pb-[env(safe-area-inset-bottom)]">
-        {/* Quick chips */}
+        {/* 빠른 질문 칩 */}
         <div className="px-3 pt-3 pb-1.5 overflow-x-auto hide-scrollbar">
           <div className="flex gap-2 w-max">
             {QUICK_CHIPS.map((chip) => (
@@ -289,7 +289,7 @@ export default function ChatPage() {
           </div>
         </div>
 
-        {/* Input form */}
+        {/* 입력 폼 */}
         <form onSubmit={handleSubmit} className="px-3 pb-4 pt-1.5 flex items-center gap-2.5">
           <input
             ref={inputRef}

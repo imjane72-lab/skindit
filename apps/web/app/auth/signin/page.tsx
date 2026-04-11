@@ -72,7 +72,7 @@ function SignInContent() {
           )}
         </div>
 
-        {/* Social buttons */}
+        {/* 소셜 로그인 버튼 */}
         <div className="flex flex-col gap-3 anim-fade-up" style={{ animationDelay: "0.2s" }}>
           {/* Google */}
           <button
@@ -127,13 +127,13 @@ function SignInContent() {
           <div className="flex-1 h-px bg-gray-200/80" />
         </div>
 
-        {/* Footer note */}
+        {/* 하단 안내 */}
         <p className="text-center text-[11px] text-gray-300 leading-relaxed anim-fade-up" style={{ animationDelay: "0.35s" }}>
           로그인 시 서비스 이용약관 및 개인정보처리방침에 동의합니다.
         </p>
       </div>
 
-      {/* Bottom accent */}
+      {/* 하단 링크 */}
       <div className="mt-8 anim-fade-up" style={{ animationDelay: "0.4s" }}>
         <a href="/" className="text-xs text-gray-400 hover:text-purple-500 transition-colors">
           {t("← 홈으로 돌아가기", "← Back to Home")}

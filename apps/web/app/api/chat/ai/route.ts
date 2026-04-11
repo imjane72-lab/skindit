@@ -45,26 +45,26 @@ interface ClaudeMessage {
 }
 
 export async function POST(req: NextRequest) {
-  // 1. Auth
+  // 1. 인증 확인
   const session = await auth()
   if (!session?.user?.id) {
     return apiError("Unauthorized", 401)
   }
 
-  // 2. Rate limit
+  // 2. 요청 횟수 제한
   const ip = getIp(req.headers)
   const limit = rateLimit(ip)
   if (!limit.ok) {
     return apiError(limit.msg || "Too many requests", 429)
   }
 
-  // 3. API key
+  // 3. API 키 확인
   const apiKey = process.env.ANTHROPIC_API_KEY
   if (!apiKey) {
     return apiError("ANTHROPIC_API_KEY is not configured", 500)
   }
 
-  // 4. Parse request
+  // 4. 요청 파싱
   const body = await req.json()
   const { message } = body as { message: string }
 
@@ -74,14 +74,14 @@ export async function POST(req: NextRequest) {
 
   const userId = session.user.id
 
-  // 5. Load recent chat history for context
+  // 5. 최근 채팅 히스토리 불러오기 (컨텍스트용)
   const recentMessages = await prisma.chatMessage.findMany({
     where: { userId },
     orderBy: { createdAt: "desc" },
     take: 10,
   })
 
-  // Build conversation messages (oldest first)
+  // 대화 메시지 구성 (오래된 순서)
   const conversationMessages: ClaudeMessage[] = recentMessages
     .reverse()
     .map((m) => ({
@@ -89,10 +89,10 @@ export async function POST(req: NextRequest) {
       content: m.content,
     }))
 
-  // Add new user message
+  // 새 사용자 메시지 추가
   conversationMessages.push({ role: "user", content: message })
 
-  // 6. Tool-use loop
+  // 6. Tool-use 반복 루프
   let finalText = ""
 
   for (let i = 0; i < MAX_TOOL_ITERATIONS; i++) {
@@ -122,7 +122,7 @@ export async function POST(req: NextRequest) {
     const stopReason = data.stop_reason as string
 
     if (stopReason === "end_turn" || stopReason !== "tool_use") {
-      // Extract text from content blocks
+      // 컨텐츠 블록에서 텍스트 추출
       finalText = content
         .filter((b) => b.type === "text")
         .map((b) => b.text || "")
@@ -130,7 +130,7 @@ export async function POST(req: NextRequest) {
       break
     }
 
-    // Claude wants to use tools
+    // Claude가 도구 사용을 요청한 경우
     conversationMessages.push({ role: "assistant", content })
 
     const toolResults: ContentBlock[] = []
@@ -161,7 +161,7 @@ export async function POST(req: NextRequest) {
     finalText = "죄송해요, 잠시 문제가 생겼어요. 다시 한번 말해주세요!"
   }
 
-  // 7. Persist messages
+  // 7. 메시지 DB 저장
   await prisma.chatMessage.createMany({
     data: [
       { userId, role: "user", content: message },

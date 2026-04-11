@@ -374,7 +374,7 @@ ${info.tips.map(t => `- ${t}`).join("\n")}
 **추천** ${"★".repeat(info.rating)}${"☆".repeat(5 - info.rating)} ${info.bestFor}`
   }
 
-  // English fallback
+  // 영어 폴백
   const combos = info.cautionCombos.length > 0
     ? info.cautionCombos.join("\n")
     : "No known caution combos"

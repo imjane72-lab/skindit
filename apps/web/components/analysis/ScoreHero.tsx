@@ -19,7 +19,7 @@ export default function ScoreHero({
 }) {
   return (
     <div className="anim-scale-in relative mb-5 overflow-hidden rounded-3xl">
-      {/* Background gradient */}
+      {/* 배경 그라디언트 */}
       <div
         className={`absolute inset-0 bg-linear-to-br ${scoreGradient(score)} opacity-10`}
       />
