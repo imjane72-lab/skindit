@@ -57,15 +57,15 @@ export default function SingleResult({ res, t, reset, lang, historyId, productNa
     <div className="anim-scale-in space-y-5">
       {/* ── Hero: 그라디언트 헤더 ── */}
       <div className="bg-linear-to-r from-[#c5e384] via-[#f0d078] to-[#c4a35a] px-6 py-6 rounded-2xl">
-        <p className="text-white/60 text-[10px] font-bold uppercase tracking-widest mb-1">
+        <p className="text-gray-500 text-[10px] font-bold uppercase tracking-widest mb-1">
           skindit {t("분석 결과", "Analysis Result")}
         </p>
-        <h1 className="font-display text-white text-lg font-extrabold">
+        <h1 className="font-display text-gray-900 text-lg font-extrabold">
           {displayName || t("성분 분석 결과", "Ingredient Analysis")}
         </h1>
         <div className="flex items-center gap-3 mt-2">
-          <span className="bg-white/20 rounded-full px-3 py-1 text-xs font-bold text-white">{res.overall_score}{t("점", "pt")}</span>
-          <span className="text-white/60 text-xs">{new Date().toLocaleDateString("ko-KR")}</span>
+          <span className="bg-gray-900/10 rounded-full px-3 py-1 text-xs font-bold text-gray-800">{res.overall_score}{t("점", "pt")}</span>
+          <span className="text-gray-500 text-xs">{new Date().toLocaleDateString("ko-KR")}</span>
         </div>
       </div>
 

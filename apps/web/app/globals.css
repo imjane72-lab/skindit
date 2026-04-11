@@ -85,7 +85,7 @@ button, [role="button"], a, label, select, summary, [tabindex]:not([tabindex="-1
 
 /* ── Gradient text — avocado green ── */
 .gradient-text {
-  background: linear-gradient(135deg, #9bce26 0%, #E8B830 50%, #8B6914 100%) !important;
+  background: linear-gradient(135deg, #6B8E23 0%, #9bce26 30%, #E8B830 60%, #8B6914 100%) !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
   background-clip: text !important;

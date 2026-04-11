@@ -20,10 +20,10 @@ export default function CompareResult({ cRes, t, reset, lang, historyId }: Compa
         <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-white/20 text-2xl shadow-sm">
           ⚖️
         </div>
-        <p className="mb-2 text-sm font-bold text-white">
+        <p className="mb-2 text-sm font-bold text-gray-900">
           <Md>{cRes.summary}</Md>
         </p>
-        <p className="text-sm leading-relaxed text-white/80">
+        <p className="text-sm leading-relaxed text-gray-700">
           <Md>{cRes.recommendation}</Md>
         </p>
       </div>

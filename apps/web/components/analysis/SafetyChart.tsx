@@ -23,7 +23,7 @@ export default function SafetyChart({
         </div>
         <div>
           <span className="text-xs font-bold tracking-wide text-gray-800">
-            {t("skindit 안전 등급", "skindit Safety Ratings")}
+            {t("안전 등급", "Safety Ratings")}
           </span>
           <p className="text-[10px] text-gray-400">
             {t("성분별 안전도를 분석했어요", "Ingredient safety analysis")}
