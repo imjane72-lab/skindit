@@ -1054,7 +1054,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
               className="anim-fade-up mt-14 mb-6"
               style={{ animationDelay: "140ms" }}
             >
-              <p className="mb-2 text-center text-lg font-extrabold text-gray-900">
+              <p className="mb-2 text-center text-lg font-extrabold text-[#8B6914]">
                 {t(
                   "쓸수록 나를 알아가는 스킨딧",
                   "skindit learns you over time"
