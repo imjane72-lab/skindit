@@ -476,7 +476,6 @@ server.tool(
       });
 
       if (!productInfo) {
-        await browser.close();
         return {
           content: [{
             type: "text" as const,
@@ -524,8 +523,6 @@ server.tool(
         return null;
       });
 
-      await browser.close();
-
       if (!ingredients) {
         return {
           content: [{
@@ -553,13 +550,14 @@ server.tool(
         }],
       };
     } catch (err) {
-      if (browser) await browser.close();
       return {
         content: [{
           type: "text" as const,
-          text: `올리브영 검색 실패: ${err instanceof Error ? err.message : "Unknown error"}`,
+          text: `검색 실패: ${err instanceof Error ? err.message : "Unknown error"}`,
         }],
       };
+    } finally {
+      if (browser) await browser.close();
     }
   }
 );
