@@ -410,7 +410,7 @@ function NavBar() {
   return (
     <nav className="sticky top-0 z-50 flex h-14 items-center justify-between border-b border-gray-100/80 bg-white/80 px-6 backdrop-blur-2xl">
       <button onClick={() => router.push("/")} className="flex items-center gap-3 border-none bg-transparent p-0">
-        <div className="from-pastel-lavender-dark to-pastel-rose-dark relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-2xl bg-linear-to-br via-green-500 shadow-md">
+        <div className="bg-[#9bce26] shadow-md">
           <div className="absolute inset-0 bg-linear-to-t from-white/10 to-transparent" />
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="relative">
             <circle cx="11" cy="11" r="6" stroke="white" strokeWidth="2" strokeOpacity="0.9" />
@@ -422,7 +422,7 @@ function NavBar() {
         </div>
         <div className="flex items-baseline gap-0.5">
           <span className="font-display text-[17px] font-extrabold tracking-tight text-gray-900">skin</span>
-          <span className="font-accent from-pastel-lavender-dark to-pastel-rose-dark bg-linear-to-r bg-clip-text text-[17px] font-semibold text-transparent italic">dit</span>
+          <span className="font-accent bg-[#9bce26] bg-clip-text text-[17px] font-semibold text-transparent italic">dit</span>
         </div>
       </button>
       <span className="text-xs font-bold tracking-widest text-gray-400 uppercase">History</span>
@@ -624,7 +624,7 @@ export default function HistoryPage() {
                 onClick={() => handleFilterChange(f.id)}
                 className={`flex items-center gap-1.5 rounded-full border px-3.5 py-2 text-xs font-bold transition-all duration-200 ${
                   filter === f.id
-                    ? "from-pastel-lavender-dark to-pastel-rose-dark border-transparent bg-linear-to-r text-white shadow-md"
+                    ? "bg-[#9bce26] text-white shadow-md"
                     : "border-gray-200 bg-white text-gray-400 hover:border-green-200 hover:text-green-500"
                 }`}
               >
@@ -657,7 +657,7 @@ export default function HistoryPage() {
               <p className="mb-6 text-xs text-gray-300">{t("성분 분석하면 여기에 쌓여요! ✨", "Analyses will appear here! ✨")}</p>
               <button
                 onClick={() => router.push("/")}
-                className="from-pastel-lavender-dark to-pastel-rose-dark rounded-full bg-linear-to-r px-6 py-2.5 text-xs font-bold text-white shadow-md transition-all hover:shadow-lg"
+                className="bg-[#9bce26] px-6 py-2.5 text-xs font-bold text-white shadow-md transition-all hover:shadow-lg"
               >
                 {t("첫 분석 해보기", "Try First Analysis")}
               </button>
@@ -826,7 +826,7 @@ export default function HistoryPage() {
                         onClick={() => setPage(p)}
                         className={`flex h-9 w-9 items-center justify-center rounded-xl border text-xs font-bold transition-all ${
                           p === page
-                            ? "from-pastel-lavender-dark to-pastel-rose-dark border-transparent bg-linear-to-r text-white shadow-md"
+                            ? "bg-[#9bce26] text-white shadow-md"
                             : "border-gray-200 bg-white text-gray-400 hover:border-green-200 hover:text-green-500"
                         }`}
                       >

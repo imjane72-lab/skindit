@@ -58,7 +58,7 @@ function NavBar() {
   return (
     <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-2xl border-b border-gray-100/80 h-14 px-6 flex items-center justify-between">
       <button onClick={() => router.push("/")} className="flex items-center gap-3 bg-transparent border-none p-0">
-        <div className="w-9 h-9 rounded-2xl bg-linear-to-br from-pastel-lavender-dark via-green-500 to-pastel-rose-dark flex items-center justify-center shadow-md relative overflow-hidden">
+        <div className="w-9 h-9 rounded-2xl bg-linear-to-br bg-[#9bce26] flex items-center justify-center shadow-md relative overflow-hidden">
           <div className="absolute inset-0 bg-linear-to-t from-white/10 to-transparent" />
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="relative">
             <circle cx="11" cy="11" r="6" stroke="white" strokeWidth="2" strokeOpacity="0.9" />
@@ -83,7 +83,7 @@ function TypingIndicator() {
   return (
     <div className="flex items-end gap-2.5 anim-fade-up">
       {/* Avatar */}
-      <div className="w-8 h-8 rounded-full bg-linear-to-br from-pastel-lavender-dark to-pastel-rose-dark flex items-center justify-center shrink-0 shadow-sm">
+      <div className="w-8 h-8 rounded-full bg-[#9bce26] flex items-center justify-center shrink-0 shadow-sm">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
           <circle cx="11" cy="11" r="6" stroke="white" strokeWidth="2" strokeOpacity="0.9" />
           <path d="M16 16L20 20" stroke="white" strokeWidth="2" strokeLinecap="round" strokeOpacity="0.9" />
@@ -107,7 +107,7 @@ function MessageBubble({ message }: { message: Message }) {
     <div className={`flex items-end gap-2.5 anim-fade-up ${isAI ? "justify-start" : "justify-end"}`}>
       {/* AI avatar */}
       {isAI && (
-        <div className="w-8 h-8 rounded-full bg-linear-to-br from-pastel-lavender-dark to-pastel-rose-dark flex items-center justify-center shrink-0 shadow-sm">
+        <div className="w-8 h-8 rounded-full bg-[#9bce26] flex items-center justify-center shrink-0 shadow-sm">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
             <circle cx="11" cy="11" r="6" stroke="white" strokeWidth="2" strokeOpacity="0.9" />
             <path d="M16 16L20 20" stroke="white" strokeWidth="2" strokeLinecap="round" strokeOpacity="0.9" />
@@ -243,7 +243,7 @@ export default function ChatPage() {
   if (status === "loading") {
     return (
       <div className="min-h-screen flex items-center justify-center bg-linear-to-b from-pastel-lavender/30 to-white">
-        <div className="w-8 h-8 rounded-full border-2 border-pastel-lavender-dark border-t-transparent animate-spin" />
+        <div className="w-8 h-8 rounded-full border-2 border-[#9bce26] border-t-transparent animate-spin" />
       </div>
     );
   }
@@ -300,14 +300,14 @@ export default function ChatPage() {
             disabled={isTyping}
             className="flex-1 h-12 px-4 rounded-2xl bg-gray-50 border border-gray-200
               text-[14.5px] text-gray-800 placeholder-gray-400
-              focus:outline-none focus:ring-2 focus:ring-pastel-lavender-dark/40 focus:border-pastel-lavender-dark/50
+              focus:outline-none focus:ring-2 focus:ring-[#9bce26]/40 focus:border-[#9bce26]/50
               disabled:opacity-60 transition-all duration-200"
           />
           <button
             type="submit"
             disabled={!input.trim() || isTyping}
             className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0
-              bg-linear-to-br from-pastel-lavender-dark via-green-500 to-pastel-rose-dark
+              bg-linear-to-br bg-[#9bce26]
               text-white shadow-lg shadow-green-200/50
               hover:shadow-xl hover:shadow-green-300/50 hover:scale-105
               active:scale-95 transition-all duration-200

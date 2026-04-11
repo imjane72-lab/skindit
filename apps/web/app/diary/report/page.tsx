@@ -174,7 +174,7 @@ export default function DiaryReportPage() {
               </div>
               <button
                 onClick={() => router.push("/diary/write")}
-                className="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-linear-to-r from-pastel-lavender-dark via-green-500 to-pastel-rose-dark shadow-md hover:shadow-lg transition-all"
+                className="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-linear-to-r bg-[#9bce26] shadow-md hover:shadow-lg transition-all"
               >
                 기록하러 가기
               </button>
@@ -255,7 +255,7 @@ export default function DiaryReportPage() {
           {reportData ? (
             <div className="rounded-2xl overflow-hidden shadow-sm anim-scale-in">
               {/* Header — 은은한 파스텔 */}
-              <div className="bg-linear-to-r from-pastel-lavender-dark via-green-500 to-pastel-rose-dark px-6 py-6 rounded-t-2xl">
+              <div className="bg-linear-to-r bg-[#9bce26] px-6 py-6 rounded-t-2xl">
                 <h3 className="font-display text-white text-lg font-extrabold">
                   {session?.user?.name || ""}님의 피부 리포트 📑
                 </h3>
@@ -450,7 +450,7 @@ export default function DiaryReportPage() {
               <p className="text-xs text-gray-400 leading-relaxed mb-4">다시 한번 시도해 주세요!</p>
               <button
                 onClick={fetchReport}
-                className="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-linear-to-r from-pastel-lavender-dark via-green-500 to-pastel-rose-dark shadow-md hover:shadow-lg transition-all"
+                className="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-linear-to-r bg-[#9bce26] shadow-md hover:shadow-lg transition-all"
               >
                 다시 시도
               </button>

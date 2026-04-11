@@ -172,7 +172,7 @@ export default function RoutineResult({ rRes, t, reset, lang, historyId }: Routi
         {rRes.timeline && rRes.timeline.length > 0 && (
           <div className="rounded-2xl border border-green-200 bg-green-50 p-5 shadow-sm">
             <div className="mb-4 flex items-center gap-2.5 border-b border-green-200 pb-3">
-              <div className="from-pastel-lavender-dark to-pastel-rose-dark flex h-8 w-8 items-center justify-center rounded-xl bg-linear-to-br shadow-sm">
+              <div className="bg-[#9bce26] flex h-8 w-8 items-center justify-center rounded-xl shadow-sm">
                 <span className="text-xs font-bold text-white">⏰</span>
               </div>
               <div>

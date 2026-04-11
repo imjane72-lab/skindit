@@ -139,7 +139,7 @@ function NavBar() {
         onClick={() => router.push("/")}
         className="flex items-center gap-3 border-none bg-transparent p-0"
       >
-        <div className="from-pastel-lavender-dark to-pastel-rose-dark relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-2xl bg-linear-to-br via-green-500 shadow-md">
+        <div className="bg-[#9bce26] shadow-md">
           <div className="absolute inset-0 bg-linear-to-t from-white/10 to-transparent" />
           <svg
             width="18"
@@ -172,7 +172,7 @@ function NavBar() {
           <span className="font-display text-[17px] font-extrabold tracking-tight text-gray-900">
             skin
           </span>
-          <span className="font-accent from-pastel-lavender-dark to-pastel-rose-dark bg-linear-to-r bg-clip-text text-[17px] font-semibold text-transparent italic">
+          <span className="font-accent bg-[#9bce26] bg-clip-text text-[17px] font-semibold text-transparent italic">
             dit
           </span>
         </div>
@@ -427,7 +427,7 @@ export default function ProfilePage() {
             <button
               onClick={handleSave}
               disabled={saving || skinType.length === 0}
-              className="from-pastel-lavender-dark to-pastel-rose-dark font-display relative h-13 w-full overflow-hidden rounded-2xl bg-linear-to-r via-green-500 text-sm font-bold tracking-wide text-white shadow-lg shadow-green-200/50 transition-all duration-300 hover:shadow-xl hover:shadow-green-300/50 disabled:cursor-not-allowed disabled:opacity-40"
+              className="bg-[#9bce26] text-sm font-bold tracking-wide text-white shadow-lg shadow-green-200/50 transition-all duration-300 hover:shadow-xl hover:shadow-green-300/50 disabled:cursor-not-allowed disabled:opacity-40"
             >
               {saving ? (
                 <div className="flex items-center justify-center gap-2">

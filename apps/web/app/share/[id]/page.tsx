@@ -293,7 +293,7 @@ export default function SharePage() {
             <p className="text-xs text-gray-400 mb-6">링크가 만료되었거나 잘못된 링크일 수 있어요.</p>
             <button
               onClick={() => router.push("/")}
-              className="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-linear-to-r from-pastel-lavender-dark via-green-500 to-pastel-rose-dark shadow-md"
+              className="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-linear-to-r bg-[#9bce26] shadow-md"
             >
               skindit 홈으로
             </button>
@@ -317,7 +317,7 @@ export default function SharePage() {
 
         <div className="px-6 py-8 pb-24">
           {/* Header */}
-          <div className="bg-linear-to-r from-pastel-lavender-dark via-green-500 to-pastel-rose-dark px-6 py-6 rounded-2xl mb-6">
+          <div className="bg-linear-to-r bg-[#9bce26] px-6 py-6 rounded-2xl mb-6">
             <p className="text-white/60 text-[10px] font-bold uppercase tracking-widest mb-1">skindit 분석 결과</p>
             <h1 className="font-display text-white text-lg font-extrabold">{title}</h1>
             <div className="flex items-center gap-3 mt-2">
@@ -335,7 +335,7 @@ export default function SharePage() {
             <p className="text-xs text-gray-400 mb-4">화장품 성분을 AI가 분석해드려요</p>
             <button
               onClick={() => router.push("/")}
-              className="px-6 py-2.5 rounded-xl text-xs font-bold text-white bg-linear-to-r from-pastel-lavender-dark via-green-500 to-pastel-rose-dark shadow-md hover:shadow-lg transition-all"
+              className="px-6 py-2.5 rounded-xl text-xs font-bold text-white bg-linear-to-r bg-[#9bce26] shadow-md hover:shadow-lg transition-all"
             >
               skindit 시작하기
             </button>
@@ -352,7 +352,7 @@ function Nav() {
   return (
     <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-2xl border-b border-gray-100/80 h-14 px-6 flex items-center justify-between">
       <button onClick={() => router.push("/")} className="flex items-center gap-3 bg-transparent border-none p-0">
-        <div className="w-9 h-9 rounded-2xl bg-linear-to-br from-pastel-lavender-dark via-green-500 to-pastel-rose-dark flex items-center justify-center shadow-md relative overflow-hidden">
+        <div className="w-9 h-9 rounded-2xl bg-linear-to-br bg-[#9bce26] flex items-center justify-center shadow-md relative overflow-hidden">
           <div className="absolute inset-0 bg-linear-to-t from-white/10 to-transparent" />
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="relative">
             <circle cx="11" cy="11" r="6" stroke="white" strokeWidth="2" strokeOpacity="0.9" />

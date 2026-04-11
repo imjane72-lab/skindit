@@ -155,7 +155,7 @@ function NavBar() {
         onClick={() => router.push("/")}
         className="flex items-center gap-3 border-none bg-transparent p-0"
       >
-        <div className="from-pastel-lavender-dark to-pastel-rose-dark relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-2xl bg-linear-to-br via-green-500 shadow-md">
+        <div className="bg-[#9bce26] shadow-md">
           <div className="absolute inset-0 bg-linear-to-t from-white/10 to-transparent" />
           <svg
             width="18"
@@ -188,7 +188,7 @@ function NavBar() {
           <span className="font-display text-[17px] font-extrabold tracking-tight text-gray-900">
             skin
           </span>
-          <span className="from-pastel-lavender-dark to-pastel-rose-dark font-accent bg-linear-to-r bg-clip-text text-[17px] font-semibold text-transparent italic">
+          <span className="bg-[#9bce26] bg-clip-text text-[17px] font-semibold text-transparent italic">
             dit
           </span>
         </div>
@@ -852,7 +852,7 @@ export default function DiaryPage() {
                           <button
                             onClick={() => handleEditSave(selectedEntry.id)}
                             disabled={editSaving}
-                            className="from-pastel-lavender-dark to-pastel-rose-dark rounded-lg bg-linear-to-r px-4 py-1.5 text-xs font-bold text-white transition-all hover:opacity-90 disabled:opacity-40"
+                            className="bg-[#9bce26] px-4 py-1.5 text-xs font-bold text-white transition-all hover:opacity-90 disabled:opacity-40"
                           >
                             {editSaving ? t("저장 중...", "Saving...") : t("수정 완료", "Save")}
                           </button>
@@ -879,7 +879,7 @@ export default function DiaryPage() {
                   </p>
                   <Link
                     href={`/diary/write?date=${viewYear}-${String(viewMonth + 1).padStart(2, "0")}-${String(selectedDate).padStart(2, "0")}`}
-                    className="from-pastel-lavender-dark to-pastel-rose-dark inline-flex items-center rounded-xl bg-linear-to-r px-5 py-2 text-xs font-bold text-white no-underline shadow-md transition-all hover:scale-105 hover:shadow-lg"
+                    className="bg-[#9bce26] px-5 py-2 text-xs font-bold text-white no-underline shadow-md transition-all hover:scale-105 hover:shadow-lg"
                   >
                     {t("기록하기", "Log")}
                   </Link>
@@ -912,7 +912,7 @@ export default function DiaryPage() {
         {/* ── Floating "+ 새 기록" Button ── */}
         <Link
           href="/diary/write"
-          className="from-pastel-lavender-dark to-pastel-rose-dark font-display fixed bottom-8 left-1/2 z-50 flex -translate-x-1/2 items-center rounded-2xl bg-linear-to-r via-green-500 px-7 py-3.5 text-sm font-bold tracking-wide text-white no-underline shadow-lg shadow-green-300/50 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-green-500/50"
+          className="bg-[#9bce26] px-7 py-3.5 text-sm font-bold tracking-wide text-white no-underline shadow-lg shadow-green-300/50 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-green-500/50"
         >
           {t("새 기록", "New Entry")}
         </Link>

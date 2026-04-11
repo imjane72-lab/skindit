@@ -808,8 +808,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
           className="flex items-center gap-3 border-none bg-transparent p-0"
         >
           {/* 로고 마크 — 돋보기 + 피부 세포 */}
-          <div className="from-pastel-lavender-dark to-pastel-rose-dark relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-2xl bg-linear-to-br via-green-500 shadow-md">
-            <div className="absolute inset-0 bg-linear-to-t from-white/10 to-transparent" />
+          <div className="relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-2xl bg-[#9bce26] shadow-md">
             <svg
               width="18"
               height="18"
@@ -823,18 +822,13 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                 r="6"
                 stroke="white"
                 strokeWidth="2"
-                strokeOpacity="0.9"
               />
               <path
                 d="M16 16L20 20"
                 stroke="white"
                 strokeWidth="2"
                 strokeLinecap="round"
-                strokeOpacity="0.9"
               />
-              <circle cx="9.5" cy="9.5" r="1.5" fill="rgba(155,206,38,0.7)" />
-              <circle cx="13" cy="11" r="1" fill="rgba(232,184,48,0.6)" />
-              <circle cx="10.5" cy="13" r="0.8" fill="rgba(139,105,20,0.5)" />
             </svg>
           </div>
           <div className="flex items-baseline gap-0.5">
@@ -876,7 +870,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                       onClick={() => setProfileOpen((o) => !o)}
                       className="flex items-center gap-3 rounded-full border-none bg-transparent transition-all"
                     >
-                      <div className="bg-pastel-lavender flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full border-3 border-green-200 transition-all hover:scale-105 hover:border-green-300 hover:shadow-lg">
+                      <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full border-3 border-[#9bce26]/40 bg-white transition-all hover:scale-105 hover:border-[#9bce26]/60 hover:shadow-lg">
                         {session?.user?.image ? (
                           <img
                             src={session.user.image}
@@ -975,7 +969,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
                 ) : (
                   <button
                     onClick={() => signIn()}
-                    className="bg-pastel-lavender/60 hover:bg-pastel-lavender flex h-11 w-11 items-center justify-center rounded-full border-2 border-green-200 transition-all"
+                    className="flex h-11 w-11 items-center justify-center rounded-full border-2 border-[#9bce26]/40 bg-white transition-all hover:border-[#9bce26]/60"
                   >
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                       <circle
@@ -1478,7 +1472,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
             <button
               onClick={analyzeSingle}
               disabled={!canS}
-              className="pastel-lavender-dark to-pastel-rose-dark w-full rounded-2xl bg-linear-to-r via-green-500 py-4 text-sm font-bold text-white shadow-md transition-all hover:-translate-y-0.5 hover:opacity-90 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:translate-y-0 disabled:hover:shadow-none"
+              className="w-full rounded-2xl bg-[#9bce26] py-4 text-sm font-bold text-white shadow-md transition-all hover:-translate-y-0.5 hover:opacity-90 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:translate-y-0 disabled:hover:shadow-none"
             >
               {t("분석해볼까요?", "Analyze Ingredients")}
             </button>
@@ -1656,7 +1650,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
             <button
               onClick={analyzeRoutine}
               disabled={!canR}
-              className="from-pastel-lavender-dark to-pastel-rose-dark w-full rounded-2xl bg-linear-to-r via-green-500 py-4 text-sm font-bold text-white shadow-md transition-all hover:-translate-y-0.5 hover:opacity-90 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:translate-y-0 disabled:hover:shadow-none"
+              className="bg-[#9bce26] py-4 text-sm font-bold text-white shadow-md transition-all hover:-translate-y-0.5 hover:opacity-90 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:translate-y-0 disabled:hover:shadow-none"
             >
               {t("궁합 체크해볼까요?", "Check Compatibility")}
             </button>
@@ -1807,7 +1801,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
             <button
               onClick={analyzeCompare}
               disabled={!canC}
-              className="from-pastel-lavender-dark to-pastel-rose-dark w-full rounded-2xl bg-linear-to-r via-green-500 py-4 text-sm font-bold text-white shadow-md transition-all hover:-translate-y-0.5 hover:opacity-90 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:translate-y-0 disabled:hover:shadow-none"
+              className="bg-[#9bce26] py-4 text-sm font-bold text-white shadow-md transition-all hover:-translate-y-0.5 hover:opacity-90 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:translate-y-0 disabled:hover:shadow-none"
             >
               {t("비교하기", "Compare Ingredients")}
             </button>
@@ -1876,7 +1870,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
       {showPwaBanner && phase === "setup" && (
         <div className="anim-fade-up fixed right-0 bottom-6 left-0 z-50 mx-auto max-w-140 px-4">
           <div className="flex items-center gap-3 rounded-2xl border border-green-200 bg-white/95 p-4 shadow-xl backdrop-blur">
-            <div className="from-pastel-lavender-dark to-pastel-rose-dark flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-linear-to-br shadow-md">
+            <div className="bg-[#9bce26] flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl shadow-md">
               <svg
                 width="18"
                 height="18"
@@ -1911,7 +1905,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
             </div>
             <button
               onClick={handlePwaInstall}
-              className="from-pastel-lavender-dark to-pastel-rose-dark shrink-0 rounded-xl bg-linear-to-r px-4 py-2 text-[11px] font-bold text-white shadow-sm"
+              className="shrink-0 rounded-xl bg-[#9bce26] px-4 py-2 text-[11px] font-bold text-white shadow-sm"
             >
               {deferredPrompt ? t("설치", "Install") : t("방법 보기", "How")}
             </button>
@@ -1930,7 +1924,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
         <footer className="border-t border-gray-100 bg-gray-50/50 px-6 py-10">
           <div>
             <div className="mb-6 flex items-center gap-2">
-              <div className="from-pastel-lavender-dark to-pastel-rose-dark flex h-7 w-7 items-center justify-center rounded-xl bg-linear-to-br shadow-sm">
+              <div className="bg-[#9bce26] flex h-7 w-7 items-center justify-center rounded-xl shadow-sm">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
                   <circle
                     cx="11"

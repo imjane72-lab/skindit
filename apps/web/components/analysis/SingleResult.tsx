@@ -56,7 +56,7 @@ export default function SingleResult({ res, t, reset, lang, historyId, productNa
   return (
     <div className="anim-scale-in space-y-5">
       {/* ── Hero: 그라디언트 헤더 ── */}
-      <div className="bg-linear-to-r from-pastel-lavender-dark via-green-500 to-pastel-rose-dark px-6 py-6 rounded-2xl">
+      <div className="bg-linear-to-r bg-[#9bce26] px-6 py-6 rounded-2xl">
         <p className="text-white/60 text-[10px] font-bold uppercase tracking-widest mb-1">
           skindit {t("분석 결과", "Analysis Result")}
         </p>
@@ -209,7 +209,7 @@ export default function SingleResult({ res, t, reset, lang, historyId, productNa
               alert(lang === "ko" ? "링크 복사했어요! 친구한테 보내주세요~" : "Link copied!")
             }
           }}
-          className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-linear-to-r from-pastel-lavender-dark to-pastel-rose-dark py-3.5 text-sm font-bold text-white transition-all hover:opacity-90"
+          className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-[#9bce26] py-3.5 text-sm font-bold text-white transition-all hover:opacity-90"
         >
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13" />

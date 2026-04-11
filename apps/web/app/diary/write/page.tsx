@@ -594,7 +594,7 @@ function DiaryWritePage() {
           <button
             onClick={handleSave}
             disabled={!condition || saving}
-            className="mt-6 w-full rounded-2xl from-pastel-lavender-dark via-green-500 to-pastel-rose-dark bg-linear-to-r py-4 text-sm font-bold text-white shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-30"
+            className="mt-6 w-full rounded-2xl bg-[#9bce26] bg-linear-to-r py-4 text-sm font-bold text-white shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-30"
           >
             {saving ? t("저장하는 중...", "Saving...") : t("기록 저장하기", "Save Entry")}
           </button>
