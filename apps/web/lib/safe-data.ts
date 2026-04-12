@@ -42,6 +42,20 @@ export function sanitizeAnalysisResult(raw: Record<string, unknown>) {
     raw.overall_score = s <= 10 ? s * 10 : Math.max(0, Math.min(100, Math.round(s)))
   }
 
+  if (raw.routine_score != null) {
+    const s = safeNum(raw.routine_score, 50)
+    raw.routine_score = s <= 10 ? s * 10 : Math.max(0, Math.min(100, Math.round(s)))
+  }
+
+  if (raw.compatibility_score != null) {
+    const s = safeNum(raw.compatibility_score, 50)
+    raw.compatibility_score = s <= 10 ? s * 10 : Math.max(0, Math.min(100, Math.round(s)))
+  }
+
+  if (raw.compatibility_comment != null) {
+    raw.compatibility_comment = safeStr(raw.compatibility_comment)
+  }
+
   if (raw.overall_comment != null) {
     raw.overall_comment = safeStr(raw.overall_comment)
   }

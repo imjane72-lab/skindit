@@ -1,7 +1,10 @@
 "use client"
 
+import ResultHero from "@/components/analysis/shared/ResultHero"
+import ResultSection from "@/components/analysis/shared/ResultSection"
+import ResultActions from "@/components/analysis/shared/ResultActions"
+import InfoCard from "@/components/analysis/shared/InfoCard"
 import Md from "@/components/ui/Md"
-import { SITE_URL } from "@/lib/constants"
 import type { CompareRes } from "@/types/analysis"
 
 interface CompareResultProps {
@@ -10,199 +13,230 @@ interface CompareResultProps {
   reset: () => void
   lang: string
   historyId?: string | null
+  nameA?: string
+  nameB?: string
 }
 
-export default function CompareResult({ cRes, t, reset, lang, historyId }: CompareResultProps) {
+export default function CompareResult({
+  cRes,
+  t,
+  reset,
+  lang,
+  historyId,
+  nameA,
+  nameB,
+}: CompareResultProps) {
+  const displayA = nameA || t("제품 A", "Product A")
+  const displayB = nameB || t("제품 B", "Product B")
+  const score = cRes.compatibility_score ?? 0
+  const compatLabel =
+    score >= 80
+      ? t("환상의 조합", "Great Match")
+      : score >= 60
+        ? t("괜찮아요", "Fair Match")
+        : score >= 40
+          ? t("주의 필요", "Mind the Mix")
+          : t("다시 생각", "Reconsider")
+
   return (
-    <div className="anim-scale-in">
-      {/* Summary */}
-      <div className="mb-5 rounded-2xl bg-linear-to-r from-[#c5e384] via-[#f0d078] to-[#c4a35a] p-6 text-center shadow-sm">
-        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-white/20 text-2xl shadow-sm">
-          ⚖️
-        </div>
-        <p className="mb-2 text-sm font-bold text-gray-900">
-          <Md>{cRes.summary}</Md>
-        </p>
-        <p className="text-sm leading-relaxed text-gray-700">
-          <Md>{cRes.recommendation}</Md>
-        </p>
-      </div>
+    <div className="anim-scale-in space-y-4">
+      <ResultHero
+        eyebrow={t("성분 비교", "Compare")}
+        title=""
+        variant="versus"
+        versusLeft={displayA}
+        versusRight={displayB}
+        score={score}
+        scoreLabel={compatLabel}
+      />
 
-      <div className="mb-5 grid grid-cols-1 gap-4">
-        {/* Shared */}
-        {cRes.shared?.length > 0 && (
-          <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 shadow-sm">
-            <div className="mb-3 flex items-center gap-2.5 border-b border-emerald-200 pb-2">
-              <span className="text-base">🤝</span>
-              <span className="text-sm font-bold text-emerald-800">
-                {t("공통 성분", "Shared Ingredients")}
-              </span>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {cRes.shared.map((s, i) => (
-                <span
-                  key={i}
-                  className="rounded-full border border-emerald-200 bg-emerald-100 px-3 py-1.5 text-xs font-semibold text-emerald-700"
-                >
-                  {s.name}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Only A / Only B */}
-        <div className="grid grid-cols-2 gap-3">
-          <div className="rounded-2xl border border-lime-200 bg-lime-50 p-4 shadow-sm">
-            <div className="mb-3 flex items-center gap-1.5 border-b border-lime-200 pb-2">
-              <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-[#9bce26] text-[10px] font-bold text-white shadow-sm">
-                A
-              </span>
-              <span className="text-xs font-bold text-lime-800">
-                {t("A에만 있는 성분", "Only in A")}
-              </span>
-            </div>
-            <div className="flex flex-col gap-1.5">
-              {(cRes.only_a || []).map((s, i) => (
-                <div key={i} className="text-xs">
-                  <span className="font-semibold text-gray-800">
-                    {s.name}
-                  </span>
-                  {s.note && (
-                    <span className="ml-1 text-gray-500">
-                      · {s.note}
-                    </span>
-                  )}
-                </div>
-              ))}
-              {(!cRes.only_a || cRes.only_a.length === 0) && (
-                <p className="text-xs text-gray-400">
-                  {t("없음", "None")}
-                </p>
-              )}
-            </div>
-          </div>
-          <div className="rounded-2xl border border-orange-200 bg-orange-50 p-4 shadow-sm">
-            <div className="mb-3 flex items-center gap-1.5 border-b border-orange-200 pb-2">
-              <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-linear-to-br from-orange-500 to-orange-400 text-[10px] font-bold text-white shadow-sm">
-                B
-              </span>
-              <span className="text-xs font-bold text-orange-700">
-                {t("B에만 있는 성분", "Only in B")}
-              </span>
-            </div>
-            <div className="flex flex-col gap-1.5">
-              {(cRes.only_b || []).map((s, i) => (
-                <div key={i} className="text-xs">
-                  <span className="font-semibold text-gray-800">
-                    {s.name}
-                  </span>
-                  {s.note && (
-                    <span className="ml-1 text-gray-500">
-                      · {s.note}
-                    </span>
-                  )}
-                </div>
-              ))}
-              {(!cRes.only_b || cRes.only_b.length === 0) && (
-                <p className="text-xs text-gray-400">
-                  {t("없음", "None")}
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Caution Combos */}
-      {cRes.forbidden_combos && cRes.forbidden_combos.length > 0 && (
-        <div className="mb-5 rounded-2xl border border-rose-200 bg-rose-50 p-5 shadow-sm">
-          <div className="mb-2 flex items-center gap-2">
-            <span className="text-base">🚫</span>
-            <p className="text-sm font-bold text-rose-800">{t("주의 콤보", "Caution Combos")}</p>
-          </div>
-          {cRes.forbidden_combos.map((combo, i) => (
-            <div key={i} className="mb-2 last:mb-0 rounded-xl border border-rose-100 bg-white/60 p-3">
-              <p className="text-xs font-bold text-rose-600 mb-0.5">{combo.ingredients}</p>
-              <p className="text-[11px] leading-relaxed text-gray-600"><Md>{combo.reason}</Md></p>
-            </div>
-          ))}
-        </div>
+      {cRes.compatibility_comment && (
+        <InfoCard
+          variant="brand"
+          icon="🤎"
+          label={t("궁합 요약", "Compatibility")}
+        >
+          {cRes.compatibility_comment}
+        </InfoCard>
       )}
 
-      {/* Usage Guide */}
-      {cRes.usage_guide && (
-        <div className="mb-5 rounded-2xl border border-sky-200 bg-sky-50 p-5 shadow-sm">
-          <div className="mb-2 flex items-center gap-2">
-            <span className="text-base">📋</span>
-            <p className="text-sm font-bold text-sky-800">{t("사용 가이드", "Usage Guide")}</p>
+      {cRes.summary && (
+        <InfoCard icon="📝" label={t("한눈에 보기", "Overview")}>
+          {cRes.summary}
+        </InfoCard>
+      )}
+
+      {cRes.recommendation && (
+        <InfoCard icon="💡" label={t("추천", "Recommendation")}>
+          {cRes.recommendation}
+        </InfoCard>
+      )}
+
+      {cRes.shared?.length > 0 && (
+        <ResultSection
+          tone="good"
+          icon="🤝"
+          title={t("공통 성분", "Shared Ingredients")}
+          subtitle={t("두 제품에 모두 들어있어요", "In both products")}
+        >
+          <div className="flex flex-wrap gap-1.5">
+            {cRes.shared.map((s, i) => (
+              <span
+                key={i}
+                className="rounded-full border border-emerald-200 bg-white/70 px-3 py-1.5 text-[12px] font-semibold text-emerald-700"
+              >
+                {s.name}
+              </span>
+            ))}
           </div>
-          {(() => {
-            const guide = cRes.usage_guide!;
-            return (
-              <div className="space-y-2">
-                {guide.best_time && <div className="flex gap-2 items-start"><span className="shrink-0">⏰</span><div><p className="text-[10px] font-bold text-sky-600">사용 시간</p><p className="text-xs text-gray-600">{guide.best_time}</p></div></div>}
-                {guide.effect_timeline && <div className="flex gap-2 items-start"><span className="shrink-0">📅</span><div><p className="text-[10px] font-bold text-sky-600">효과 시기</p><p className="text-xs text-gray-600">{guide.effect_timeline}</p></div></div>}
-                {guide.beginner_tips?.map((tip, i) => <p key={i} className="text-xs text-gray-600 ml-6">· {tip}</p>)}
+        </ResultSection>
+      )}
+
+      <div className="grid grid-cols-2 gap-3">
+        <ResultSection
+          tone="brand"
+          icon="🟢"
+          title={t("A에만", "Only A")}
+          subtitle={displayA}
+        >
+          <div className="flex flex-col gap-1.5">
+            {(cRes.only_a || []).map((s, i) => (
+              <div key={i} className="text-[12px]">
+                <span className="font-semibold text-gray-800">{s.name}</span>
+                {s.note && (
+                  <span className="ml-1 text-gray-500">· {s.note}</span>
+                )}
               </div>
-            );
-          })()}
-        </div>
+            ))}
+            {(!cRes.only_a || cRes.only_a.length === 0) && (
+              <p className="text-[12px] text-gray-400">{t("없음", "None")}</p>
+            )}
+          </div>
+        </ResultSection>
+        <ResultSection
+          tone="accent"
+          icon="🟡"
+          title={t("B에만", "Only B")}
+          subtitle={displayB}
+        >
+          <div className="flex flex-col gap-1.5">
+            {(cRes.only_b || []).map((s, i) => (
+              <div key={i} className="text-[12px]">
+                <span className="font-semibold text-gray-800">{s.name}</span>
+                {s.note && (
+                  <span className="ml-1 text-gray-500">· {s.note}</span>
+                )}
+              </div>
+            ))}
+            {(!cRes.only_b || cRes.only_b.length === 0) && (
+              <p className="text-[12px] text-gray-400">{t("없음", "None")}</p>
+            )}
+          </div>
+        </ResultSection>
+      </div>
+
+      {cRes.forbidden_combos && cRes.forbidden_combos.length > 0 && (
+        <ResultSection
+          tone="warn"
+          icon="🚫"
+          title={t("주의 콤보", "Caution Combos")}
+          subtitle={t("같이 쓰면 주의가 필요해요", "Use with caution")}
+        >
+          <div className="space-y-2">
+            {cRes.forbidden_combos.map((combo, i) => (
+              <div
+                key={i}
+                className="rounded-xl border border-rose-100 bg-white/70 p-3"
+              >
+                <p className="mb-0.5 text-xs font-bold text-rose-600">
+                  {combo.ingredients}
+                </p>
+                <p className="text-[11px] leading-relaxed text-gray-600">
+                  <Md>{combo.reason}</Md>
+                </p>
+              </div>
+            ))}
+          </div>
+        </ResultSection>
       )}
 
-      {/* Verdict */}
-      <div className="mb-5 rounded-2xl border border-amber-200 bg-amber-50 p-5 shadow-sm">
-        <div className="mb-2 flex items-center gap-2">
-          <span className="text-base">💬</span>
-          <p className="text-sm font-bold text-amber-800">
-            {t("최종 의견", "Verdict")}
-          </p>
-        </div>
-        <p className="text-sm leading-relaxed text-gray-700">
-          <Md>{cRes.verdict}</Md>
-        </p>
-      </div>
+      {cRes.usage_guide && (
+        <ResultSection
+          tone="info"
+          icon="📋"
+          title={t("사용 가이드", "Usage Guide")}
+        >
+          <div className="space-y-3">
+            {cRes.usage_guide.best_time && (
+              <div className="flex items-start gap-3">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-sky-100 text-sm">
+                  ⏰
+                </span>
+                <div>
+                  <p className="mb-0.5 text-[11px] font-bold text-sky-700">
+                    {t("사용 시간", "Best Time")}
+                  </p>
+                  <p className="text-xs leading-relaxed text-gray-600">
+                    {cRes.usage_guide.best_time}
+                  </p>
+                </div>
+              </div>
+            )}
+            {cRes.usage_guide.effect_timeline && (
+              <div className="flex items-start gap-3">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-sky-100 text-sm">
+                  📅
+                </span>
+                <div>
+                  <p className="mb-0.5 text-[11px] font-bold text-sky-700">
+                    {t("효과 시기", "Effect Timeline")}
+                  </p>
+                  <p className="text-xs leading-relaxed text-gray-600">
+                    {cRes.usage_guide.effect_timeline}
+                  </p>
+                </div>
+              </div>
+            )}
+            {cRes.usage_guide.beginner_tips &&
+              cRes.usage_guide.beginner_tips.length > 0 && (
+                <div className="flex items-start gap-3">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-sky-100 text-sm">
+                    💡
+                  </span>
+                  <div>
+                    <p className="mb-1 text-[11px] font-bold text-sky-700">
+                      {t("초보자 팁", "Beginner Tips")}
+                    </p>
+                    {cRes.usage_guide.beginner_tips.map((tip, i) => (
+                      <p
+                        key={i}
+                        className="mb-0.5 text-xs leading-relaxed text-gray-600"
+                      >
+                        · {tip}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+              )}
+          </div>
+        </ResultSection>
+      )}
 
-      <div className="flex gap-2">
-        <button
-          onClick={() => {
-            const shareUrl = historyId ? `${SITE_URL}/share/${historyId}` : `${SITE_URL}?tab=compare`
-            if (navigator.share) {
-              navigator
-                .share({ url: shareUrl })
-                .catch(() => {})
-            } else {
-              navigator.clipboard.writeText(shareUrl)
-              alert(
-                lang === "ko"
-                  ? "링크 복사했어요! 친구한테 보내주세요~"
-                  : "Link copied!"
-              )
-            }
-          }}
-          className="flex flex-1 items-center justify-center gap-2 rounded-2xl border border-lime-200 bg-lime-50 py-3.5 text-sm font-semibold text-lime-700 transition-all hover:bg-lime-100"
-        >
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13" />
-          </svg>
-          {t("결과 공유", "Share")}
-        </button>
-        <button
-          onClick={reset}
-          className="hover:bg-[#9bce26]/10 flex-1 rounded-2xl border border-gray-200 bg-white/80 py-3.5 text-sm font-semibold text-gray-500 backdrop-blur transition-all hover:border-lime-200 hover:text-lime-700"
-        >
-          {t("← 새 비교", "← New")}
-        </button>
-      </div>
+      {cRes.verdict && (
+        <InfoCard icon="💬" label={t("최종 의견", "Verdict")}>
+          {cRes.verdict}
+        </InfoCard>
+      )}
+
+      <ResultActions
+        t={t}
+        reset={reset}
+        lang={lang}
+        historyId={historyId}
+        tab="compare"
+        newLabelKo="새 비교"
+        newLabelEn="New"
+      />
     </div>
   )
 }

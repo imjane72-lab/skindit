@@ -93,6 +93,8 @@ export interface CompareItem {
 export interface CompareRes {
   error?: boolean
   errorMessage?: string
+  compatibility_score: number
+  compatibility_comment?: string
   summary: string
   shared: CompareItem[]
   only_a: CompareItem[]

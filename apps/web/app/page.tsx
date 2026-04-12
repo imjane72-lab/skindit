@@ -170,7 +170,7 @@ export default function Page() {
       } else if (data.ingredients) {
         setIngs(data.ingredients)
         setProductName(oyQuery.trim())
-        setOySuccess(`✅ ${data.brand} ${data.productName}`)
+        setOySuccess(t("✅ 성분을 불러왔어요", "✅ Ingredients loaded"))
       } else {
         setOyError(data.message || "전성분을 찾지 못했어요.")
       }
@@ -195,11 +195,7 @@ export default function Page() {
         setProducts((ps) =>
           ps.map((x) =>
             x.id === productId
-              ? {
-                  ...x,
-                  ingredients: data.ingredients,
-                  name: x.name || data.productName || "",
-                }
+              ? { ...x, ingredients: data.ingredients }
               : x
           )
         )
@@ -226,10 +222,8 @@ export default function Page() {
       if (!data.error && data.ingredients) {
         if (target === "A") {
           setCompareA(data.ingredients)
-          if (!compareNameA) setCompareNameA(data.productName || "")
         } else {
           setCompareB(data.ingredients)
-          if (!compareNameB) setCompareNameB(data.productName || "")
         }
       } else {
         alert(data.error || data.message || "전성분을 찾지 못했어요.")
@@ -387,7 +381,7 @@ export default function Page() {
     const sys = `skindit 성분 비교. 친근한 존댓말.
 규칙: 입력 성분+제공된 데이터만 사용. 데이터에 없는 성분은 언급하지 않기. 제품 단위 꿀팁(아침/저녁, 순서, 시너지). 주의 콤보는 검증된 것만. 같은제형이면 하나만 추천.
 가드레일: 답변의 모든 내용이 제공된 컨텍스트에 포함되어 있는지 자체 검증. 컨텍스트에 없으면 언급하지 않기. "금지"라는 단어 사용하지 말고 부드러운 표현 사용.
-JSON only. Schema:{"summary":"2-3줄","shared":[max 5,{"name":"","inA":true,"inB":true,"note":""}],"only_a":[max 5,{"name":"","inA":true,"inB":false,"note":""}],"only_b":[max 5,{"name":"","inA":false,"inB":true,"note":""}],"forbidden_combos":[max 2,{"ingredients":"","reason":""}],"recommendation":"2-3줄","usage_guide":{"best_time":"A:시간+이유, B:시간+이유, 순서","effect_timeline":"","beginner_tips":["3개"]},"verdict":"★(1-5)+근거 2줄"}. ${useLang === "ko" ? "한국어" : "English"}.`
+JSON only. Schema:{"compatibility_score":"0-100 정수. 두 제품을 함께 쓰기에 얼마나 잘 어울리는지. 성분 겹침·충돌·시너지·피부타입 적합도 종합. 80+=환상의 조합, 60-79=괜찮음, 40-59=주의 필요, <40=비추천","compatibility_comment":"점수 근거 1줄","summary":"2-3줄","shared":[max 5,{"name":"","inA":true,"inB":true,"note":""}],"only_a":[max 5,{"name":"","inA":true,"inB":false,"note":""}],"only_b":[max 5,{"name":"","inA":false,"inB":true,"note":""}],"forbidden_combos":[max 2,{"ingredients":"","reason":""}],"recommendation":"2-3줄","usage_guide":{"best_time":"A:시간+이유, B:시간+이유, 순서","effect_timeline":"","beginner_tips":["3개"]},"verdict":"★(1-5)+근거 2줄"}. ${useLang === "ko" ? "한국어" : "English"}.`
     const skinContext =
       profileSkinTypes.length > 0
         ? `\n⚠️ 이 사용자의 피부 타입: ${profileSkinTypes.join(", ")} — 이 피부 타입에 더 맞는 제품을 추천해주세요!`
@@ -434,6 +428,7 @@ JSON only. Schema:{"summary":"2-3줄","shared":[max 5,{"name":"","inA":true,"inB
       const errRes = {
         error: true,
         errorMessage: msg,
+        compatibility_score: 0,
         summary: "",
         shared: [],
         only_a: [],
@@ -1853,7 +1848,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
           (cRes.error ? (
             <ErrState t={t} reset={retry} message={cRes.errorMessage} />
           ) : (
-            <CompareResult cRes={cRes} t={t} reset={reset} lang={lang} historyId={historyId} />
+            <CompareResult cRes={cRes} t={t} reset={reset} lang={lang} historyId={historyId} nameA={compareNameA} nameB={compareNameB} />
           ))}
       </main>
 
