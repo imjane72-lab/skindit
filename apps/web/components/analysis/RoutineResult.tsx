@@ -1,6 +1,7 @@
 "use client"
 
 import ResultHero from "@/components/analysis/shared/ResultHero"
+import ScoreCard from "@/components/analysis/shared/ScoreCard"
 import ResultSection from "@/components/analysis/shared/ResultSection"
 import ResultActions from "@/components/analysis/shared/ResultActions"
 import InfoCard from "@/components/analysis/shared/InfoCard"
@@ -15,6 +16,7 @@ interface RoutineResultProps {
   reset: () => void
   lang: string
   historyId?: string | null
+  productNames?: string[]
 }
 
 export default function RoutineResult({
@@ -23,14 +25,21 @@ export default function RoutineResult({
   reset,
   lang,
   historyId,
+  productNames,
 }: RoutineResultProps) {
+  const names = (productNames || []).filter(Boolean)
+
   return (
     <div className="anim-scale-in space-y-4">
-      <ResultHero
-        eyebrow={t("루틴 궁합", "Routine Compatibility")}
-        title={t("내 루틴 궁합 분석", "My Routine Analysis")}
+      {names.length > 0 ? (
+        <ResultHero variant="list" productNames={names} />
+      ) : (
+        <ResultHero title={t("내 루틴 궁합 분석", "My Routine Analysis")} />
+      )}
+
+      <ScoreCard
         score={rRes.routine_score}
-        scoreLabel={scoreLabel(rRes.routine_score, lang)}
+        label={scoreLabel(rRes.routine_score, lang)}
       />
 
       {rRes.routine_comment && (
@@ -40,12 +49,6 @@ export default function RoutineResult({
           label={t("종합 의견", "Summary")}
         >
           {rRes.routine_comment}
-        </InfoCard>
-      )}
-
-      {rRes.verdict && (
-        <InfoCard icon="💬" label={t("한 줄 평", "Verdict")}>
-          {rRes.verdict}
         </InfoCard>
       )}
 
@@ -275,6 +278,12 @@ export default function RoutineResult({
               )}
           </div>
         </ResultSection>
+      )}
+
+      {rRes.verdict && (
+        <InfoCard icon="💬" label={t("최종 의견", "Verdict")}>
+          {rRes.verdict}
+        </InfoCard>
       )}
 
       <ResultActions

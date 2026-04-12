@@ -3,6 +3,7 @@
 import ConcernCard from "@/components/analysis/ConcernCard"
 import SafetyChart from "@/components/analysis/SafetyChart"
 import ResultHero from "@/components/analysis/shared/ResultHero"
+import ScoreCard from "@/components/analysis/shared/ScoreCard"
 import ResultSection from "@/components/analysis/shared/ResultSection"
 import IngredientPill from "@/components/analysis/shared/IngredientPill"
 import ResultActions from "@/components/analysis/shared/ResultActions"
@@ -35,11 +36,11 @@ export default function SingleResult({
 
   return (
     <div className="anim-scale-in space-y-4">
-      <ResultHero
-        eyebrow={t("성분 분석", "Ingredient Analysis")}
-        title={displayName || t("성분 분석 결과", "Ingredient Analysis")}
+      <ResultHero title={displayName || t("성분 분석 결과", "Ingredient Analysis")} />
+
+      <ScoreCard
         score={res.overall_score}
-        scoreLabel={scoreLabel(res.overall_score, lang)}
+        label={scoreLabel(res.overall_score, lang)}
       />
 
       {res.overall_comment && (
@@ -49,12 +50,6 @@ export default function SingleResult({
           label={t("종합 의견", "Summary")}
         >
           {res.overall_comment}
-        </InfoCard>
-      )}
-
-      {res.verdict && (
-        <InfoCard icon="💬" label={t("한 줄 평", "Verdict")}>
-          {res.verdict}
         </InfoCard>
       )}
 
@@ -227,6 +222,12 @@ export default function SingleResult({
               )}
           </div>
         </ResultSection>
+      )}
+
+      {res.verdict && (
+        <InfoCard icon="💬" label={t("최종 의견", "Verdict")}>
+          {res.verdict}
+        </InfoCard>
       )}
 
       <ResultActions

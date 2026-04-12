@@ -1,6 +1,7 @@
 "use client"
 
 import ResultHero from "@/components/analysis/shared/ResultHero"
+import ScoreCard from "@/components/analysis/shared/ScoreCard"
 import ResultSection from "@/components/analysis/shared/ResultSection"
 import ResultActions from "@/components/analysis/shared/ResultActions"
 import InfoCard from "@/components/analysis/shared/InfoCard"
@@ -38,37 +39,23 @@ export default function CompareResult({
           ? t("주의 필요", "Mind the Mix")
           : t("다시 생각", "Reconsider")
 
+  const summary = [cRes.summary, cRes.recommendation]
+    .filter((s) => s && s.trim())
+    .join("\n\n")
+
   return (
     <div className="anim-scale-in space-y-4">
-      <ResultHero
-        eyebrow={t("성분 비교", "Compare")}
-        title=""
-        variant="versus"
-        versusLeft={displayA}
-        versusRight={displayB}
-        score={score}
-        scoreLabel={compatLabel}
-      />
+      <ResultHero variant="versus" productNames={[displayA, displayB]} />
 
-      {cRes.compatibility_comment && (
+      <ScoreCard score={score} label={compatLabel} caption={cRes.compatibility_comment} />
+
+      {summary && (
         <InfoCard
           variant="brand"
           icon="🤎"
-          label={t("궁합 요약", "Compatibility")}
+          label={t("종합 의견", "Summary")}
         >
-          {cRes.compatibility_comment}
-        </InfoCard>
-      )}
-
-      {cRes.summary && (
-        <InfoCard icon="📝" label={t("한눈에 보기", "Overview")}>
-          {cRes.summary}
-        </InfoCard>
-      )}
-
-      {cRes.recommendation && (
-        <InfoCard icon="💡" label={t("추천", "Recommendation")}>
-          {cRes.recommendation}
+          {summary}
         </InfoCard>
       )}
 
@@ -96,8 +83,8 @@ export default function CompareResult({
         <ResultSection
           tone="brand"
           icon="🟢"
-          title={t("A에만", "Only A")}
-          subtitle={displayA}
+          title={displayA}
+          subtitle={t("에만 있는 성분", "only in this")}
         >
           <div className="flex flex-col gap-1.5">
             {(cRes.only_a || []).map((s, i) => (
@@ -116,8 +103,8 @@ export default function CompareResult({
         <ResultSection
           tone="accent"
           icon="🟡"
-          title={t("B에만", "Only B")}
-          subtitle={displayB}
+          title={displayB}
+          subtitle={t("에만 있는 성분", "only in this")}
         >
           <div className="flex flex-col gap-1.5">
             {(cRes.only_b || []).map((s, i) => (

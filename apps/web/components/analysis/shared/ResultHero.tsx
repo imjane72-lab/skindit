@@ -1,30 +1,15 @@
 "use client"
 
-import ScoreRing from "@/components/ui/ScoreRing"
-import { scoreColor } from "@/lib/score-utils"
-
 interface ResultHeroProps {
-  eyebrow: string
-  title: string
-  subtitle?: string
-  score?: number
-  scoreLabel?: string
-  date?: string
-  variant?: "score" | "versus"
-  versusLeft?: string
-  versusRight?: string
+  title?: string
+  productNames?: string[]
+  variant?: "single" | "list" | "versus"
 }
 
 export default function ResultHero({
-  eyebrow,
   title,
-  subtitle,
-  score,
-  scoreLabel,
-  date,
-  variant = "score",
-  versusLeft,
-  versusRight,
+  productNames,
+  variant = "single",
 }: ResultHeroProps) {
   return (
     <div className="relative overflow-hidden rounded-3xl">
@@ -32,58 +17,41 @@ export default function ResultHero({
       <div className="blob bg-[#9bce26]/25 absolute -top-12 -right-10 h-40 w-40" />
       <div className="blob bg-[#E8B830]/20 absolute -bottom-16 -left-8 h-36 w-36" />
 
-      <div className="relative px-6 pt-6 pb-7">
-        <p className="mb-3 text-[10px] font-bold tracking-[0.18em] text-[#8B6914]/70 uppercase">
-          skindit · {eyebrow}
+      <div className="relative px-6 pt-7 pb-8">
+        <p className="mb-5 text-[10px] font-bold tracking-[0.24em] text-[#8B6914]/75 uppercase">
+          skindit
         </p>
 
-        {variant === "versus" && versusLeft && versusRight ? (
-          <div className="mb-4">
-            <div className="flex items-center gap-2">
-              <span className="min-w-0 flex-1 truncate font-display text-base font-extrabold text-gray-900">
-                {versusLeft}
+        {variant === "versus" && productNames && productNames.length === 2 ? (
+          <div className="flex items-center gap-3">
+            <span className="min-w-0 flex-1 font-display text-xl leading-tight font-extrabold break-words text-gray-900">
+              {productNames[0]}
+            </span>
+            <span className="shrink-0 rounded-full border border-white/60 bg-white/60 px-2.5 py-1 text-[10px] font-bold tracking-[0.18em] text-[#8B6914] uppercase backdrop-blur">
+              vs
+            </span>
+            <span className="min-w-0 flex-1 text-right font-display text-xl leading-tight font-extrabold break-words text-gray-900">
+              {productNames[1]}
+            </span>
+          </div>
+        ) : variant === "list" && productNames && productNames.length > 0 ? (
+          <div className="flex flex-wrap gap-1.5">
+            {productNames.map((n, i) => (
+              <span
+                key={i}
+                className="inline-flex items-center gap-1.5 rounded-full border border-white/70 bg-white/60 px-3 py-1.5 font-display text-[13px] font-bold text-gray-900 shadow-sm backdrop-blur"
+              >
+                <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[#9bce26] text-[9px] font-extrabold text-white">
+                  {i + 1}
+                </span>
+                {n}
               </span>
-              <span className="shrink-0 rounded-full border border-white/70 bg-white/60 px-2.5 py-0.5 text-[10px] font-bold tracking-widest text-[#8B6914] uppercase backdrop-blur">
-                vs
-              </span>
-              <span className="min-w-0 flex-1 truncate text-right font-display text-base font-extrabold text-gray-900">
-                {versusRight}
-              </span>
-            </div>
+            ))}
           </div>
         ) : (
-          <h1 className="mb-1 font-display text-xl leading-tight font-extrabold text-gray-900">
+          <h1 className="font-display text-2xl leading-tight font-extrabold break-words text-gray-900">
             {title}
           </h1>
-        )}
-
-        {subtitle && (
-          <p className="mb-4 text-xs leading-relaxed text-gray-600">{subtitle}</p>
-        )}
-
-        {typeof score === "number" && (
-          <div className="mt-4 flex items-center gap-4 rounded-2xl border border-white/60 bg-white/55 p-4 shadow-sm backdrop-blur-md">
-            <ScoreRing score={score} size={96} />
-            <div className="min-w-0 flex-1">
-              {scoreLabel && (
-                <p
-                  className={`font-display text-2xl font-extrabold tracking-tight ${scoreColor(score)}`}
-                >
-                  {scoreLabel}
-                </p>
-              )}
-              <p className="mt-0.5 text-[11px] text-gray-500">
-                {date || new Date().toLocaleDateString("ko-KR")}
-              </p>
-              <div className="mt-2 flex flex-wrap gap-1.5">
-                <span className="inline-flex items-center gap-1 rounded-full bg-[#9bce26]/15 px-2.5 py-1 text-[10px] font-bold text-[#6B8E23]">
-                  <span className="h-1.5 w-1.5 rounded-full bg-[#9bce26]" />
-                  {score}
-                  <span className="text-[9px] text-[#6B8E23]/70">/100</span>
-                </span>
-              </div>
-            </div>
-          </div>
         )}
       </div>
     </div>

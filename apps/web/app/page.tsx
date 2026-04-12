@@ -195,7 +195,7 @@ export default function Page() {
         setProducts((ps) =>
           ps.map((x) =>
             x.id === productId
-              ? { ...x, ingredients: data.ingredients }
+              ? { ...x, ingredients: data.ingredients, name: x.name || query }
               : x
           )
         )
@@ -222,8 +222,10 @@ export default function Page() {
       if (!data.error && data.ingredients) {
         if (target === "A") {
           setCompareA(data.ingredients)
+          if (!compareNameA) setCompareNameA(query)
         } else {
           setCompareB(data.ingredients)
+          if (!compareNameB) setCompareNameB(query)
         }
       } else {
         alert(data.error || data.message || "전성분을 찾지 못했어요.")
@@ -378,7 +380,8 @@ export default function Page() {
     textB: string
   ) => {
     setPhase("loading")
-    const sys = `skindit 성분 비교. 친근한 존댓말.
+    const sys = `skindit 성분 비교. 친근한 존댓말로만 답변.
+말투: 모든 문장 반드시 "~요", "~에요", "~어요", "~거예요", "~세요" 종결어미로 끝맺기. 반말(~야, ~네, ~다, ~해, ~지, ~군, ~구나, ~거든) 절대 금지. 친한 언니가 부드럽게 조언하는 톤.
 규칙: 입력 성분+제공된 데이터만 사용. 데이터에 없는 성분은 언급하지 않기. 제품 단위 꿀팁(아침/저녁, 순서, 시너지). 주의 콤보는 검증된 것만. 같은제형이면 하나만 추천.
 가드레일: 답변의 모든 내용이 제공된 컨텍스트에 포함되어 있는지 자체 검증. 컨텍스트에 없으면 언급하지 않기. "금지"라는 단어 사용하지 말고 부드러운 표현 사용.
 JSON only. Schema:{"compatibility_score":"0-100 정수. 두 제품을 함께 쓰기에 얼마나 잘 어울리는지. 성분 겹침·충돌·시너지·피부타입 적합도 종합. 80+=환상의 조합, 60-79=괜찮음, 40-59=주의 필요, <40=비추천","compatibility_comment":"점수 근거 1줄","summary":"2-3줄","shared":[max 5,{"name":"","inA":true,"inB":true,"note":""}],"only_a":[max 5,{"name":"","inA":true,"inB":false,"note":""}],"only_b":[max 5,{"name":"","inA":false,"inB":true,"note":""}],"forbidden_combos":[max 2,{"ingredients":"","reason":""}],"recommendation":"2-3줄","usage_guide":{"best_time":"A:시간+이유, B:시간+이유, 순서","effect_timeline":"","beginner_tips":["3개"]},"verdict":"★(1-5)+근거 2줄"}. ${useLang === "ko" ? "한국어" : "English"}.`
@@ -540,7 +543,8 @@ JSON only. Schema:{"compatibility_score":"0-100 정수. 두 제품을 함께 쓰
       .map((id) => CONCERNS.find((c) => c.id === id))
       .map((c) => (c ? tl(useLang, c.ko, c.en) : ""))
       .join(", ")
-    const sys = `skindit 성분 분석. 친근한 존댓말.
+    const sys = `skindit 성분 분석. 친근한 존댓말로만 답변.
+말투: 모든 문장 반드시 "~요", "~에요", "~어요", "~거예요", "~세요" 종결어미로 끝맺기. 반말(~야, ~네, ~다, ~해, ~지, ~군, ~구나, ~거든) 절대 금지. 친한 언니가 부드럽게 조언하는 톤.
 규칙: 입력 성분+제공된 데이터만 사용. 데이터에 없는 성분은 언급하지 않기. 추측/지어내기 하지 않기. 주의 콤보는 검증된 것만. "분리 사용 권장"처럼 부드러운 표현 사용. "금지"라는 단어 대신 "피하는 게 좋아요", "권장하지 않아요" 등으로. concern_analysis에 선택한 고민 전부 포함.
 출처: [검증된 성분 데이터]가 제공되면 해당 데이터 기반임을 표시. 예: "식약처 등록 성분이에요", "검증된 데이터 기준으로..."
 가드레일: 답변 전 자체 검증 — 모든 내용이 제공된 컨텍스트에 포함되어 있는지 확인. 컨텍스트에 없는 성분 효능/부작용은 언급하지 않기.
@@ -607,7 +611,8 @@ safety_ratings 점수 기준 (엄격히 따를 것):
     const list = filled
       .map((p, i) => `[${p.name || `Product${i + 1}`}]: ${p.ingredients}`)
       .join("\n\n")
-    const sys = `skindit 루틴 분석. 친근한 존댓말.
+    const sys = `skindit 루틴 분석. 친근한 존댓말로만 답변.
+말투: 모든 문장 반드시 "~요", "~에요", "~어요", "~거예요", "~세요" 종결어미로 끝맺기. 반말(~야, ~네, ~다, ~해, ~지, ~군, ~구나, ~거든) 절대 금지. 친한 언니가 부드럽게 조언하는 톤.
 규칙: 입력 성분+제공된 데이터만 사용. 데이터에 없는 성분은 언급하지 않기. 같은제형 겹침=점수↓(40~60), 다른제형=OK(70~85), 상호보완=80~90. 주의 콤보는 검증된 것만. "분리 사용 권장"처럼 부드러운 표현 사용. "금지"라는 단어 대신 "피하는 게 좋아요", "권장하지 않아요" 등으로.
 가드레일: 답변의 모든 내용이 제공된 컨텍스트에 포함되어 있는지 자체 검증. 컨텍스트에 없으면 언급하지 않기.
 JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":[max 3,{"ingredients":[""],"products":[""],"severity":"high|medium|low","reason":""}],"synergies":[max 3,{"ingredients":[""],"products":[""],"reason":""}],"order_suggestion":["순서"],"recommendations":[max 3,"팁"],"timeline":[{"product":"","timing":"morning|evening|both","reason":""}],"usage_guide":{"effect_timeline":"","beginner_tips":["2-3개"]},"verdict":"★(1-5)+근거 2줄"}. ${useLang === "ko" ? "한국어" : "English"}.`
@@ -1839,7 +1844,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
           (rRes.error ? (
             <ErrState t={t} reset={retry} message={rRes.errorMessage} />
           ) : (
-            <RoutineResult rRes={rRes} t={t} reset={reset} lang={lang} historyId={historyId} />
+            <RoutineResult rRes={rRes} t={t} reset={reset} lang={lang} historyId={historyId} productNames={products.filter(p => p.ingredients.trim()).map(p => p.name).filter(Boolean)} />
           ))}
         {/* ── COMPARE RESULT ── */}
         {phase === "result" &&
