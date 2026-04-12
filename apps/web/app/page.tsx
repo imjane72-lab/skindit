@@ -384,7 +384,8 @@ export default function Page() {
 말투: 모든 문장 반드시 "~요", "~에요", "~어요", "~거예요", "~세요" 종결어미로 끝맺기. 반말(~야, ~네, ~다, ~해, ~지, ~군, ~구나, ~거든) 절대 금지. 친한 언니가 부드럽게 조언하는 톤.
 규칙: 입력 성분+제공된 데이터만 사용. 데이터에 없는 성분은 언급하지 않기. 제품 단위 꿀팁(아침/저녁, 순서, 시너지). 주의 콤보는 검증된 것만. 같은제형이면 하나만 추천.
 가드레일: 답변의 모든 내용이 제공된 컨텍스트에 포함되어 있는지 자체 검증. 컨텍스트에 없으면 언급하지 않기. "금지"라는 단어 사용하지 말고 부드러운 표현 사용.
-JSON only. Schema:{"compatibility_score":"0-100 정수. 두 제품을 함께 쓰기에 얼마나 잘 어울리는지. 성분 겹침·충돌·시너지·피부타입 적합도 종합. 80+=환상의 조합, 60-79=괜찮음, 40-59=주의 필요, <40=비추천","compatibility_comment":"점수 근거 1줄","summary":"2-3줄","shared":[max 5,{"name":"","inA":true,"inB":true,"note":""}],"only_a":[max 5,{"name":"","inA":true,"inB":false,"note":""}],"only_b":[max 5,{"name":"","inA":false,"inB":true,"note":""}],"forbidden_combos":[max 2,{"ingredients":"","reason":""}],"recommendation":"2-3줄","usage_guide":{"best_time":"A:시간+이유, B:시간+이유, 순서","effect_timeline":"","beginner_tips":["3개"]},"verdict":"★(1-5)+근거 2줄"}. ${useLang === "ko" ? "한국어" : "English"}.`
+목적: 두 제품의 성분을 비교해서 "사용자의 피부 타입·고민 기준으로 어느 쪽이 더 맞는지" 판단해줘. 궁합(함께 쓰기)이 아니라 '비교·선택' 관점이야. "환상의 조합" 같은 궁합 언어 사용 금지.
+JSON only. Schema:{"score_a":"0-100 정수. A 제품이 이 사용자 피부에 얼마나 맞는지","score_b":"0-100 정수. B 제품이 이 사용자 피부에 얼마나 맞는지","score_a_reason":"A 점수 근거 1줄 (사용자 피부 언급)","score_b_reason":"B 점수 근거 1줄 (사용자 피부 언급)","pick":"A|B|both|either","pick_reason":"왜 그 선택인지 1-2줄 (사용자 피부 타입·고민 근거)","summary":"성분 관점 비교 2-3줄","shared":[max 5,{"name":"","inA":true,"inB":true,"note":""}],"only_a":[max 5,{"name":"","inA":true,"inB":false,"note":""}],"only_b":[max 5,{"name":"","inA":false,"inB":true,"note":""}],"forbidden_combos":[max 2,{"ingredients":"","reason":""}],"recommendation":"2-3줄","usage_guide":{"best_time":"A:시간+이유, B:시간+이유","effect_timeline":"","beginner_tips":["3개"]},"verdict":"★(1-5)+근거 2줄"}. ${useLang === "ko" ? "한국어" : "English"}.`
     const skinContext =
       profileSkinTypes.length > 0
         ? `\n⚠️ 이 사용자의 피부 타입: ${profileSkinTypes.join(", ")} — 이 피부 타입에 더 맞는 제품을 추천해주세요!`
@@ -431,7 +432,8 @@ JSON only. Schema:{"compatibility_score":"0-100 정수. 두 제품을 함께 쓰
       const errRes = {
         error: true,
         errorMessage: msg,
-        compatibility_score: 0,
+        score_a: 0,
+        score_b: 0,
         summary: "",
         shared: [],
         only_a: [],

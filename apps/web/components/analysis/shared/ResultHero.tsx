@@ -11,6 +11,14 @@ export default function ResultHero({
   productNames,
   variant = "single",
 }: ResultHeroProps) {
+  const badgeBg = (i: number, total: number) => {
+    if (variant === "versus") return i === 0 ? "bg-[#9bce26]" : "bg-[#E8B830]"
+    const palette = ["bg-[#9bce26]", "bg-[#E8B830]", "bg-[#8B6914]"]
+    return palette[i % palette.length] || "bg-[#9bce26]"
+  }
+  const badgeText = (i: number) =>
+    variant === "versus" ? (i === 0 ? "A" : "B") : `${i + 1}`
+
   return (
     <div className="relative overflow-hidden rounded-3xl">
       <div className="absolute inset-0 bg-linear-to-br from-[#f0f7d4] via-[#fdf6e3] to-[#faf3e0]" />
@@ -22,44 +30,21 @@ export default function ResultHero({
           skindit
         </p>
 
-        {variant === "versus" && productNames && productNames.length === 2 ? (
-          <div className="flex flex-col gap-2">
-            <div className="flex items-start gap-2.5">
-              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#9bce26] font-display text-[11px] font-extrabold text-white shadow-sm">
-                A
-              </span>
-              <span className="min-w-0 flex-1 font-display text-xl leading-tight font-extrabold break-words text-gray-900">
-                {productNames[0]}
-              </span>
-            </div>
-            <div className="my-0.5 flex items-center gap-2">
-              <span className="h-px flex-1 bg-[#8B6914]/15" />
-              <span className="rounded-full border border-white/70 bg-white/70 px-2.5 py-0.5 text-[10px] font-bold tracking-[0.2em] text-[#8B6914] uppercase backdrop-blur">
-                vs
-              </span>
-              <span className="h-px flex-1 bg-[#8B6914]/15" />
-            </div>
-            <div className="flex items-start gap-2.5">
-              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#E8B830] font-display text-[11px] font-extrabold text-white shadow-sm">
-                B
-              </span>
-              <span className="min-w-0 flex-1 font-display text-xl leading-tight font-extrabold break-words text-gray-900">
-                {productNames[1]}
-              </span>
-            </div>
-          </div>
-        ) : variant === "list" && productNames && productNames.length > 0 ? (
-          <div className="flex flex-wrap gap-1.5">
+        {(variant === "list" || variant === "versus") &&
+        productNames &&
+        productNames.length > 0 ? (
+          <div className="flex flex-col gap-3">
             {productNames.map((n, i) => (
-              <span
-                key={i}
-                className="inline-flex items-center gap-1.5 rounded-full border border-white/70 bg-white/60 px-3 py-1.5 font-display text-[13px] font-bold text-gray-900 shadow-sm backdrop-blur"
-              >
-                <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[#9bce26] text-[9px] font-extrabold text-white">
-                  {i + 1}
+              <div key={i} className="flex items-start gap-3">
+                <span
+                  className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full font-display text-[12px] font-extrabold text-white shadow-sm ${badgeBg(i, productNames.length)}`}
+                >
+                  {badgeText(i)}
                 </span>
-                {n}
-              </span>
+                <span className="min-w-0 flex-1 font-display text-[18px] leading-snug font-extrabold break-keep text-gray-900">
+                  {n}
+                </span>
+              </div>
             ))}
           </div>
         ) : (

@@ -93,8 +93,12 @@ export interface CompareItem {
 export interface CompareRes {
   error?: boolean
   errorMessage?: string
-  compatibility_score: number
-  compatibility_comment?: string
+  score_a?: number
+  score_b?: number
+  score_a_reason?: string
+  score_b_reason?: string
+  pick?: "A" | "B" | "both" | "either"
+  pick_reason?: string
   summary: string
   shared: CompareItem[]
   only_a: CompareItem[]
@@ -103,4 +107,6 @@ export interface CompareRes {
   verdict: string
   forbidden_combos?: ForbiddenCombo[]
   usage_guide?: UsageGuide
+  compatibility_score?: number
+  compatibility_comment?: string
 }

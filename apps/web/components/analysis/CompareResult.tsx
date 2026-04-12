@@ -1,7 +1,7 @@
 "use client"
 
 import ResultHero from "@/components/analysis/shared/ResultHero"
-import ScoreCard from "@/components/analysis/shared/ScoreCard"
+import CompareScore from "@/components/analysis/shared/CompareScore"
 import ResultSection from "@/components/analysis/shared/ResultSection"
 import ResultActions from "@/components/analysis/shared/ResultActions"
 import InfoCard from "@/components/analysis/shared/InfoCard"
@@ -29,15 +29,6 @@ export default function CompareResult({
 }: CompareResultProps) {
   const displayA = nameA || t("제품 A", "Product A")
   const displayB = nameB || t("제품 B", "Product B")
-  const score = cRes.compatibility_score ?? 0
-  const compatLabel =
-    score >= 80
-      ? t("환상의 조합", "Great Match")
-      : score >= 60
-        ? t("괜찮아요", "Fair Match")
-        : score >= 40
-          ? t("주의 필요", "Mind the Mix")
-          : t("다시 생각", "Reconsider")
 
   const summary = [cRes.summary, cRes.recommendation]
     .filter((s) => s && s.trim())
@@ -47,7 +38,17 @@ export default function CompareResult({
     <div className="anim-scale-in space-y-4">
       <ResultHero variant="versus" productNames={[displayA, displayB]} />
 
-      <ScoreCard score={score} label={compatLabel} caption={cRes.compatibility_comment} />
+      <CompareScore
+        scoreA={cRes.score_a ?? 0}
+        scoreB={cRes.score_b ?? 0}
+        reasonA={cRes.score_a_reason}
+        reasonB={cRes.score_b_reason}
+        pick={cRes.pick}
+        pickReason={cRes.pick_reason}
+        nameA={displayA}
+        nameB={displayB}
+        t={t}
+      />
 
       {summary && (
         <InfoCard

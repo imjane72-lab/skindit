@@ -13,7 +13,7 @@ export default function ScoreRing({
   compact?: boolean
 }) {
   const s = Number.isFinite(score) ? Math.max(0, Math.min(100, score)) : 0
-  const strokeW = compact ? 4 : 6
+  const strokeW = compact ? 5 : 11
   const r = (size - strokeW * 2) / 2
   const circumference = 2 * Math.PI * r
   const offset = circumference - (s / 100) * circumference
