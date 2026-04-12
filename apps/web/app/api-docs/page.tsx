@@ -37,7 +37,7 @@ export default function ApiDocsPage() {
 
   if (!spec) return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-      <div className="w-8 h-8 border-2 border-gray-200 border-t-[#9bce26] rounded-full" style={{ animation: "spin 1s linear infinite" }} />
+      <div className="w-8 h-8 border-2 border-gray-200 border-t-pastel-lime-dark rounded-full" style={{ animation: "spin 1s linear infinite" }} />
     </div>
   )
 
@@ -49,7 +49,7 @@ export default function ApiDocsPage() {
           <div className="flex items-center gap-3 mb-3">
             <a href="/" className="flex items-baseline gap-0.5 no-underline">
               <span className="font-display text-xl font-extrabold text-gray-900">skin</span>
-              <span className="font-accent text-xl font-semibold italic text-transparent bg-clip-text bg-linear-to-r from-pastel-lavender-dark to-pastel-rose-dark">dit</span>
+              <span className="font-accent text-xl font-semibold italic text-transparent bg-clip-text bg-linear-to-r from-pastel-lime-dark to-pastel-gold">dit</span>
             </a>
             <span className="text-xs font-bold text-lime-700 bg-lime-50 px-2 py-0.5 rounded-full">API v{spec.info.version}</span>
           </div>

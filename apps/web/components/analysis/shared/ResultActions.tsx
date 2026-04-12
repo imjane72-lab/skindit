@@ -37,7 +37,7 @@ export default function ResultActions({
     <div className="flex gap-2 pt-1">
       <button
         onClick={handleShare}
-        className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-[#9bce26] py-3.5 text-sm font-bold text-white shadow-sm transition-all hover:opacity-90 active:scale-[0.98]"
+        className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-pastel-lime-dark py-3.5 text-sm font-bold text-white shadow-sm transition-all hover:opacity-90 active:scale-[0.98]"
       >
         <svg
           width="15"
@@ -55,7 +55,7 @@ export default function ResultActions({
       </button>
       <button
         onClick={reset}
-        className="flex-1 rounded-2xl border border-gray-200 bg-white py-3.5 text-sm font-bold text-gray-500 transition-all hover:border-[#9bce26]/40 hover:text-[#6B8E23] active:scale-[0.98]"
+        className="flex-1 rounded-2xl border border-gray-200 bg-white py-3.5 text-sm font-bold text-gray-500 transition-all hover:border-pastel-lime-dark/40 hover:text-[#6B8E23] active:scale-[0.98]"
       >
         {t(newLabelKo, newLabelEn)}
       </button>

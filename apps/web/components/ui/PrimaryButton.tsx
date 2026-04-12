@@ -29,11 +29,11 @@ export default function PrimaryButton({
 
   const variants = {
     solid:
-      "bg-[#9bce26] text-white shadow-md hover:-translate-y-0.5 hover:opacity-90 hover:shadow-lg disabled:hover:translate-y-0 disabled:hover:shadow-none",
+      "bg-pastel-lime-dark text-white shadow-md hover:-translate-y-0.5 hover:opacity-90 hover:shadow-lg disabled:hover:translate-y-0 disabled:hover:shadow-none",
     outline:
-      "border-2 border-[#9bce26]/40 bg-white text-[#9bce26] hover:bg-[#9bce26]/5 hover:border-[#9bce26]/60",
+      "border-2 border-pastel-lime-dark/40 bg-white text-pastel-lime-dark hover:bg-pastel-lime-dark/5 hover:border-pastel-lime-dark/60",
     ghost:
-      "bg-[#9bce26]/10 text-[#9bce26] hover:bg-[#9bce26]/20",
+      "bg-pastel-lime-dark/10 text-pastel-lime-dark hover:bg-pastel-lime-dark/20",
   }
 
   return (

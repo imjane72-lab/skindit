@@ -25,7 +25,7 @@ const TROUBLES = [
     id: "redness",
     ko: "홍조",
     icon: "🔴",
-    color: "bg-pastel-rose text-pink-700 border-pink-200",
+    color: "bg-pastel-cream text-pink-700 border-pink-200",
   },
   {
     id: "dryness",
@@ -37,13 +37,13 @@ const TROUBLES = [
     id: "acne",
     ko: "트러블",
     icon: "💥",
-    color: "bg-pastel-rose text-rose-700 border-rose-200",
+    color: "bg-pastel-cream text-rose-700 border-rose-200",
   },
   {
     id: "itching",
     ko: "가려움",
     icon: "🩸",
-    color: "bg-pastel-lilac text-lime-800 border-lime-200",
+    color: "bg-pastel-sand text-lime-800 border-lime-200",
   },
   {
     id: "flaking",
@@ -382,7 +382,7 @@ export default function DiaryPage() {
         <div className="mx-auto min-h-screen max-w-160 bg-white shadow-xl">
           <NavBar title="Diary" />
           <div className="flex h-[60vh] items-center justify-center">
-            <div className="h-8 w-8 animate-spin rounded-full border-3 border-[#9bce26]/30 border-t-[#9bce26]" />
+            <div className="h-8 w-8 animate-spin rounded-full border-3 border-pastel-lime-dark/30 border-t-pastel-lime-dark" />
           </div>
         </div>
       </div>
@@ -456,7 +456,7 @@ export default function DiaryPage() {
                   {viewYear}년 {viewMonth + 1}월
                 </h2>
                 {!isCurrentMonth && (
-                  <span className="rounded-full bg-lime-50 px-2 py-0.5 text-[10px] font-bold text-[#9bce26]">
+                  <span className="rounded-full bg-lime-50 px-2 py-0.5 text-[10px] font-bold text-pastel-lime-dark">
                     오늘
                   </span>
                 )}
@@ -531,7 +531,7 @@ export default function DiaryPage() {
                     disabled={!d.current || isFuture}
                     className={`relative flex aspect-square flex-col items-center justify-center rounded-2xl border-[1.5px] transition-all duration-200 ${!d.current ? "pointer-events-none opacity-0" : ""} ${isFuture ? "cursor-not-allowed border-transparent opacity-25" : ""} ${d.current && !entry && !isSelected && !isToday ? "border-transparent hover:bg-gray-50" : ""} ${
                       isSelected
-                        ? "z-10 border-[#9bce26] shadow-[0_0_0_2px_rgba(155,206,38,0.15)] " +
+                        ? "z-10 border-pastel-lime-dark shadow-[0_0_0_2px_rgba(155,206,38,0.15)] " +
                           (entry ? cellBg.split(" ")[0] : "bg-lime-50")
                         : entry
                           ? cellBg
@@ -558,7 +558,7 @@ export default function DiaryPage() {
 
                     {/* 오늘 표시 */}
                     {isToday && (
-                      <span className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 text-[8px] font-extrabold tracking-tight text-[#9bce26]">
+                      <span className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 text-[8px] font-extrabold tracking-tight text-pastel-lime-dark">
                         today
                       </span>
                     )}
@@ -606,7 +606,7 @@ export default function DiaryPage() {
           {/* 월 전환 시 로딩 오버레이 */}
           {loading && (
             <div className="flex justify-center py-6">
-              <div className="h-6 w-6 animate-spin rounded-full border-2 border-[#9bce26]/30 border-t-[#9bce26]" />
+              <div className="h-6 w-6 animate-spin rounded-full border-2 border-pastel-lime-dark/30 border-t-pastel-lime-dark" />
             </div>
           )}
 
@@ -646,7 +646,7 @@ export default function DiaryPage() {
                               ? setEditingId(null)
                               : startEdit(selectedEntry)
                           }
-                          className="rounded-xl p-2 text-gray-300 transition-all hover:bg-gray-50 hover:text-[#9bce26]"
+                          className="rounded-xl p-2 text-gray-300 transition-all hover:bg-gray-50 hover:text-pastel-lime-dark"
                         >
                           <svg
                             width="14"
@@ -794,13 +794,13 @@ export default function DiaryPage() {
                           value={editNote}
                           onChange={(e) => setEditNote(e.target.value)}
                           rows={3}
-                          className="mb-2 w-full resize-y rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-xs leading-relaxed text-gray-900 transition-all outline-none focus:border-[#9bce26]/50 focus:ring-2 focus:ring-[#9bce26]/20"
+                          className="mb-2 w-full resize-y rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-xs leading-relaxed text-gray-900 transition-all outline-none focus:border-pastel-lime-dark/50 focus:ring-2 focus:ring-pastel-lime-dark/20"
                         />
                         <div className="flex gap-2">
                           <button
                             onClick={() => handleEditSave(selectedEntry.id)}
                             disabled={editSaving}
-                            className="bg-[#9bce26] px-4 py-1.5 text-xs font-bold text-white transition-all hover:opacity-90 disabled:opacity-40"
+                            className="bg-pastel-lime-dark px-4 py-1.5 text-xs font-bold text-white transition-all hover:opacity-90 disabled:opacity-40"
                           >
                             {editSaving ? t("저장 중...", "Saving...") : t("수정 완료", "Save")}
                           </button>
@@ -827,7 +827,7 @@ export default function DiaryPage() {
                   </p>
                   <Link
                     href={`/diary/write?date=${viewYear}-${String(viewMonth + 1).padStart(2, "0")}-${String(selectedDate).padStart(2, "0")}`}
-                    className="bg-[#9bce26] px-5 py-2 text-xs font-bold text-white no-underline shadow-md transition-all hover:scale-105 hover:shadow-lg"
+                    className="bg-pastel-lime-dark px-5 py-2 text-xs font-bold text-white no-underline shadow-md transition-all hover:scale-105 hover:shadow-lg"
                   >
                     {t("기록하기", "Log")}
                   </Link>
@@ -849,7 +849,7 @@ export default function DiaryPage() {
                 {t("트러블 원인을 추적할 수 있어요!", "track trouble causes!")}
               </p>
               {entries.length < 5 && (
-                <p className="mt-3 text-[11px] font-medium text-[#9bce26]">
+                <p className="mt-3 text-[11px] font-medium text-pastel-lime-dark">
                   {t("📊 5일만 기록하시면 리포트를 받아보실 수 있어요!", "📊 Log 5 days to unlock your report!")}
                 </p>
               )}
@@ -860,7 +860,7 @@ export default function DiaryPage() {
         {/* ── Floating "+ 새 기록" Button ── */}
         <Link
           href="/diary/write"
-          className="bg-[#9bce26] px-7 py-3.5 text-sm font-bold tracking-wide text-white no-underline shadow-lg shadow-[#9bce26]/30 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-[#9bce26]/30"
+          className="bg-pastel-lime-dark px-7 py-3.5 text-sm font-bold tracking-wide text-white no-underline shadow-lg shadow-pastel-lime-dark/30 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-pastel-lime-dark/30"
         >
           {t("새 기록", "New Entry")}
         </Link>

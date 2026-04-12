@@ -367,7 +367,7 @@ const TYPE_CONFIG = {
     bg: "bg-lime-50",
     text: "text-lime-700",
     border: "border-lime-200",
-    accent: "from-[#9bce26] to-lime-300",
+    accent: "from-pastel-lime-dark to-lime-300",
   },
   compare: {
     label: "성분 비교",
@@ -562,7 +562,7 @@ export default function HistoryPage() {
         <div className="mx-auto min-h-screen max-w-160 bg-white shadow-xl">
           <NavBar title="History" />
           <div className="flex h-[60vh] items-center justify-center">
-            <div className="h-8 w-8 rounded-full border-3 border-[#9bce26]/30 border-t-[#9bce26] animate-spin" />
+            <div className="h-8 w-8 rounded-full border-3 border-pastel-lime-dark/30 border-t-pastel-lime-dark animate-spin" />
           </div>
         </div>
       </div>
@@ -600,8 +600,8 @@ export default function HistoryPage() {
                 onClick={() => handleFilterChange(f.id)}
                 className={`flex items-center gap-1.5 rounded-full border px-3.5 py-2 text-xs font-bold transition-all duration-200 ${
                   filter === f.id
-                    ? "bg-[#9bce26]/10 border-[#9bce26]/40 text-gray-800 shadow-sm"
-                    : "border-gray-200 bg-white text-gray-400 hover:border-[#9bce26]/30 hover:bg-[#9bce26]/5"
+                    ? "bg-pastel-lime-dark/10 border-pastel-lime-dark/40 text-gray-800 shadow-sm"
+                    : "border-gray-200 bg-white text-gray-400 hover:border-pastel-lime-dark/30 hover:bg-pastel-lime-dark/5"
                 }`}
               >
                 <span className="text-sm">{f.icon}</span>
@@ -613,14 +613,14 @@ export default function HistoryPage() {
           {/* Content */}
           {loading ? (
             <div className="flex flex-col items-center justify-center py-20">
-              <div className="h-8 w-8 rounded-full border-3 border-[#9bce26]/30 border-t-[#9bce26] animate-spin" />
+              <div className="h-8 w-8 rounded-full border-3 border-pastel-lime-dark/30 border-t-pastel-lime-dark animate-spin" />
               <p className="mt-4 text-xs text-gray-300">불러오는 중...</p>
             </div>
           ) : items.length === 0 ? (
             <div className="anim-scale-in flex flex-col items-center justify-center py-20">
               <div className="relative mb-6">
-                <div className="bg-[#9bce26]/10 flex h-24 w-24 items-center justify-center rounded-full">
-                  <div className="bg-pastel-lavender anim-float flex h-16 w-16 items-center justify-center rounded-full">
+                <div className="bg-pastel-lime-dark/10 flex h-24 w-24 items-center justify-center rounded-full">
+                  <div className="bg-pastel-lime anim-float flex h-16 w-16 items-center justify-center rounded-full">
                     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" className="text-lime-300">
                       <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                       <rect x="9" y="3" width="6" height="4" rx="1" stroke="currentColor" strokeWidth="1.5" />
@@ -633,7 +633,7 @@ export default function HistoryPage() {
               <p className="mb-6 text-xs text-gray-300">{t("성분 분석하면 여기에 쌓여요! ✨", "Analyses will appear here! ✨")}</p>
               <button
                 onClick={() => router.push("/")}
-                className="bg-[#9bce26] px-6 py-2.5 text-xs font-bold text-white shadow-md transition-all hover:shadow-lg"
+                className="bg-pastel-lime-dark px-6 py-2.5 text-xs font-bold text-white shadow-md transition-all hover:shadow-lg"
               >
                 {t("첫 분석 해보기", "Try First Analysis")}
               </button>
@@ -748,7 +748,7 @@ export default function HistoryPage() {
                                 alert("공유 링크가 복사되었어요!")
                               }
                             }}
-                            className="flex items-center gap-1.5 text-xs text-[#9bce26] transition-colors hover:text-lime-700"
+                            className="flex items-center gap-1.5 text-xs text-pastel-lime-dark transition-colors hover:text-lime-700"
                           >
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                               <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13" />
@@ -784,7 +784,7 @@ export default function HistoryPage() {
               <button
                 onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={page <= 1}
-                className="flex h-9 w-9 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-400 transition-all hover:border-lime-200 hover:text-[#9bce26] disabled:cursor-not-allowed disabled:opacity-30"
+                className="flex h-9 w-9 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-400 transition-all hover:border-lime-200 hover:text-pastel-lime-dark disabled:cursor-not-allowed disabled:opacity-30"
               >
                 <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
                   <path d="M10 4L6 8L10 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -802,8 +802,8 @@ export default function HistoryPage() {
                         onClick={() => setPage(p)}
                         className={`flex h-9 w-9 items-center justify-center rounded-xl border text-xs font-bold transition-all ${
                           p === page
-                            ? "bg-[#9bce26] text-white shadow-md"
-                            : "border-gray-200 bg-white text-gray-400 hover:border-lime-200 hover:text-[#9bce26]"
+                            ? "bg-pastel-lime-dark text-white shadow-md"
+                            : "border-gray-200 bg-white text-gray-400 hover:border-lime-200 hover:text-pastel-lime-dark"
                         }`}
                       >
                         {p}
@@ -815,7 +815,7 @@ export default function HistoryPage() {
               <button
                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                 disabled={page >= totalPages}
-                className="flex h-9 w-9 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-400 transition-all hover:border-lime-200 hover:text-[#9bce26] disabled:cursor-not-allowed disabled:opacity-30"
+                className="flex h-9 w-9 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-400 transition-all hover:border-lime-200 hover:text-pastel-lime-dark disabled:cursor-not-allowed disabled:opacity-30"
               >
                 <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
                   <path d="M6 4L10 8L6 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />

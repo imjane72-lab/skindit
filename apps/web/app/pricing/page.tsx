@@ -38,9 +38,9 @@ export default function PricingPage() {
           </div>
 
           {/* Free Card */}
-          <div className="rounded-2xl border-2 border-[#9bce26]/30 bg-[#9bce26]/5 p-6 anim-fade-up" style={{ animationDelay: "0.05s" }}>
+          <div className="rounded-2xl border-2 border-pastel-lime-dark/30 bg-pastel-lime-dark/5 p-6 anim-fade-up" style={{ animationDelay: "0.05s" }}>
             <div className="text-center mb-6">
-              <span className="inline-block text-[11px] font-bold text-white bg-[#9bce26] px-3 py-1 rounded-full mb-3">
+              <span className="inline-block text-[11px] font-bold text-white bg-pastel-lime-dark px-3 py-1 rounded-full mb-3">
                 {t("현재 무료", "Currently Free")}
               </span>
               <p className="text-3xl font-extrabold text-gray-900">
@@ -67,7 +67,7 @@ export default function PricingPage() {
           <div className="mt-6 anim-fade-up" style={{ animationDelay: "0.1s" }}>
             <button
               onClick={() => router.push("/")}
-              className="w-full h-12 rounded-2xl bg-[#9bce26] text-white text-sm font-bold shadow-lg shadow-[#9bce26]/20 hover:-translate-y-0.5 hover:shadow-xl transition-all disabled:cursor-not-allowed disabled:opacity-30"
+              className="w-full h-12 rounded-2xl bg-pastel-lime-dark text-white text-sm font-bold shadow-lg shadow-pastel-lime-dark/20 hover:-translate-y-0.5 hover:shadow-xl transition-all disabled:cursor-not-allowed disabled:opacity-30"
             >
               {t("성분 분석하러 가기", "Start Analyzing")}
             </button>

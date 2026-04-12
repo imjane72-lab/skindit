@@ -58,14 +58,14 @@ function TypingIndicator() {
   return (
     <div className="flex items-end gap-2.5 anim-fade-up">
       {/* Avatar */}
-      <div className="w-8 h-8 rounded-full bg-[#9bce26] flex items-center justify-center shrink-0 shadow-sm">
+      <div className="w-8 h-8 rounded-full bg-pastel-lime-dark flex items-center justify-center shrink-0 shadow-sm">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
           <circle cx="11" cy="11" r="6" stroke="white" strokeWidth="2" strokeOpacity="0.9" />
           <path d="M16 16L20 20" stroke="white" strokeWidth="2" strokeLinecap="round" strokeOpacity="0.9" />
         </svg>
       </div>
       {/* 점 말풍선 */}
-      <div className="bg-[#9bce26]/10 rounded-2xl rounded-bl-md px-5 py-3.5 skindit-loading">
+      <div className="bg-pastel-lime-dark/10 rounded-2xl rounded-bl-md px-5 py-3.5 skindit-loading">
         <div className="dot" />
         <div className="dot" />
         <div className="dot" />
@@ -82,7 +82,7 @@ function MessageBubble({ message }: { message: Message }) {
     <div className={`flex items-end gap-2.5 anim-fade-up ${isAI ? "justify-start" : "justify-end"}`}>
       {/* AI avatar */}
       {isAI && (
-        <div className="w-8 h-8 rounded-full bg-[#9bce26] flex items-center justify-center shrink-0 shadow-sm">
+        <div className="w-8 h-8 rounded-full bg-pastel-lime-dark flex items-center justify-center shrink-0 shadow-sm">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
             <circle cx="11" cy="11" r="6" stroke="white" strokeWidth="2" strokeOpacity="0.9" />
             <path d="M16 16L20 20" stroke="white" strokeWidth="2" strokeLinecap="round" strokeOpacity="0.9" />
@@ -95,7 +95,7 @@ function MessageBubble({ message }: { message: Message }) {
         <div
           className={`px-4 py-3 text-[14.5px] leading-relaxed whitespace-pre-wrap wrap-break-word ${
             isAI
-              ? "bg-[#9bce26]/15 text-gray-800 rounded-2xl rounded-bl-md"
+              ? "bg-pastel-lime-dark/15 text-gray-800 rounded-2xl rounded-bl-md"
               : "bg-gray-100 text-gray-800 rounded-2xl rounded-br-md"
           }`}
         >
@@ -217,8 +217,8 @@ export default function ChatPage() {
   /* ── 로딩 / 인증 상태 ── */
   if (status === "loading") {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-linear-to-b from-[#9bce26]/8 to-white">
-        <div className="w-8 h-8 rounded-full border-2 border-[#9bce26] border-t-transparent animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-linear-to-b from-pastel-lime-dark/8 to-white">
+        <div className="w-8 h-8 rounded-full border-2 border-pastel-lime-dark border-t-transparent animate-spin" />
       </div>
     );
   }
@@ -230,8 +230,8 @@ export default function ChatPage() {
       <NavBar title="Chat" />
 
       {/* ── 장식용 블롭 ── */}
-      <div className="blob w-48 h-48 bg-pastel-lavender top-24 -left-16 fixed" />
-      <div className="blob w-36 h-36 bg-pastel-rose top-64 -right-10 fixed" />
+      <div className="blob w-48 h-48 bg-pastel-lime top-24 -left-16 fixed" />
+      <div className="blob w-36 h-36 bg-pastel-cream top-64 -right-10 fixed" />
 
       {/* ── 메시지 영역 ── */}
       <div className="flex-1 overflow-y-auto px-4 pt-4 pb-4 flex flex-col gap-4 hide-scrollbar">
@@ -253,8 +253,8 @@ export default function ChatPage() {
                 onClick={() => sendMessage(chip)}
                 disabled={isTyping}
                 className="shrink-0 px-3.5 py-2 rounded-full text-[12.5px] font-medium
-                  bg-[#9bce26]/10 text-lime-800 border border-lime-100
-                  hover:bg-[#9bce26]/15 hover:border-lime-200 hover:shadow-sm
+                  bg-pastel-lime-dark/10 text-lime-800 border border-lime-100
+                  hover:bg-pastel-lime-dark/15 hover:border-lime-200 hover:shadow-sm
                   active:scale-95 transition-all duration-150
                   disabled:opacity-50 disabled:cursor-not-allowed"
               >
@@ -275,16 +275,16 @@ export default function ChatPage() {
             disabled={isTyping}
             className="flex-1 h-12 px-4 rounded-2xl bg-gray-50 border border-gray-200
               text-[14.5px] text-gray-800 placeholder-gray-400
-              focus:outline-none focus:ring-2 focus:ring-[#9bce26]/40 focus:border-[#9bce26]/50
+              focus:outline-none focus:ring-2 focus:ring-pastel-lime-dark/40 focus:border-pastel-lime-dark/50
               disabled:opacity-60 transition-all duration-200"
           />
           <button
             type="submit"
             disabled={!input.trim() || isTyping}
             className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0
-              bg-[#9bce26]
-              text-white shadow-lg shadow-[#9bce26]/20
-              hover:shadow-xl hover:shadow-[#9bce26]/30 hover:scale-105
+              bg-pastel-lime-dark
+              text-white shadow-lg shadow-pastel-lime-dark/20
+              hover:shadow-xl hover:shadow-pastel-lime-dark/30 hover:scale-105
               active:scale-95 transition-all duration-200
               disabled:opacity-40 disabled:shadow-none disabled:hover:scale-100"
           >

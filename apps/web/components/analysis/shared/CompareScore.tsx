@@ -40,7 +40,7 @@ export default function CompareScore({
         <div className="flex flex-col items-center">
           <ScoreRing score={scoreA} size={130} />
           <span className="mt-3 flex items-center gap-1.5">
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#9bce26] font-display text-[10px] font-extrabold text-white">
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-pastel-lime-dark font-display text-[10px] font-extrabold text-white">
               A
             </span>
             <span className="text-[11px] font-bold tracking-wide text-gray-500 uppercase">
@@ -49,14 +49,14 @@ export default function CompareScore({
           </span>
         </div>
 
-        <span className="mb-5 shrink-0 rounded-full border border-[#8B6914]/20 bg-white/70 px-2.5 py-1 text-[10px] font-bold tracking-[0.2em] text-[#8B6914] uppercase">
+        <span className="mb-5 shrink-0 rounded-full border border-pastel-olive/20 bg-white/70 px-2.5 py-1 text-[10px] font-bold tracking-[0.2em] text-pastel-olive uppercase">
           vs
         </span>
 
         <div className="flex flex-col items-center">
           <ScoreRing score={scoreB} size={130} />
           <span className="mt-3 flex items-center gap-1.5">
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#E8B830] font-display text-[10px] font-extrabold text-white">
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-pastel-gold font-display text-[10px] font-extrabold text-white">
               B
             </span>
             <span className="text-[11px] font-bold tracking-wide text-gray-500 uppercase">
@@ -68,12 +68,12 @@ export default function CompareScore({
 
       {(reasonA || reasonB) && (
         <div className="mt-5 grid w-full grid-cols-2 gap-3">
-          <div className="rounded-xl border border-[#9bce26]/20 bg-[#f0f7d4]/40 p-3">
+          <div className="rounded-xl border border-pastel-lime-dark/20 bg-pastel-lime/40 p-3">
             <p className="text-[11px] leading-relaxed text-gray-600">
               {reasonA || "—"}
             </p>
           </div>
-          <div className="rounded-xl border border-[#E8B830]/25 bg-[#fdf6e3]/60 p-3">
+          <div className="rounded-xl border border-pastel-gold/25 bg-pastel-cream/60 p-3">
             <p className="text-[11px] leading-relaxed text-gray-600">
               {reasonB || "—"}
             </p>
@@ -82,7 +82,7 @@ export default function CompareScore({
       )}
 
       {winner && (
-        <div className="mt-5 w-full rounded-2xl border border-[#9bce26]/25 bg-linear-to-br from-[#f0f7d4]/70 to-white p-4">
+        <div className="mt-5 w-full rounded-2xl border border-pastel-lime-dark/25 bg-linear-to-br from-pastel-lime/70 to-white p-4">
           <div className="mb-1 flex items-center gap-1.5">
             <span className="text-sm">🌿</span>
             <p className="text-[10px] font-bold tracking-wide text-[#6B8E23] uppercase">

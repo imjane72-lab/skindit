@@ -22,7 +22,7 @@ export default function ErrState({
       </p>
       <button
         onClick={reset}
-        className="bg-[#9bce26] px-8 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:opacity-90"
+        className="bg-pastel-lime-dark px-8 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:opacity-90"
       >
         {t("다시 해볼게요!", "Try Again")}
       </button>

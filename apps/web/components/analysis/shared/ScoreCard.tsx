@@ -20,7 +20,7 @@ export default function ScoreCard({ score, label, caption, date }: ScoreCardProp
         {label}
       </p>
       {caption && (
-        <p className="mt-2 max-w-[320px] text-[12px] leading-relaxed text-gray-600">
+        <p className="mt-2 max-w-80 text-[12px] leading-relaxed text-gray-600">
           {caption}
         </p>
       )}

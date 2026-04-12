@@ -48,7 +48,7 @@ const todayStr = () => {
 /* ── Write Page ── */
 export default function DiaryWritePageWrapper() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center"><div className="h-8 w-8 rounded-full border-3 border-[#9bce26]/30 border-t-[#9bce26] animate-spin" /></div>}>
+    <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center"><div className="h-8 w-8 rounded-full border-3 border-pastel-lime-dark/30 border-t-pastel-lime-dark animate-spin" /></div>}>
       <DiaryWritePage />
     </Suspense>
   );
@@ -272,7 +272,7 @@ function DiaryWritePage() {
         <div className="mx-auto min-h-screen max-w-160 bg-white shadow-xl">
           <NavBar title="Diary" />
           <div className="flex h-[60vh] items-center justify-center">
-            <div className="h-8 w-8 rounded-full border-3 border-[#9bce26]/30 border-t-[#9bce26] animate-spin" />
+            <div className="h-8 w-8 rounded-full border-3 border-pastel-lime-dark/30 border-t-pastel-lime-dark animate-spin" />
           </div>
         </div>
       </div>
@@ -322,7 +322,7 @@ function DiaryWritePage() {
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
                 max={todayStr()}
-                className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-700 outline-none focus:ring-2 focus:ring-[#9bce26]/30 focus:border-[#9bce26]/50 transition-all"
+                className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-700 outline-none focus:ring-2 focus:ring-pastel-lime-dark/30 focus:border-pastel-lime-dark/50 transition-all"
               />
             </div>
 
@@ -369,7 +369,7 @@ function DiaryWritePage() {
                     }}
                     placeholder={t("제품명 입력 (분석한 제품은 자동 연동!)", "Product name (analyzed products auto-link!)")}
 
-                    className="flex-1 rounded-xl px-4 py-2.5 text-sm text-gray-700 placeholder:text-gray-300 border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-[#9bce26]/30 focus:border-[#9bce26]/50 transition-all"
+                    className="flex-1 rounded-xl px-4 py-2.5 text-sm text-gray-700 placeholder:text-gray-300 border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-pastel-lime-dark/30 focus:border-pastel-lime-dark/50 transition-all"
                   />
                   <button
                     onClick={() => addProduct()}
@@ -382,7 +382,7 @@ function DiaryWritePage() {
                 {/* 자동완성 드롭다운 */}
                 {productSuggestions.length > 0 && (
                   <div className="absolute left-0 right-0 top-full z-20 mt-1 rounded-xl border border-lime-200 bg-white shadow-lg overflow-hidden anim-fade-up">
-                    <p className="px-3 py-1.5 text-[10px] font-bold text-[#9bce26] bg-lime-50/50">이전에 기록한 제품이에요!</p>
+                    <p className="px-3 py-1.5 text-[10px] font-bold text-pastel-lime-dark bg-lime-50/50">이전에 기록한 제품이에요!</p>
                     {productSuggestions.map(name => {
                       const isAnalyzed = allAnalyzedNames.some(n => n.toLowerCase() === name.toLowerCase() || n.toLowerCase().includes(name.toLowerCase()) || name.toLowerCase().includes(n.toLowerCase()));
                       return (
@@ -395,7 +395,7 @@ function DiaryWritePage() {
                             {isAnalyzed ? "🧬" : "📝"}
                           </span>
                           <span className="font-medium">{name}</span>
-                          <span className={`ml-auto text-[10px] ${isAnalyzed ? "text-[#9bce26]" : "text-gray-400"}`}>
+                          <span className={`ml-auto text-[10px] ${isAnalyzed ? "text-pastel-lime-dark" : "text-gray-400"}`}>
                             {isAnalyzed ? "성분 연동" : "일지 기록"}
                           </span>
                         </button>
@@ -442,7 +442,7 @@ function DiaryWritePage() {
                           <div className="flex items-center gap-2">
                             {linked && <span className="flex h-5 w-5 items-center justify-center rounded-md bg-lime-100 text-[9px] font-bold text-lime-700">🧬</span>}
                             <span className="text-xs font-bold text-gray-700">{p}</span>
-                            {linked && <span className="rounded-full bg-lime-100 px-1.5 py-0.5 text-[9px] font-bold text-[#9bce26]">성분 연동됨</span>}
+                            {linked && <span className="rounded-full bg-lime-100 px-1.5 py-0.5 text-[9px] font-bold text-pastel-lime-dark">성분 연동됨</span>}
                           </div>
                           <button onClick={() => removeProduct(p)} className="border-none bg-transparent text-gray-300 hover:text-rose-500 transition-colors text-sm">✕</button>
                         </div>
@@ -503,7 +503,7 @@ function DiaryWritePage() {
                     if (e.key === "Enter") { e.preventDefault(); addFood(); }
                   }}
                   placeholder="피부에 영향 줄 수 있는 음식 적어봐~"
-                  className="flex-1 rounded-xl px-4 py-2.5 text-sm text-gray-700 placeholder:text-gray-300 border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-[#9bce26]/30 focus:border-[#9bce26]/50 transition-all"
+                  className="flex-1 rounded-xl px-4 py-2.5 text-sm text-gray-700 placeholder:text-gray-300 border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-pastel-lime-dark/30 focus:border-pastel-lime-dark/50 transition-all"
                 />
                 <button
                   onClick={addFood}
@@ -558,7 +558,7 @@ function DiaryWritePage() {
                 onChange={(e) => setNote(e.target.value)}
                 placeholder="오늘 피부 상태에 대해 자유롭게 적어봐~"
                 rows={3}
-                className="w-full rounded-xl p-4 text-sm text-gray-700 placeholder:text-gray-300 resize-none border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-[#9bce26]/30 focus:border-[#9bce26]/50 transition-all"
+                className="w-full rounded-xl p-4 text-sm text-gray-700 placeholder:text-gray-300 resize-none border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-pastel-lime-dark/30 focus:border-pastel-lime-dark/50 transition-all"
               />
             </div>
           </div>
@@ -577,7 +577,7 @@ function DiaryWritePage() {
           <button
             onClick={handleSave}
             disabled={!condition || saving}
-            className="mt-6 w-full rounded-2xl bg-[#9bce26] py-4 text-sm font-bold text-white shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-30"
+            className="mt-6 w-full rounded-2xl bg-pastel-lime-dark py-4 text-sm font-bold text-white shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-30"
           >
             {saving ? t("저장하는 중...", "Saving...") : t("기록 저장하기", "Save Entry")}
           </button>

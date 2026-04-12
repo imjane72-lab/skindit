@@ -2,10 +2,10 @@
 
 @theme {
   /* ── Pastel palette ── */
-  --color-pastel-rose: #fdf6e3;
-  --color-pastel-rose-dark: #E8B830;
-  --color-pastel-lavender: #f0f7d4;
-  --color-pastel-lavender-dark: #9bce26;
+  --color-pastel-cream: #fdf6e3;
+  --color-pastel-gold: #E8B830;
+  --color-pastel-lime: #f0f7d4;
+  --color-pastel-lime-dark: #9bce26;
   --color-pastel-mint: #e0f2f1;
   --color-pastel-mint-dark: #80cbc4;
   --color-pastel-sky: #e3f2fd;
@@ -15,8 +15,8 @@
   --color-pastel-lemon: #fffde7;
   --color-pastel-lemon-dark: #fff176;
   --color-pastel-blush: #faf3e0;
-  --color-pastel-lilac: #f5efe0;
-  --color-pastel-lilac-dark: #8B6914;
+  --color-pastel-sand: #f5efe0;
+  --color-pastel-olive: #8B6914;
   --color-pastel-sage: #e8f5e9;
   --color-pastel-sage-dark: #a5d6a7;
 

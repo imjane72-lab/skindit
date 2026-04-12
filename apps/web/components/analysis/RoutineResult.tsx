@@ -168,7 +168,7 @@ export default function RoutineResult({
                         <Md>{ti.reason}</Md>
                       </p>
                       {ti.timing === "both" && (
-                        <span className="mt-1 inline-block rounded-full bg-[#9bce26]/20 px-2 py-0.5 text-[9px] font-bold text-[#6B8E23]">
+                        <span className="mt-1 inline-block rounded-full bg-pastel-lime-dark/20 px-2 py-0.5 text-[9px] font-bold text-[#6B8E23]">
                           {t("아침/저녁", "AM/PM")}
                         </span>
                       )}
@@ -199,7 +199,7 @@ export default function RoutineResult({
                         <Md>{ti.reason}</Md>
                       </p>
                       {ti.timing === "both" && (
-                        <span className="mt-1 inline-block rounded-full bg-[#9bce26]/20 px-2 py-0.5 text-[9px] font-bold text-[#6B8E23]">
+                        <span className="mt-1 inline-block rounded-full bg-pastel-lime-dark/20 px-2 py-0.5 text-[9px] font-bold text-[#6B8E23]">
                           {t("아침/저녁", "AM/PM")}
                         </span>
                       )}

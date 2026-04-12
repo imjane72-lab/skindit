@@ -316,7 +316,7 @@ export default function SharePage() {
         <div className="max-w-160 mx-auto bg-white min-h-screen shadow-xl">
           <NavBar title="Share" />
           <div className="flex items-center justify-center h-[60vh]">
-            <div className="w-8 h-8 border-3 border-[#9bce26]/30 border-t-[#9bce26] rounded-full animate-spin" />
+            <div className="w-8 h-8 border-3 border-pastel-lime-dark/30 border-t-pastel-lime-dark rounded-full animate-spin" />
           </div>
         </div>
       </div>
@@ -334,7 +334,7 @@ export default function SharePage() {
             <p className="text-xs text-gray-400 mb-6">링크가 만료되었거나 잘못된 링크일 수 있어요.</p>
             <button
               onClick={() => router.push("/")}
-              className="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-[#9bce26] shadow-md"
+              className="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-pastel-lime-dark shadow-md"
             >
               skindit 홈으로
             </button>
@@ -376,7 +376,7 @@ export default function SharePage() {
             <p className="text-xs text-gray-400 mb-4">화장품 성분을 AI가 분석해드려요</p>
             <button
               onClick={() => router.push("/")}
-              className="px-6 py-2.5 rounded-xl text-xs font-bold text-white bg-[#9bce26] shadow-md hover:shadow-lg transition-all"
+              className="px-6 py-2.5 rounded-xl text-xs font-bold text-white bg-pastel-lime-dark shadow-md hover:shadow-lg transition-all"
             >
               skindit 시작하기
             </button>

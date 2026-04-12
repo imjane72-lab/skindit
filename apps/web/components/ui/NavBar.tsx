@@ -9,7 +9,7 @@ interface NavBarProps {
 export function Logo() {
   return (
     <>
-      <div className="relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-2xl bg-[#9bce26] shadow-md">
+      <div className="relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-2xl bg-pastel-lime-dark shadow-md">
         <svg
           width="18"
           height="18"
@@ -30,7 +30,7 @@ export function Logo() {
         <span className="font-display text-[17px] font-extrabold tracking-tight text-gray-900">
           skin
         </span>
-        <span className="font-accent from-pastel-lavender-dark to-pastel-rose-dark bg-linear-to-r bg-clip-text text-[17px] font-semibold text-transparent italic">
+        <span className="font-accent from-pastel-lime-dark to-pastel-gold bg-linear-to-r bg-clip-text text-[17px] font-semibold text-transparent italic">
           dit
         </span>
       </div>

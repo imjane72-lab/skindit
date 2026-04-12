@@ -21,7 +21,7 @@ export default function InfoCard({
     <div
       className={`rounded-2xl border p-4 ${
         isBrand
-          ? "border-[#9bce26]/20 bg-linear-to-br from-[#f0f7d4]/70 to-white"
+          ? "border-pastel-lime-dark/20 bg-linear-to-br from-pastel-lime/70 to-white"
           : "border-gray-100 bg-white"
       }`}
     >

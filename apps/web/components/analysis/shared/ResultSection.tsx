@@ -48,18 +48,18 @@ const TONES: Record<SectionTone, { bg: string; icon: string; title: string; sub:
     border: "border-amber-100",
   },
   brand: {
-    bg: "bg-[#f0f7d4]/60",
-    icon: "bg-[#9bce26]/15 text-[#6B8E23]",
+    bg: "bg-pastel-lime/60",
+    icon: "bg-pastel-lime-dark/15 text-[#6B8E23]",
     title: "text-[#3a5a1a]",
     sub: "text-[#6B8E23]/80",
-    border: "border-[#9bce26]/20",
+    border: "border-pastel-lime-dark/20",
   },
   accent: {
-    bg: "bg-[#fdf6e3]/60",
-    icon: "bg-[#E8B830]/20 text-[#8B6914]",
+    bg: "bg-pastel-cream/60",
+    icon: "bg-pastel-gold/20 text-pastel-olive",
     title: "text-[#5c430c]",
-    sub: "text-[#8B6914]/70",
-    border: "border-[#E8B830]/25",
+    sub: "text-pastel-olive/70",
+    border: "border-pastel-gold/25",
   },
 }
 

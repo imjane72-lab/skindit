@@ -12,21 +12,21 @@ export default function ResultHero({
   variant = "single",
 }: ResultHeroProps) {
   const badgeBg = (i: number, total: number) => {
-    if (variant === "versus") return i === 0 ? "bg-[#9bce26]" : "bg-[#E8B830]"
-    const palette = ["bg-[#9bce26]", "bg-[#E8B830]", "bg-[#8B6914]"]
-    return palette[i % palette.length] || "bg-[#9bce26]"
+    if (variant === "versus") return i === 0 ? "bg-pastel-lime-dark" : "bg-pastel-gold"
+    const palette = ["bg-pastel-lime-dark", "bg-pastel-gold", "bg-pastel-olive"]
+    return palette[i % palette.length] || "bg-pastel-lime-dark"
   }
   const badgeText = (i: number) =>
     variant === "versus" ? (i === 0 ? "A" : "B") : `${i + 1}`
 
   return (
     <div className="relative overflow-hidden rounded-3xl">
-      <div className="absolute inset-0 bg-linear-to-br from-[#f0f7d4] via-[#fdf6e3] to-[#faf3e0]" />
-      <div className="blob bg-[#9bce26]/25 absolute -top-12 -right-10 h-40 w-40" />
-      <div className="blob bg-[#E8B830]/20 absolute -bottom-16 -left-8 h-36 w-36" />
+      <div className="absolute inset-0 bg-linear-to-br from-pastel-lime via-pastel-cream to-pastel-blush" />
+      <div className="blob bg-pastel-lime-dark/25 absolute -top-12 -right-10 h-40 w-40" />
+      <div className="blob bg-pastel-gold/20 absolute -bottom-16 -left-8 h-36 w-36" />
 
       <div className="relative px-6 pt-7 pb-8">
-        <p className="mb-5 text-[10px] font-bold tracking-[0.24em] text-[#8B6914]/75 uppercase">
+        <p className="mb-5 text-[10px] font-bold tracking-[0.24em] text-pastel-olive/75 uppercase">
           skindit
         </p>
 
@@ -48,7 +48,7 @@ export default function ResultHero({
             ))}
           </div>
         ) : (
-          <h1 className="font-display text-2xl leading-tight font-extrabold break-words text-gray-900">
+          <h1 className="font-display text-2xl leading-tight font-extrabold wrap-break-word text-gray-900">
             {title}
           </h1>
         )}

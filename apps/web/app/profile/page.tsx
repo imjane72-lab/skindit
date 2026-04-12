@@ -50,14 +50,14 @@ const CONCERNS = [
     ko: "홍조",
     en: "Redness",
     icon: "🔴",
-    color: "bg-pastel-rose text-pink-700 border-pink-200",
+    color: "bg-pastel-cream text-pink-700 border-pink-200",
   },
   {
     id: "sensitive",
     ko: "민감성",
     en: "Sensitive",
     icon: "🫧",
-    color: "bg-pastel-lavender text-lime-800 border-lime-200",
+    color: "bg-pastel-lime text-lime-800 border-lime-200",
   },
   {
     id: "pores",
@@ -78,7 +78,7 @@ const CONCERNS = [
     ko: "트러블",
     en: "Acne",
     icon: "💥",
-    color: "bg-pastel-rose text-rose-700 border-rose-200",
+    color: "bg-pastel-cream text-rose-700 border-rose-200",
   },
   {
     id: "brightening",
@@ -99,7 +99,7 @@ const CONCERNS = [
     ko: "노화",
     en: "Anti-aging",
     icon: "🌿",
-    color: "bg-pastel-lilac text-lime-800 border-lime-200",
+    color: "bg-pastel-sand text-lime-800 border-lime-200",
   },
   {
     id: "blackhead",
@@ -198,10 +198,10 @@ export default function ProfilePage() {
 
   if (status === "loading" || loadingProfile) {
     return (
-      <div className="via-[#9bce26]/5 to-pastel-rose/20 min-h-screen bg-linear-to-b from-white">
+      <div className="via-pastel-lime-dark/5 to-pastel-cream/20 min-h-screen bg-linear-to-b from-white">
         <NavBar title="Profile" />
         <div className="flex h-[60vh] items-center justify-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-3 border-[#9bce26]/30 border-t-[#9bce26]" />
+          <div className="h-8 w-8 animate-spin rounded-full border-3 border-pastel-lime-dark/30 border-t-pastel-lime-dark" />
         </div>
       </div>
     )
@@ -238,7 +238,7 @@ export default function ProfilePage() {
               <span className="font-normal tracking-normal text-gray-300 normal-case">
                 Skin Type
               </span>
-              <span className="ml-2 text-[11px] font-medium text-[#9bce26]">
+              <span className="ml-2 text-[11px] font-medium text-pastel-lime-dark">
                 최대 2개
               </span>
             </h2>
@@ -258,7 +258,7 @@ export default function ProfilePage() {
                     }}
                     className={`glass-card rounded-2xl p-4 text-left transition-all duration-200 ${
                       selected
-                        ? "border-[#9bce26]/40 shadow-lg ring-2 shadow-[#9bce26]/10 ring-[#9bce26]"
+                        ? "border-pastel-lime-dark/40 shadow-lg ring-2 shadow-pastel-lime-dark/10 ring-pastel-lime-dark"
                         : skinType.length >= 2
                           ? "opacity-40"
                           : "hover:border-lime-100 hover:shadow-md"
@@ -282,7 +282,7 @@ export default function ProfilePage() {
                       <div
                         className={`flex h-5 w-5 items-center justify-center rounded-full border-2 transition-all ${
                           selected
-                            ? "border-[#9bce26] bg-[#9bce26]"
+                            ? "border-pastel-lime-dark bg-pastel-lime-dark"
                             : "border-gray-200"
                         }`}
                       >
@@ -366,7 +366,7 @@ export default function ProfilePage() {
               }}
               placeholder="알레르기, 복용 약, 특이사항 있으면 적어줘~"
               rows={4}
-              className="w-full resize-none rounded-2xl border border-[#9bce26]/30 bg-white p-4 text-sm text-gray-700 transition-all placeholder:text-gray-300 focus:outline-none"
+              className="w-full resize-none rounded-2xl border border-pastel-lime-dark/30 bg-white p-4 text-sm text-gray-700 transition-all placeholder:text-gray-300 focus:outline-none"
             />
           </section>
 
@@ -375,7 +375,7 @@ export default function ProfilePage() {
             <button
               onClick={handleSave}
               disabled={saving || skinType.length === 0}
-              className="font-display relative h-13 w-full overflow-hidden rounded-2xl bg-[#9bce26] text-sm font-bold tracking-wide text-white shadow-lg shadow-[#9bce26]/30 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-[#9bce26]/40 disabled:cursor-not-allowed disabled:opacity-40"
+              className="font-display relative h-13 w-full overflow-hidden rounded-2xl bg-pastel-lime-dark text-sm font-bold tracking-wide text-white shadow-lg shadow-pastel-lime-dark/30 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-pastel-lime-dark/40 disabled:cursor-not-allowed disabled:opacity-40"
             >
               {saving ? (
                 <div className="flex items-center justify-center gap-2">

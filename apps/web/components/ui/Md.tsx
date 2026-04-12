@@ -29,7 +29,7 @@ export default function Md({ children }: { children: string }) {
           const content = trimmed.slice(2)
           return (
             <div key={li} className="flex gap-1.5 ml-1 mb-0.5">
-              <span className="shrink-0 text-[#9bce26]">·</span>
+              <span className="shrink-0 text-pastel-lime-dark">·</span>
               <span>{parseBold(content)}</span>
             </div>
           )

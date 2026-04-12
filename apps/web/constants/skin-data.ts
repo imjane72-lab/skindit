@@ -4,14 +4,14 @@ export const CONCERNS = [
     ko: "홍조",
     en: "Redness",
     icon: "🔴",
-    color: "bg-pastel-rose text-pink-700 border-pink-200",
+    color: "bg-pastel-cream text-pink-700 border-pink-200",
   },
   {
     id: "sensitive",
     ko: "민감성",
     en: "Sensitive",
     icon: "🫧",
-    color: "bg-pastel-lavender text-lime-800 border-lime-200",
+    color: "bg-pastel-lime text-lime-800 border-lime-200",
   },
   {
     id: "pores",
@@ -32,7 +32,7 @@ export const CONCERNS = [
     ko: "트러블",
     en: "Acne",
     icon: "💥",
-    color: "bg-pastel-rose text-rose-700 border-rose-200",
+    color: "bg-pastel-cream text-rose-700 border-rose-200",
   },
   {
     id: "brightening",
@@ -53,7 +53,7 @@ export const CONCERNS = [
     ko: "노화",
     en: "Anti-aging",
     icon: "🌿",
-    color: "bg-pastel-lilac text-lime-800 border-lime-200",
+    color: "bg-pastel-sand text-lime-800 border-lime-200",
   },
   {
     id: "blackhead",

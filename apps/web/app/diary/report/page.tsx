@@ -119,7 +119,7 @@ export default function DiaryReportPage() {
         <div className="max-w-160 mx-auto bg-white min-h-screen shadow-xl">
           <NavBar title="Diary" />
           <div className="flex items-center justify-center h-[60vh]">
-            <div className="w-8 h-8 border-3 border-[#9bce26]/30 border-t-[#9bce26] rounded-full animate-spin" />
+            <div className="w-8 h-8 border-3 border-pastel-lime-dark/30 border-t-pastel-lime-dark rounded-full animate-spin" />
           </div>
         </div>
       </div>
@@ -152,12 +152,12 @@ export default function DiaryReportPage() {
               </p>
               <div className="flex justify-center gap-1 mb-4">
                 {Array.from({ length: 5 }).map((_, i) => (
-                  <div key={i} className={`w-8 h-2 rounded-full ${i < entryCount ? "bg-[#9bce26]" : "bg-gray-200"}`} />
+                  <div key={i} className={`w-8 h-2 rounded-full ${i < entryCount ? "bg-pastel-lime-dark" : "bg-gray-200"}`} />
                 ))}
               </div>
               <button
                 onClick={() => router.push("/diary/write")}
-                className="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-[#9bce26] shadow-md hover:shadow-lg transition-all"
+                className="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-pastel-lime-dark shadow-md hover:shadow-lg transition-all"
               >
                 기록하러 가기
               </button>
@@ -320,7 +320,7 @@ export default function DiaryReportPage() {
                       {reportData.top_products.map((p: string, i: number) => (
                         <span
                           key={i}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-pastel-lavender text-lime-800 border border-lime-100"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-pastel-lime text-lime-800 border border-lime-100"
                         >
                           {p}
                         </span>
@@ -360,7 +360,7 @@ export default function DiaryReportPage() {
                           key={i}
                           className="flex gap-2.5 text-xs text-gray-600 leading-relaxed bg-lime-50/40 rounded-xl p-3 border border-lime-100/30"
                         >
-                          <span className="text-[#9bce26] font-bold shrink-0">{i + 1}.</span>
+                          <span className="text-pastel-lime-dark font-bold shrink-0">{i + 1}.</span>
                           <span>{rec}</span>
                         </div>
                       ))}
@@ -433,7 +433,7 @@ export default function DiaryReportPage() {
               <p className="text-xs text-gray-400 leading-relaxed mb-4">다시 한번 시도해 주세요!</p>
               <button
                 onClick={fetchReport}
-                className="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-[#9bce26] shadow-md hover:shadow-lg transition-all"
+                className="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-pastel-lime-dark shadow-md hover:shadow-lg transition-all"
               >
                 다시 시도
               </button>

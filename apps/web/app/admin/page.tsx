@@ -27,7 +27,7 @@ interface AdminStats {
 function StatCard({ label, value, icon }: { label: string; value: number; icon: string }) {
   return (
     <div className="glass-card rounded-2xl p-5 flex items-center gap-4">
-      <div className="w-11 h-11 rounded-xl bg-[#9bce26]/10 flex items-center justify-center text-xl">
+      <div className="w-11 h-11 rounded-xl bg-pastel-lime-dark/10 flex items-center justify-center text-xl">
         {icon}
       </div>
       <div className="flex-1 min-w-0">
@@ -98,10 +98,10 @@ export default function AdminPage() {
 
   if (status === "loading" || (status === "authenticated" && loading)) {
     return (
-      <div className="min-h-screen bg-linear-to-b from-white via-[#9bce26]/5 to-pastel-rose/20">
+      <div className="min-h-screen bg-linear-to-b from-white via-pastel-lime-dark/5 to-pastel-cream/20">
         <NavBar title="Admin" />
         <div className="flex items-center justify-center h-[60vh]">
-          <div className="w-8 h-8 border-3 border-[#9bce26]/30 border-t-[#9bce26] rounded-full animate-spin" />
+          <div className="w-8 h-8 border-3 border-pastel-lime-dark/30 border-t-pastel-lime-dark rounded-full animate-spin" />
         </div>
       </div>
     );
@@ -162,7 +162,7 @@ export default function AdminPage() {
                       key={user.id}
                       className="glass-card rounded-2xl p-4 flex items-center gap-3"
                     >
-                      <div className="w-9 h-9 rounded-full bg-[#9bce26]/10 flex items-center justify-center text-sm font-bold text-white shrink-0">
+                      <div className="w-9 h-9 rounded-full bg-pastel-lime-dark/10 flex items-center justify-center text-sm font-bold text-white shrink-0">
                         {(user.name || user.email || "?").charAt(0).toUpperCase()}
                       </div>
                       <div className="flex-1 min-w-0">
