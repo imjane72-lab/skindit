@@ -12,23 +12,21 @@ interface ScoreCardProps {
 
 export default function ScoreCard({ score, label, caption, date }: ScoreCardProps) {
   return (
-    <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-      <div className="flex items-center gap-5">
-        <ScoreRing score={score} size={104} />
-        <div className="min-w-0 flex-1">
-          <p className={`font-display text-2xl leading-none font-extrabold tracking-tight ${scoreColor(score)}`}>
-            {label}
-          </p>
-          {caption && (
-            <p className="mt-1.5 text-[12px] leading-relaxed text-gray-600">
-              {caption}
-            </p>
-          )}
-          <p className="mt-2 text-[11px] text-gray-400">
-            {date || new Date().toLocaleDateString("ko-KR")}
-          </p>
-        </div>
-      </div>
+    <div className="flex flex-col items-center py-2 text-center">
+      <ScoreRing score={score} size={180} />
+      <p
+        className={`mt-4 font-display text-2xl font-extrabold tracking-tight ${scoreColor(score)}`}
+      >
+        {label}
+      </p>
+      {caption && (
+        <p className="mt-2 max-w-[320px] text-[12px] leading-relaxed text-gray-600">
+          {caption}
+        </p>
+      )}
+      <p className="mt-1.5 text-[11px] text-gray-400">
+        {date || new Date().toLocaleDateString("ko-KR")}
+      </p>
     </div>
   )
 }

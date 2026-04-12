@@ -64,7 +64,7 @@ const TONES: Record<SectionTone, { bg: string; icon: string; title: string; sub:
 }
 
 interface ResultSectionProps {
-  icon: string
+  icon: ReactNode
   title: string
   subtitle?: string
   tone?: SectionTone

@@ -82,9 +82,11 @@ export default function CompareResult({
       <div className="grid grid-cols-2 gap-3">
         <ResultSection
           tone="brand"
-          icon="🟢"
-          title={displayA}
-          subtitle={t("에만 있는 성분", "only in this")}
+          icon={
+            <span className="font-display text-sm font-extrabold">A</span>
+          }
+          title={t("A에만 있어요", "Only in A")}
+          subtitle={displayA}
         >
           <div className="flex flex-col gap-1.5">
             {(cRes.only_a || []).map((s, i) => (
@@ -102,9 +104,11 @@ export default function CompareResult({
         </ResultSection>
         <ResultSection
           tone="accent"
-          icon="🟡"
-          title={displayB}
-          subtitle={t("에만 있는 성분", "only in this")}
+          icon={
+            <span className="font-display text-sm font-extrabold">B</span>
+          }
+          title={t("B에만 있어요", "Only in B")}
+          subtitle={displayB}
         >
           <div className="flex flex-col gap-1.5">
             {(cRes.only_b || []).map((s, i) => (

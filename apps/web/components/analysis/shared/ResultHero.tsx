@@ -23,16 +23,30 @@ export default function ResultHero({
         </p>
 
         {variant === "versus" && productNames && productNames.length === 2 ? (
-          <div className="flex items-center gap-3">
-            <span className="min-w-0 flex-1 font-display text-xl leading-tight font-extrabold break-words text-gray-900">
-              {productNames[0]}
-            </span>
-            <span className="shrink-0 rounded-full border border-white/60 bg-white/60 px-2.5 py-1 text-[10px] font-bold tracking-[0.18em] text-[#8B6914] uppercase backdrop-blur">
-              vs
-            </span>
-            <span className="min-w-0 flex-1 text-right font-display text-xl leading-tight font-extrabold break-words text-gray-900">
-              {productNames[1]}
-            </span>
+          <div className="flex flex-col gap-2">
+            <div className="flex items-start gap-2.5">
+              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#9bce26] font-display text-[11px] font-extrabold text-white shadow-sm">
+                A
+              </span>
+              <span className="min-w-0 flex-1 font-display text-xl leading-tight font-extrabold break-words text-gray-900">
+                {productNames[0]}
+              </span>
+            </div>
+            <div className="my-0.5 flex items-center gap-2">
+              <span className="h-px flex-1 bg-[#8B6914]/15" />
+              <span className="rounded-full border border-white/70 bg-white/70 px-2.5 py-0.5 text-[10px] font-bold tracking-[0.2em] text-[#8B6914] uppercase backdrop-blur">
+                vs
+              </span>
+              <span className="h-px flex-1 bg-[#8B6914]/15" />
+            </div>
+            <div className="flex items-start gap-2.5">
+              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#E8B830] font-display text-[11px] font-extrabold text-white shadow-sm">
+                B
+              </span>
+              <span className="min-w-0 flex-1 font-display text-xl leading-tight font-extrabold break-words text-gray-900">
+                {productNames[1]}
+              </span>
+            </div>
           </div>
         ) : variant === "list" && productNames && productNames.length > 0 ? (
           <div className="flex flex-wrap gap-1.5">
