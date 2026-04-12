@@ -116,7 +116,7 @@ export default function SingleResult({ res, t, reset, lang, historyId, productNa
               const extra: string[] = []
               if (ing.benefit) extra.push(ing.benefit)
               if (ing.best_time) extra.push(`⏰ ${ing.best_time}`)
-              if (ing.synergy) extra.push(`🤎 시너지: ${ing.synergy.join(", ")}`)
+              if (ing.synergy && Array.isArray(ing.synergy)) extra.push(`🤎 시너지: ${ing.synergy.join(", ")}`)
               return <ResultPill key={i} name={ing.name} detail={extra.join("\n\n")} good />
             })}
           </div>

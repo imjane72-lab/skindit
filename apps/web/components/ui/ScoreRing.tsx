@@ -12,10 +12,11 @@ export default function ScoreRing({
   size?: number
   compact?: boolean
 }) {
+  const s = Number.isFinite(score) ? Math.max(0, Math.min(100, score)) : 0
   const strokeW = compact ? 4 : 6
   const r = (size - strokeW * 2) / 2
   const circumference = 2 * Math.PI * r
-  const offset = circumference - (score / 100) * circumference
+  const offset = circumference - (s / 100) * circumference
 
   const numSize = compact ? "text-xl" : "text-4xl"
   const subSize = compact ? "text-[8px]" : "text-[10px]"
@@ -41,7 +42,7 @@ export default function ScoreRing({
           cx={size / 2}
           cy={size / 2}
           r={r}
-          stroke={scoreHex(score)}
+          stroke={scoreHex(s)}
           strokeDasharray={circumference}
           strokeDashoffset={offset}
           style={{ strokeWidth: strokeW }}
@@ -49,9 +50,9 @@ export default function ScoreRing({
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         <span
-          className={`font-display ${numSize} leading-none font-extrabold tracking-tight ${scoreColor(score)}`}
+          className={`font-display ${numSize} leading-none font-extrabold tracking-tight ${scoreColor(s)}`}
         >
-          <Counter to={score} />
+          <Counter to={s} />
         </span>
         <span
           className={`${subSize} font-semibold tracking-wider text-gray-400 uppercase ${subGap}`}

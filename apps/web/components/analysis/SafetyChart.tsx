@@ -9,12 +9,23 @@ export default function SafetyChart({
   ratings: SafetyRating[]
   t: (ko: string, en: string) => string
 }) {
+  const safeScore = (s: unknown): number => {
+    const n = Number(s)
+    if (!Number.isFinite(n) || n < 1 || n > 10) return 1
+    return Math.round(n)
+  }
+
   const barColor = (s: number) =>
     s <= 2 ? "bg-emerald-400" : s <= 6 ? "bg-amber-400" : "bg-rose-400"
   const textColor = (s: number) =>
     s <= 2 ? "text-emerald-700" : s <= 6 ? "text-amber-700" : "text-rose-700"
   const bgColor = (s: number) =>
     s <= 2 ? "bg-emerald-50" : s <= 6 ? "bg-amber-50" : "bg-rose-50"
+
+  const validRatings = ratings
+    .filter((r) => r && r.name)
+    .map((r) => ({ ...r, score: safeScore(r.score) }))
+
   return (
     <div className="glass-card mb-5 rounded-2xl bg-linear-to-br from-gray-50/50 to-white/30 p-5 shadow-sm">
       <div className="mb-1 flex items-center gap-2.5 border-b border-gray-100/60 pb-3">
@@ -45,7 +56,7 @@ export default function SafetyChart({
         </span>
       </div>
       <div className="flex flex-col gap-2.5">
-        {ratings.map((r, i) => (
+        {validRatings.map((r, i) => (
           <div
             key={i}
             className="anim-fade-up"

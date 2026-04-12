@@ -20,12 +20,12 @@ import type {
   RoutineRes,
   CompareRes,
   Product,
-  ConcernAnalysis,
 } from "@/types/analysis"
 import SingleResult from "@/components/analysis/SingleResult"
 import RoutineResult from "@/components/analysis/RoutineResult"
 import CompareResult from "@/components/analysis/CompareResult"
 import ErrState from "@/components/ui/ErrState"
+import { sanitizeAnalysisResult } from "@/lib/safe-data"
 
 /* ════════════════════════════════════
    ROOT APP
@@ -402,6 +402,7 @@ JSON only. Schema:{"summary":"2-3줄","shared":[max 5,{"name":"","inA":true,"inB
         sys,
         `${nameA} 성분:\n${textA}\n\n${nameB} 성분:\n${textB}${skinContext}${noteContext}${getIngredientContext([...textA.split(","), ...textB.split(",")].map((s) => s.trim()).filter(Boolean))}\n\n※ A/B 대신 "${nameA}", "${nameB}" 이름으로 대답해주세요.`
       )
+      sanitizeAnalysisResult(raw)
       setCRes(raw)
       saveResultState("compare", null, null, raw)
       // 분석 기록 저장
@@ -569,12 +570,7 @@ safety_ratings 점수 기준 (엄격히 따를 것):
             .filter(Boolean)
         )}`
       )
-      const norm = (d: number) => (d <= 10 ? d * 10 : d)
-      if (raw.overall_score) raw.overall_score = norm(raw.overall_score)
-      if (raw.concern_analysis)
-        raw.concern_analysis = raw.concern_analysis.map(
-          (c: ConcernAnalysis) => ({ ...c, score: norm(c.score) })
-        )
+      sanitizeAnalysisResult(raw)
       setSRes(raw)
       saveResultState("single", raw, null, null)
       // 로그인 시 히스토리 저장
@@ -639,8 +635,9 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
           )
         )}`
       )
-      if (raw.routine_score && raw.routine_score <= 10)
-        raw.routine_score = raw.routine_score * 10
+      sanitizeAnalysisResult(raw)
+      if (raw.routine_score && (raw.routine_score as number) <= 10)
+        raw.routine_score = (raw.routine_score as number) * 10
       setRRes(raw)
       saveResultState("routine", null, raw, null)
       // 로그인 시 히스토리 저장

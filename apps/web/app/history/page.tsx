@@ -600,8 +600,8 @@ export default function HistoryPage() {
                 onClick={() => handleFilterChange(f.id)}
                 className={`flex items-center gap-1.5 rounded-full border px-3.5 py-2 text-xs font-bold transition-all duration-200 ${
                   filter === f.id
-                    ? "bg-[#9bce26] text-white shadow-md"
-                    : "border-gray-200 bg-white text-gray-400 hover:border-lime-200 hover:text-[#9bce26]"
+                    ? "bg-[#9bce26]/10 border-[#9bce26]/40 text-gray-800 shadow-sm"
+                    : "border-gray-200 bg-white text-gray-400 hover:border-[#9bce26]/30 hover:bg-[#9bce26]/5"
                 }`}
               >
                 <span className="text-sm">{f.icon}</span>

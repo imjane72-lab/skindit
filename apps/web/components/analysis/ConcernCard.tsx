@@ -20,6 +20,7 @@ export default function ConcernCard({
   delay: number
   index: number
 }) {
+  const s = Number.isFinite(score) ? Math.max(0, Math.min(100, score)) : 50
   const bg = CONCERN_BG[index % CONCERN_BG.length]
   return (
     <div
@@ -27,15 +28,15 @@ export default function ConcernCard({
       style={{ animationDelay: `${delay}ms` }}
     >
       <div className="mb-3 flex items-center justify-between">
-        <ScoreRing score={score} size={72} compact />
+        <ScoreRing score={s} size={72} compact />
         <span
-          className={`text-[10px] font-bold tracking-wide ${scoreColor(score)} ${scoreBg(score)} rounded-full px-2 py-0.5 uppercase`}
+          className={`text-[10px] font-bold tracking-wide ${scoreColor(s)} ${scoreBg(s)} rounded-full px-2 py-0.5 uppercase`}
         >
-          {scoreLabel(score, lang)}
+          {scoreLabel(s, lang)}
         </span>
       </div>
-      <div className="mb-1.5 text-sm font-bold text-gray-900">{concern}</div>
-      <p className="text-[13px] leading-relaxed text-gray-700"><Md>{comment}</Md></p>
+      <div className="mb-1.5 text-sm font-bold text-gray-900">{concern || "분석"}</div>
+      <p className="text-[13px] leading-relaxed text-gray-700"><Md>{comment || ""}</Md></p>
     </div>
   )
 }
