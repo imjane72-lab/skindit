@@ -3,40 +3,41 @@
  * ────────────────────────────────────────────────────────────
  * 올리브영 제품 검색 → 전성분 자동 추출 API
  *
- * [흐름]
- *   1) 검색 → 첫 번째 제품 카드 찾기
- *   2) 상세 페이지로 이동
- *   3) "상품정보 제공고시" 버튼 클릭 → 펼쳐진 영역 등장
- *   4) 전성분 라벨("모든 성분" / "주요성분" / "전성분") 뒤 텍스트 추출
- *   5) 종료 패턴(내용물의 용량, 사용기한 등) 직전까지 잘라서 반환
+ * [구현 전략]
+ *   직접 puppeteer로 크롤링하지 않고 ScrapingBee 외부 서비스를 미들맨으로 사용.
  *
- * [Cloudflare 우회 전략]
- *   - puppeteer-extra + stealth 플러그인으로 헤드리스 탐지(navigator.webdriver,
- *     plugins, languages 등) 우회
- *   - 표준 데스크톱 Chrome User-Agent + Sec-CH-UA 클라이언트 힌트 헤더 위장
- *   - Vercel Serverless 환경에서는 chromium-min 바이너리를 외부 URL에서 받아 사용
+ *   이전엔 Vercel Serverless에서 puppeteer + stealth 플러그인으로 직접 크롤링했지만
+ *   아래 한계가 누적되어 ScrapingBee 위임으로 전환:
+ *
+ *   1) Vercel Serverless의 데이터센터 IP가 Cloudflare에 차단됨
+ *   2) puppeteer-extra-stealth가 dynamic require로 17개 evasion을 끌어쓰는데
+ *      pnpm 모노레포 + Vercel NFT 환경에서 transitive deps 추적이 불안정
+ *   3) Cloudflare가 봇 탐지 정책을 지속적으로 강화 → 군비경쟁 부담
+ *
+ *   ScrapingBee는 레지덴셜 IP 풀과 Cloudflare 우회 인프라를 SaaS로 제공하므로
+ *   복잡한 의존성 없이 fetch 한 번으로 동일 결과를 얻을 수 있음.
+ *
+ * [전체 흐름]
+ *   1) 검색 결과 페이지를 ScrapingBee에 위임해 렌더링된 HTML 받기
+ *   2) HTML에서 첫 번째 제품 카드 정보(URL/이름/브랜드) 추출
+ *   3) 상세 페이지를 다시 ScrapingBee로 받기 (JS 렌더링 + 펼침 대기 옵션)
+ *   4) 전성분 라벨 후보("모든 성분"/"전성분"/"주요성분"/...)로 텍스트 슬라이스
  *
  * [실패 시 응답]
+ *   - SCRAPINGBEE_API_KEY 미설정 → 500 + 안내 메시지
  *   - 검색 결과 0건 → 404 + "검색 결과가 없습니다"
  *   - 제품은 찾았으나 성분 추출 실패 → 200 + ingredients:null + message
- *   - puppeteer 자체 에러 → 500
+ *   - ScrapingBee 자체 에러 → 502
  */
 import { NextRequest, NextResponse } from "next/server"
-
-/* puppeteer-extra와 stealth는 모듈 최상단이 아니라 핸들러 안에서 lazy-load.
- * 이유:
- *   1) Next.js의 "collect page data" 빌드 단계가 라우트 모듈을 import하는데,
- *      stealth 플러그인은 내부에서 dynamic require로 evasion 모듈들을 끌어옴
- *   2) 그 dynamic require가 빌드 환경의 번들러 컨텍스트에서 실패 → 빌드 깨짐
- *   3) 핸들러 호출 시점(런타임)에 import하면 Vercel Serverless에서 정상 동작 */
 
 export const maxDuration = 60
 export const dynamic = "force-dynamic"
 
 /* ────────────────────────────────────────────────────────────
  * Rate Limiter — IP당 분당 5회
- * 외부 사이트 크롤링은 비싸므로(puppeteer 콜드 스타트 + 네트워크 왕복)
- * 같은 사용자가 연속으로 두드리지 못하도록 짧은 윈도우로 차단.
+ * ScrapingBee 무료 티어가 1,000 req/월 → 한 사용자가 무차별 호출하지 못하게 차단.
+ * 분석 흐름상 검색→상세 두 번 호출되므로 실질 5건/분은 충분히 여유.
  * ──────────────────────────────────────────────────────────── */
 const WINDOW_MS = 60 * 1000
 const MAX_PER_WINDOW = 5
@@ -56,11 +57,7 @@ function rateLimit(ip: string): { ok: boolean; msg?: string } {
   return { ok: true }
 }
 
-const CHROMIUM_URL =
-  "https://github.com/Sparticuz/chromium/releases/download/v143.0.4/chromium-v143.0.4-pack.x64.tar"
-
-/* 전성분 영역 시작 라벨 후보.
- * 올리브영 페이지가 라벨을 바꾸는 경우가 있어 여러 패턴을 모두 대응. */
+/* 전성분 영역 시작 라벨 후보. 올리브영이 라벨을 바꾸는 경우가 있어 다중 대응. */
 const INGREDIENT_LABELS = [
   "모든 성분",
   "전성분",
@@ -68,14 +65,126 @@ const INGREDIENT_LABELS = [
   "주요성분",
 ] as const
 
-/* 전성분 텍스트가 끝나는 시점을 식별하는 종료 패턴.
- * 이 패턴이 나오기 전까지를 성분 목록으로 간주. */
-const END_PATTERNS = /내용물의 용량|사용기한|사용방법|화장품제조|제조국|사용할 때|품질보증|기능성 화장품|소비자상담|주의사항/
+/* 전성분이 끝나는 시점을 식별하는 종료 패턴. 이 직전까지를 성분 목록으로 간주. */
+const END_PATTERNS =
+  /내용물의 용량|사용기한|사용방법|화장품제조|제조국|사용할 때|품질보증|기능성 화장품|소비자상담|주의사항/
+
+/**
+ * ScrapingBee로 대상 URL의 렌더링된 HTML을 받아옵니다.
+ *
+ * 옵션:
+ *   - render_js=true: JS 실행 후 HTML 반환 (CSR 사이트 대응)
+ *   - premium_proxy=true: 레지덴셜 IP 사용 (Cloudflare 회피의 핵심)
+ *   - country_code=kr: 한국 IP 우선 (지역 제한 사이트 대응)
+ *   - wait=2000: 추가 2초 대기 (지연 로딩 대비)
+ */
+async function scrapeHtml(targetUrl: string, apiKey: string): Promise<string> {
+  const params = new URLSearchParams({
+    api_key: apiKey,
+    url: targetUrl,
+    render_js: "true",
+    premium_proxy: "true",
+    country_code: "kr",
+    wait: "2000",
+  })
+  const res = await fetch(`https://app.scrapingbee.com/api/v1/?${params}`)
+  if (!res.ok) {
+    throw new Error(`ScrapingBee error ${res.status}: ${await res.text()}`)
+  }
+  return await res.text()
+}
+
+/**
+ * 검색 결과 HTML에서 첫 번째 제품 카드 정보를 추출합니다.
+ * 정규식 기반: 올리브영의 a.prd_thumb 클래스와 인접한 .prd_name / .tx_brand를 찾음.
+ */
+function extractFirstProduct(html: string): {
+  url: string
+  name: string
+  brand: string
+} | null {
+  // a.prd_thumb 첫 번째 등장 위치 찾기
+  const thumbMatch = html.match(
+    /<a[^>]*class="[^"]*prd_thumb[^"]*"[^>]*href="([^"]+)"/i
+  )
+  if (!thumbMatch) return null
+
+  let url = thumbMatch[1]
+  // 상대 경로 → 절대 경로 보정
+  if (url.startsWith("/")) url = "https://www.oliveyoung.co.kr" + url
+  else if (!url.startsWith("http")) {
+    url = "https://www.oliveyoung.co.kr/store/" + url
+  }
+
+  // 이름/브랜드는 같은 카드(li 블록) 내에서 찾음 — 가장 가까운 매칭
+  const cardScope = html.slice(
+    Math.max(0, thumbMatch.index! - 1500),
+    thumbMatch.index! + 1500
+  )
+  const nameMatch = cardScope.match(
+    /<[^>]*class="[^"]*prd_name[^"]*"[^>]*>([\s\S]*?)<\//i
+  )
+  const brandMatch = cardScope.match(
+    /<[^>]*class="[^"]*tx_brand[^"]*"[^>]*>([\s\S]*?)<\//i
+  )
+
+  const stripTags = (s: string) =>
+    s
+      .replace(/<[^>]+>/g, "")
+      .replace(/\s+/g, " ")
+      .trim()
+
+  return {
+    url,
+    name: nameMatch ? stripTags(nameMatch[1]) : "",
+    brand: brandMatch ? stripTags(brandMatch[1]) : "",
+  }
+}
+
+/**
+ * 상세 페이지 HTML 본문에서 전성분 텍스트를 추출합니다.
+ * 라벨 후보 중 가장 먼저 발견되는 위치 뒤부터 종료 패턴 직전까지를 자릅니다.
+ */
+function extractIngredients(html: string): string | null {
+  // 태그 제거 후 순수 텍스트 기반으로 검색 (HTML의 노이즈 제거)
+  const text = html
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/\s+/g, " ")
+
+  for (const label of INGREDIENT_LABELS) {
+    const idx = text.indexOf(label)
+    if (idx === -1) continue
+    const after = text.substring(idx + label.length).trim()
+    const endIdx = after.search(END_PATTERNS)
+    const raw =
+      endIdx > -1
+        ? after.substring(0, endIdx).trim()
+        : after.substring(0, 3000).trim()
+    if (raw.length > 10) return raw
+  }
+  return null
+}
 
 export async function POST(req: NextRequest) {
-  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown"
+  const ip =
+    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown"
   const limit = rateLimit(ip)
   if (!limit.ok) return NextResponse.json({ error: limit.msg }, { status: 429 })
+
+  const apiKey = process.env.SCRAPINGBEE_API_KEY
+  if (!apiKey) {
+    return NextResponse.json(
+      {
+        error:
+          "올리브영 검색 기능을 사용하려면 SCRAPINGBEE_API_KEY 환경변수가 필요해요.",
+      },
+      { status: 500 }
+    )
+  }
 
   let body: { keyword: string }
   try {
@@ -86,139 +195,33 @@ export async function POST(req: NextRequest) {
 
   const { keyword } = body
   if (!keyword || keyword.trim().length < 2) {
-    return NextResponse.json({ error: "검색어를 2글자 이상 입력해주세요." }, { status: 400 })
+    return NextResponse.json(
+      { error: "검색어를 2글자 이상 입력해주세요." },
+      { status: 400 }
+    )
   }
 
-  let browser
   try {
-    const isLocal = process.env.NODE_ENV === "development"
+    // ── 1단계: 검색 결과 페이지 받기 (ScrapingBee 위임) ──
+    const searchUrl = `https://www.oliveyoung.co.kr/store/search/getSearchMain.do?query=${encodeURIComponent(
+      keyword.trim()
+    )}`
+    const searchHtml = await scrapeHtml(searchUrl, apiKey)
 
-    /* 런타임에 동적으로 import — 빌드 단계에선 평가되지 않음.
-     * puppeteer-extra가 puppeteer-core를 감싸도록 명시적으로 연결한 뒤 stealth 적용. */
-    const { addExtra } = await import("puppeteer-extra")
-    const stealthMod = await import("puppeteer-extra-plugin-stealth")
-    const puppeteerCoreMod = await import("puppeteer-core")
-    const chromiumMod = await import("@sparticuz/chromium-min")
-    const stealth = stealthMod.default
-    const puppeteerCore = puppeteerCoreMod.default
-    const chromium = chromiumMod.default
-    const puppeteer = addExtra(puppeteerCore as never)
-    puppeteer.use(stealth())
-
-    /* stealth 적용된 puppeteer 인스턴스로 브라우저 실행.
-     * launch 옵션은 기존 chromium-min 호환 그대로 유지. */
-    browser = await puppeteer.launch({
-      args: isLocal
-        ? ["--no-sandbox", "--disable-setuid-sandbox"]
-        : chromium.args,
-      defaultViewport: { width: 1280, height: 800 },
-      executablePath: isLocal
-        ? process.platform === "darwin"
-          ? "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
-          : "/usr/bin/google-chrome"
-        : await chromium.executablePath(CHROMIUM_URL),
-      headless: "shell",
-    })
-
-    const page = await browser.newPage()
-
-    /* 일반 데스크톱 Chrome으로 위장 — Cloudflare가 보는 첫 신호.
-     * UA만으로는 부족하지만 stealth 플러그인과 결합되면 통과율이 높아짐. */
-    await page.setUserAgent(
-      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-    )
-
-    /* Cloudflare가 critical-ch로 요구하는 클라이언트 힌트 헤더.
-     * 이 헤더가 없으면 challenge 페이지로 보내짐. */
-    await page.setExtraHTTPHeaders({
-      "Accept-Language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
-      "Sec-CH-UA": '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
-      "Sec-CH-UA-Mobile": "?0",
-      "Sec-CH-UA-Platform": '"macOS"',
-    })
-
-    // ── 1단계: 검색 결과 페이지 진입 ──
-    await page.goto(
-      `https://www.oliveyoung.co.kr/store/search/getSearchMain.do?query=${encodeURIComponent(keyword.trim())}`,
-      { waitUntil: "networkidle2", timeout: 25000 }
-    )
-    // 제품 썸네일 등장 대기 — 못 찾아도 일단 진행
-    await page.waitForSelector("a.prd_thumb", { timeout: 10000 }).catch(() => null)
-
-    // ── 2단계: 첫 번째 제품 카드에서 URL/이름/브랜드 추출 ──
-    const productInfo = await page.evaluate(() => {
-      const thumbLink = document.querySelector("a.prd_thumb") as HTMLAnchorElement | null
-      if (!thumbLink) return null
-      const card = thumbLink.closest("li") || thumbLink.parentElement?.parentElement
-      const name =
-        card?.querySelector(".prd_name")?.textContent?.trim().replace(/\s+/g, " ") || ""
-      const brand = card?.querySelector(".tx_brand")?.textContent?.trim() || ""
-      return { url: thumbLink.href, name, brand }
-    })
-
+    // ── 2단계: 첫 번째 제품 카드 추출 ──
+    const productInfo = extractFirstProduct(searchHtml)
     if (!productInfo) {
-      await browser.close()
       return NextResponse.json(
         { error: `"${keyword}" 검색 결과가 없습니다.` },
         { status: 404 }
       )
     }
 
-    // ── 3단계: 상세 페이지 이동 ──
-    await page.goto(productInfo.url, { waitUntil: "networkidle2", timeout: 25000 })
+    // ── 3단계: 상세 페이지 받기 (JS 렌더링 후 충분한 대기 시간 부여) ──
+    const detailHtml = await scrapeHtml(productInfo.url, apiKey)
 
-    /* ── 4단계: "상품정보 제공고시" 버튼 클릭 ──
-     * 이 영역이 펼쳐져야 전성분이 DOM에 노출됨. textContent 기반으로 찾는 이유는
-     * 올리브영이 selector 클래스명을 자주 바꾸기 때문에 안정적인 텍스트 매칭이 더 안전. */
-    const clicked = await page.evaluate(() => {
-      const buttons = document.querySelectorAll("button, a")
-      for (const btn of buttons) {
-        if (btn.textContent?.includes("상품정보 제공고시")) {
-          ;(btn as HTMLElement).click()
-          return true
-        }
-      }
-      return false
-    })
-
-    if (clicked) {
-      /* 펼침 애니메이션이 끝나고 텍스트가 DOM에 들어올 때까지 대기.
-       * 라벨 후보 중 하나라도 보이면 통과. */
-      await page
-        .waitForFunction(
-          (labels) => {
-            const text = document.body.innerText
-            return labels.some((l) => text.includes(l))
-          },
-          { timeout: 8000 },
-          INGREDIENT_LABELS as unknown as string[]
-        )
-        .catch(() => null)
-    }
-
-    /* ── 5단계: 전성분 라벨 다음 텍스트 추출 ──
-     * 라벨 후보를 순회해 가장 먼저 발견되는 라벨을 기준으로 자름.
-     * END_PATTERNS는 "내용물의 용량" 등 그 다음 절을 식별 → 그 직전까지가 성분 목록. */
-    const ingredients = await page.evaluate(
-      (labels: string[], endPatternStr: string) => {
-        const endRe = new RegExp(endPatternStr)
-        const text = document.body.innerText
-        for (const label of labels) {
-          const idx = text.indexOf(label)
-          if (idx === -1) continue
-          const after = text.substring(idx + label.length).trim()
-          const endIdx = after.search(endRe)
-          const raw =
-            endIdx > -1 ? after.substring(0, endIdx).trim() : after.substring(0, 3000).trim()
-          if (raw.length > 10) return raw
-        }
-        return null
-      },
-      INGREDIENT_LABELS as unknown as string[],
-      END_PATTERNS.source
-    )
-
-    await browser.close()
+    // ── 4단계: 전성분 텍스트 추출 ──
+    const ingredients = extractIngredients(detailHtml)
 
     if (!ingredients) {
       return NextResponse.json({
@@ -237,10 +240,14 @@ export async function POST(req: NextRequest) {
       ingredients,
     })
   } catch (err) {
-    if (browser) await browser.close()
     return NextResponse.json(
-      { error: err instanceof Error ? err.message : "올리브영 검색 중 오류 발생" },
-      { status: 500 }
+      {
+        error:
+          err instanceof Error
+            ? err.message
+            : "올리브영 검색 중 오류 발생",
+      },
+      { status: 502 }
     )
   }
 }
