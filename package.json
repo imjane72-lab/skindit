@@ -25,5 +25,11 @@
     "puppeteer": "^24.40.0",
     "puppeteer-extra": "^3.3.6",
     "puppeteer-extra-plugin-stealth": "^2.11.2"
+  },
+  "pnpm": {
+    "overrides": {
+      "clone-deep": "^4.0.1",
+      "is-plain-object": "^2.0.4"
+    }
   }
 }

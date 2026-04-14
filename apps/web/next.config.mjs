@@ -12,6 +12,16 @@ const nextConfig = {
     "puppeteer-extra-plugin-user-preferences",
     "puppeteer-extra-plugin-user-data-dir",
   ],
+  /* puppeteer-extra-plugin이 내부 dynamic require로 끌어쓰는 transitive deps를
+   * Vercel 파일 추적기가 놓치는 문제 대응 — 명시적으로 함수 번들에 포함 강제. */
+  outputFileTracingIncludes: {
+    "/api/oliveyoung": [
+      "../../node_modules/.pnpm/clone-deep@*/node_modules/**",
+      "../../node_modules/.pnpm/merge-deep@*/node_modules/**",
+      "../../node_modules/.pnpm/is-plain-object@*/node_modules/**",
+      "../../node_modules/.pnpm/puppeteer-extra*/node_modules/**",
+    ],
+  },
 }
 
 export default nextConfig
