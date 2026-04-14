@@ -1,16 +1,14 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useSession, signIn, signOut } from "next-auth/react"
+import { useSession, signIn } from "next-auth/react"
 import {
-  getTrendingCache,
   getIngredientContext,
   correctOcrIngredients,
 } from "@/lib/ingredient-db"
-import { callAI, callAIText } from "@/lib/api"
+import { callAI } from "@/lib/api"
 import {
   CONCERNS,
-  TRENDING,
   SAMPLE_S_KO,
   SAMPLE_S_EN,
   SAMPLE_R,
@@ -25,14 +23,18 @@ import SingleResult from "@/components/analysis/SingleResult"
 import RoutineResult from "@/components/analysis/RoutineResult"
 import CompareResult from "@/components/analysis/CompareResult"
 import ErrState from "@/components/ui/ErrState"
+import HomeFooter from "@/components/home/HomeFooter"
+import PwaBanner from "@/components/home/PwaBanner"
+import LoadingPhase from "@/components/home/LoadingPhase"
+import TrendingIngredients from "@/components/home/TrendingIngredients"
+import HomeHero from "@/components/home/HomeHero"
 import { sanitizeAnalysisResult } from "@/lib/safe-data"
 
 /* ════════════════════════════════════
    ROOT APP
 ════════════════════════════════════ */
 export default function Page() {
-  const { data: session, status } = useSession()
-  const [profileOpen, setProfileOpen] = useState(false)
+  const { status } = useSession()
   const [lang, setLang] = useState(() => {
     if (typeof window !== "undefined")
       return localStorage.getItem("skindit_lang") || "ko"
@@ -83,16 +85,14 @@ export default function Page() {
     { id: 2, name: "", ingredients: "" },
   ])
   const [rRes, setRRes] = useState<RoutineRes | null>(null)
-  // 트렌드 성분
-  const [trendOpen, setTrendOpen] = useState<string | null>(null)
-  const [trendInfo, setTrendInfo] = useState<Record<string, string>>({})
-  const [trendLoading, setTrendLoading] = useState(false)
   // 비교 분석
   const [compareA, setCompareA] = useState("")
   const [compareB, setCompareB] = useState("")
   const [compareNameA, setCompareNameA] = useState("")
   const [compareNameB, setCompareNameB] = useState("")
   const [cRes, setCRes] = useState<CompareRes | null>(null)
+  // 스트리밍 진행 중 텍스트 (loading 화면에 표시)
+  const [streamingPreview, setStreamingPreview] = useState("")
   // 언어 전환 시 재분석을 위한 마지막 입력값 보관
   const [lastIngs, setLastIngs] = useState("")
   const [lastConcerns, setLastConcerns] = useState<string[]>([])
@@ -288,45 +288,6 @@ export default function Page() {
   }
 
   // 트렌드 성분 AI 조회
-  const loadTrendInfo = async (id: string, name: string) => {
-    if (trendInfo[id]) {
-      setTrendOpen(trendOpen === id ? null : id)
-      return
-    }
-    setTrendOpen(id)
-
-    // 캐시된 성분 DB에서 즉시 가져오기 (API 호출 없음, 비용 0)
-    const cached = getTrendingCache(id, lang)
-    if (cached) {
-      setTrendInfo((p) => ({ ...p, [id]: cached }))
-      return
-    }
-
-    // DB에 없는 성분만 AI 호출
-    setTrendLoading(true)
-    try {
-      const raw = await callAIText(
-        `스킨케어 성분 전문가. 반존대. ${lang === "ko" ? "한국어" : "English"}. 확실한 정보만. 추측하지 않기. 모르면 안 쓰기.`,
-        `"${name}" 성분 가이드. 각 항목 1-2줄:
-
-**작용** 피부에서 하는 일 (확실한 메커니즘만)
-**사용 시간** 아침/저녁 + 이유
-**주의 콤보** 같이 쓸 때 주의할 성분 (검증된 것만. 없으면 "특별한 주의 콤보 없음")
-**시너지** 같이 쓰면 좋은 성분 2개
-**꿀팁** 실전 팁 2개
-**효과 시기** 언제부터?
-**추천** ★(1-5) + 어떤 피부에 좋은지`
-      )
-      setTrendInfo((p) => ({ ...p, [id]: raw }))
-    } catch {
-      setTrendInfo((p) => ({
-        ...p,
-        [id]: lang === "ko" ? "정보를 못 불러왔어 ㅠ" : "Could not load info.",
-      }))
-    }
-    setTrendLoading(false)
-  }
-
   // 비교 분석 OCR 핸들러
   const [compareOcrLoading, setCompareOcrLoading] = useState<"A" | "B" | null>(
     null
@@ -380,6 +341,7 @@ export default function Page() {
     textB: string
   ) => {
     setPhase("loading")
+    setStreamingPreview("")
     const sys = `skindit 성분 비교. 친근한 존댓말로만 답변.
 말투: 모든 문장 반드시 "~요", "~에요", "~어요", "~거예요", "~세요" 종결어미로 끝맺기. 반말(~야, ~네, ~다, ~해, ~지, ~군, ~구나, ~거든) 절대 금지. 친한 언니가 부드럽게 조언하는 톤.
 규칙: 입력 성분+제공된 데이터만 사용. 데이터에 없는 성분은 언급하지 않기. 제품 단위 꿀팁(아침/저녁, 순서, 시너지). 주의 콤보는 검증된 것만. 같은제형이면 하나만 추천.
@@ -398,7 +360,8 @@ JSON only. Schema:{"score_a":"0-100 정수. A 제품이 이 사용자 피부에 
     try {
       const raw = await callAI(
         sys,
-        `${nameA} 성분:\n${textA}\n\n${nameB} 성분:\n${textB}${skinContext}${noteContext}${getIngredientContext([...textA.split(","), ...textB.split(",")].map((s) => s.trim()).filter(Boolean))}\n\n※ A/B 대신 "${nameA}", "${nameB}" 이름으로 대답해주세요.`
+        `${nameA} 성분:\n${textA}\n\n${nameB} 성분:\n${textB}${skinContext}${noteContext}${getIngredientContext([...textA.split(","), ...textB.split(",")].map((s) => s.trim()).filter(Boolean))}\n\n※ A/B 대신 "${nameA}", "${nameB}" 이름으로 대답해주세요.`,
+        (partial) => setStreamingPreview(partial)
       )
       sanitizeAnalysisResult(raw)
       setCRes(raw)
@@ -541,6 +504,7 @@ JSON only. Schema:{"score_a":"0-100 정수. A 제품이 이 사용자 피부에 
     concernIds: string[]
   ) => {
     setPhase("loading")
+    setStreamingPreview("")
     const cl = concernIds
       .map((id) => CONCERNS.find((c) => c.id === id))
       .map((c) => (c ? tl(useLang, c.ko, c.en) : ""))
@@ -569,7 +533,8 @@ safety_ratings 점수 기준 (엄격히 따를 것):
             .split(",")
             .map((s) => s.trim())
             .filter(Boolean)
-        )}`
+        )}`,
+        (partial) => setStreamingPreview(partial)
       )
       sanitizeAnalysisResult(raw)
       setSRes(raw)
@@ -609,6 +574,7 @@ safety_ratings 점수 기준 (엄격히 따를 것):
 
   const runRoutineAnalysis = async (useLang: string, prods: Product[]) => {
     setPhase("loading")
+    setStreamingPreview("")
     const filled = prods.filter((p) => p.ingredients.trim())
     const list = filled
       .map((p, i) => `[${p.name || `Product${i + 1}`}]: ${p.ingredients}`)
@@ -635,7 +601,8 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
               .map((s) => s.trim())
               .filter(Boolean)
           )
-        )}`
+        )}`,
+        (partial) => setStreamingPreview(partial)
       )
       sanitizeAnalysisResult(raw)
       if (raw.routine_score && (raw.routine_score as number) <= 10)
@@ -848,351 +815,12 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
       </nav>
 
       {/* ── HERO ── */}
-      {phase === "setup" && (
-        <div className="relative overflow-hidden border-b border-gray-100/50 px-6 pt-14 pb-12">
-          {/* 미니멀 메시 그라디언트 배경 */}
-          <div
-            className="pointer-events-none absolute inset-0"
-            style={{
-              background:
-                "radial-gradient(ellipse 80% 60% at 20% 0%, rgba(155,206,38,0.08) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 100%, rgba(232,184,48,0.06) 0%, transparent 50%)",
-            }}
-          />
-
-          <div className="relative">
-            {/* Profile / Login circle */}
-            <div className="absolute -top-8 right-0 z-10">
-              <div className="relative">
-                {status === "authenticated" ? (
-                  <>
-                    <button
-                      onClick={() => setProfileOpen((o) => !o)}
-                      className="flex items-center gap-3 rounded-full border-none bg-transparent transition-all"
-                    >
-                      <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full border-3 border-pastel-lime-dark/40 bg-white transition-all hover:scale-105 hover:border-pastel-lime-dark/60 hover:shadow-lg">
-                        {session?.user?.image ? (
-                          <img
-                            src={session.user.image}
-                            alt=""
-                            className="h-full w-full object-cover"
-                          />
-                        ) : (
-                          <span className="text-[10px] font-bold text-pastel-lime-dark">
-                            {session?.user?.name?.[0]?.toUpperCase() || "U"}
-                          </span>
-                        )}
-                      </div>
-                    </button>
-                    {profileOpen && (
-                      <>
-                        <div
-                          className="fixed inset-0 z-40"
-                          onClick={() => setProfileOpen(false)}
-                        />
-                        <div
-                          className="anim-pop-in absolute top-13 right-0 z-50 w-56 rounded-2xl p-2.5"
-                          style={{
-                            background: "rgba(255,255,255,0.85)",
-                            backdropFilter: "blur(40px) saturate(1.6)",
-                            WebkitBackdropFilter: "blur(40px) saturate(1.6)",
-                            border: "1px solid rgba(255,255,255,0.6)",
-                            boxShadow:
-                              "0 8px 40px rgba(139,105,20,0.12), 0 2px 8px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.8)",
-                          }}
-                        >
-                          <div className="mb-1.5 border-b border-white/30 px-3 py-2.5">
-                            <p className="truncate text-xs font-bold text-gray-800">
-                              {session?.user?.name}
-                            </p>
-                            <p className="truncate text-[10px] text-gray-400">
-                              {session?.user?.email}
-                            </p>
-                          </div>
-                          <a
-                            href="/profile"
-                            className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-medium text-gray-700 no-underline transition-all hover:bg-white/50"
-                          >
-                            <span className="text-sm">👤</span>{" "}
-                            {t("피부 프로필", "Skin Profile")}
-                          </a>
-                          <a
-                            href="/history"
-                            className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-medium text-gray-700 no-underline transition-all hover:bg-white/50"
-                          >
-                            <span className="text-sm">📋</span>{" "}
-                            {t("분석 기록", "Analysis History")}
-                          </a>
-                          <a
-                            href="/diary"
-                            className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-medium text-gray-700 no-underline transition-all hover:bg-white/50"
-                          >
-                            <span className="text-sm">📔</span>{" "}
-                            {t("피부 일지", "Skin Diary")}
-                          </a>
-                          <a
-                            href="/chat"
-                            className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-medium text-gray-700 no-underline transition-all hover:bg-white/50"
-                          >
-                            <span className="text-sm">💬</span>{" "}
-                            {t("성분 상담", "Ingredient Chat")}
-                          </a>
-                          <a
-                            href="/pricing"
-                            className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-medium text-lime-700 no-underline transition-all hover:bg-lime-50/50"
-                          >
-                            <span className="text-sm">💎</span>{" "}
-                            {t("프로 플랜", "Pro Plan")}
-                          </a>
-                          {(session?.user as { role?: string })?.role ===
-                            "admin" && (
-                            <a
-                              href="/admin"
-                              className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-medium text-rose-500 no-underline transition-all hover:bg-rose-50/50"
-                            >
-                              <span className="text-sm">⚙️</span>{" "}
-                              {t("관리자", "Admin")}
-                            </a>
-                          )}
-                          <div className="my-1.5 h-px bg-white/30" />
-                          <button
-                            onClick={() => signOut()}
-                            className="flex w-full items-center gap-2.5 rounded-xl border-none bg-transparent px-3 py-2.5 text-left text-xs font-medium text-rose-500 transition-all hover:bg-rose-100/50"
-                          >
-                            <span className="text-sm">🚪</span>{" "}
-                            {t("로그아웃", "Sign Out")}
-                          </button>
-                        </div>
-                      </>
-                    )}
-                  </>
-                ) : (
-                  <button
-                    onClick={() => signIn()}
-                    className="flex h-11 w-11 items-center justify-center rounded-full border-2 border-pastel-lime-dark/40 bg-white transition-all hover:border-pastel-lime-dark/60"
-                  >
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                      <circle
-                        cx="12"
-                        cy="8"
-                        r="4"
-                        stroke="#9bce26"
-                        strokeWidth="2"
-                      />
-                      <path
-                        d="M4 20c0-3.3 3.6-6 8-6s8 2.7 8 6"
-                        stroke="#9bce26"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                      />
-                    </svg>
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/* 소제목 (작게) */}
-            <p className="anim-fade-up mb-4 text-sm font-semibold tracking-wide text-pastel-olive">
-              {t(
-                "2만 개+ 성분 데이터 기반 AI 분석",
-                "AI Analysis Powered by 20K+ Ingredients"
-              )}
-            </p>
-
-            {/* 메인 타이틀 (크게) */}
-            <h1
-              className="anim-fade-up mb-5 text-[clamp(28px,6.5vw,42px)] leading-[1.2]"
-              style={{ animationDelay: "60ms" }}
-            >
-              {lang === "ko" ? (
-                <>
-                  <span className="font-display font-extrabold tracking-tight text-gray-900">
-                    나보다 내 피부를 더 잘 아는
-                  </span>
-                  <br />
-                  <span className="text-[clamp(36px,8vw,52px)]">
-                    <span className="font-display font-extrabold tracking-tight text-gray-900">
-                      skin
-                    </span>
-                    <span className="font-accent gradient-text font-semibold tracking-normal italic">
-                      dit
-                    </span>
-                  </span>
-                </>
-              ) : (
-                <>
-                  <span className="font-display font-extrabold tracking-tight text-gray-900">
-                    Knows your skin
-                  </span>
-                  <br />
-                  <span className="font-display font-extrabold tracking-tight text-gray-900">
-                    better than you —{" "}
-                  </span>
-                  <span className="font-display font-extrabold tracking-tight text-gray-900">
-                    skin
-                  </span>
-                  <span className="font-accent gradient-text font-semibold tracking-normal italic">
-                    dit
-                  </span>
-                </>
-              )}
-            </h1>
-
-            {/* 설명 문구 (중간) */}
-            <p
-              className="anim-fade-up mb-8 max-w-145 text-[17px] leading-relaxed font-medium text-pastel-olive/80"
-              style={{ animationDelay: "100ms" }}
-            >
-              {t(
-                "사진 한 장으로 성분 해석부터 조합 경고까지!",
-                "From ingredient analysis to combo warnings — just one photo!"
-              )}
-            </p>
-
-            {/* ── 순환 구조: 스킨딧 루프 ── */}
-            <div
-              className="anim-fade-up mt-14 mb-6"
-              style={{ animationDelay: "140ms" }}
-            >
-              <p className="mb-2 text-center text-lg font-extrabold text-gray-900">
-                {t(
-                  "쓸수록 나를 알아가는 스킨딧",
-                  "skindit learns you over time"
-                )}
-              </p>
-              <p className="mb-6 text-center text-sm text-gray-500">
-                {t(
-                  "분석 → 기록 → 발견 → 상담, 이 흐름이 반복될수록 정확해져요",
-                  "Analyze → Record → Discover → Consult — gets smarter each cycle"
-                )}
-              </p>
-              <div className="grid grid-cols-2 gap-3">
-                {[
-                  {
-                    icon: "🔬",
-                    label: t("분석", "Analyze"),
-                    sub: t("성분 바로 분석", "Instant analysis"),
-                    href: "#analyze",
-                    scroll: true,
-                  },
-                  {
-                    icon: "📔",
-                    label: t("기록", "Record"),
-                    sub: t("피부 변화 기록", "Track changes"),
-                    href: "/diary",
-                    scroll: false,
-                  },
-                  {
-                    icon: "📊",
-                    label: t("발견", "Discover"),
-                    sub: t("트러블 원인 발견", "Find causes"),
-                    href: "/diary/report",
-                    scroll: false,
-                  },
-                  {
-                    icon: "💬",
-                    label: t("상담", "Consult"),
-                    sub: t("1:1 AI 상담", "1:1 AI consult"),
-                    href: "/chat",
-                    scroll: false,
-                  },
-                ].map((step, i) => (
-                  <a
-                    key={i}
-                    href={step.href}
-                    onClick={
-                      step.scroll
-                        ? (e: React.MouseEvent) => {
-                            e.preventDefault()
-                            document
-                              .getElementById("analysis-tabs")
-                              ?.scrollIntoView({ behavior: "smooth" })
-                          }
-                        : undefined
-                    }
-                    className="flex items-center gap-3 rounded-2xl border border-pastel-lime-dark/15 bg-pastel-lime-dark/5 p-4 no-underline transition-all hover:-translate-y-0.5 hover:border-pastel-lime-dark/30 hover:shadow-md"
-                  >
-                    <span className="text-3xl">{step.icon}</span>
-                    <div>
-                      <p className="text-[15px] font-extrabold text-gray-900">
-                        {step.label}
-                      </p>
-                      <p className="text-sm text-gray-600">{step.sub}</p>
-                    </div>
-                  </a>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {phase === "setup" && <HomeHero t={t} lang={lang} />}
 
       {/* ── MAIN ── */}
       <main className="px-6 pt-10 pb-32">
         {/* ── TRENDING INGREDIENTS ── */}
-        {phase === "setup" && (
-          <div className="mb-8">
-            <p className="mb-3 flex items-center gap-1.5 text-sm font-bold text-gray-800">
-              <span className="text-base">🧬</span>
-              {t("요즘 뜨는 성분", "Trending Ingredients")}
-            </p>
-            <div className="hide-scrollbar -mx-1 flex gap-2 overflow-x-auto px-1 pb-2">
-              {TRENDING.map((tr) => (
-                <button
-                  key={tr.id}
-                  onClick={() =>
-                    loadTrendInfo(tr.id, lang === "ko" ? tr.ko : tr.en)
-                  }
-                  className={`flex shrink-0 items-center gap-1.5 rounded-full border px-3.5 py-2 text-xs font-semibold transition-all ${
-                    trendOpen === tr.id
-                      ? "bg-pastel-lime-dark/10 border-pastel-lime-dark/40 text-gray-800 shadow-sm"
-                      : "border-gray-200 bg-white text-gray-500 hover:border-pastel-lime-dark/30 hover:bg-pastel-lime-dark/5"
-                  }`}
-                >
-                  <span>{tr.icon}</span>
-                  {lang === "ko" ? tr.ko : tr.en}
-                </button>
-              ))}
-            </div>
-            {trendOpen && (
-              <div className="anim-fade-up mt-3 rounded-2xl border border-pastel-lime-dark/20 bg-pastel-lime-dark/5 p-4">
-                <div className="mb-2 flex items-center gap-2">
-                  <span className="text-lg">
-                    {TRENDING.find((t) => t.id === trendOpen)?.icon}
-                  </span>
-                  <span className="text-sm font-bold text-gray-800">
-                    {lang === "ko"
-                      ? TRENDING.find((t) => t.id === trendOpen)?.ko
-                      : TRENDING.find((t) => t.id === trendOpen)?.en}
-                  </span>
-                </div>
-                {trendLoading ? (
-                  <div className="flex items-center gap-2 text-xs text-gray-400">
-                    <span
-                      className="inline-block h-3.5 w-3.5 rounded-full border-2 border-pastel-lime-dark/30 border-t-pastel-lime-dark"
-                      style={{ animation: "spin 1s linear infinite" }}
-                    />
-                    {t("알아보는 중...", "Loading...")}
-                  </div>
-                ) : (
-                  <p className="text-xs leading-relaxed whitespace-pre-line text-gray-600">
-                    {(trendInfo[trendOpen] || "")
-                      .replace(/^#{1,3}\s*/gm, "")
-                      .split(/(\*\*[^*]+\*\*)/)
-                      .map((part, i) =>
-                        part.startsWith("**") && part.endsWith("**") ? (
-                          <strong key={i} className="font-bold text-gray-800">
-                            {part.slice(2, -2)}
-                          </strong>
-                        ) : (
-                          part
-                        )
-                      )}
-                  </p>
-                )}
-              </div>
-            )}
-          </div>
-        )}
+        {phase === "setup" && <TrendingIngredients t={t} lang={lang} />}
 
         {/* Tabs */}
         {phase === "setup" && (
@@ -1805,28 +1433,7 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
 
         {/* ── LOADING ── */}
         {phase === "loading" && (
-          <div className="anim-fade-in py-24 text-center">
-            <div className="skindit-loading mb-8">
-              <div className="dot" />
-              <div className="dot" />
-              <div className="dot" />
-            </div>
-            <p className="font-display mb-2 text-base font-bold text-gray-800">
-              {t(
-                "스킨딧이 꼼꼼하게 분석하고 있어요!",
-                "skindit is carefully analyzing!"
-              )}
-            </p>
-            <p
-              className="text-sm text-gray-400"
-              style={{ animation: "pulse-text 1.6s ease infinite" }}
-            >
-              {t(
-                "성분 하나하나 확인 중이라 시간이 조금 걸립니다~!",
-                "Checking each ingredient — this may take a moment~"
-              )}
-            </p>
-          </div>
+          <LoadingPhase t={t} streamingPreview={streamingPreview} />
         )}
 
         {/* ── SINGLE RESULT ── */}
@@ -1861,145 +1468,16 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
 
       {/* ── PWA Install Banner ── */}
       {showPwaBanner && phase === "setup" && (
-        <div className="anim-fade-up fixed right-0 bottom-6 left-0 z-50 mx-auto max-w-140 px-4">
-          <div className="flex items-center gap-3 rounded-2xl border border-lime-200 bg-white/95 p-4 shadow-xl backdrop-blur">
-            <div className="bg-pastel-lime-dark flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl shadow-md">
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                className="relative"
-              >
-                <circle
-                  cx="11"
-                  cy="11"
-                  r="6"
-                  stroke="white"
-                  strokeWidth="2"
-                  strokeOpacity="0.9"
-                />
-                <path
-                  d="M16 16L20 20"
-                  stroke="white"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeOpacity="0.9"
-                />
-              </svg>
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-xs font-bold text-gray-800">
-                {t(
-                  "📱 홈 화면에 skindit 추가하기",
-                  "📱 Add skindit to Home Screen"
-                )}
-              </p>
-            </div>
-            <button
-              onClick={handlePwaInstall}
-              className="shrink-0 rounded-xl bg-pastel-lime-dark px-4 py-2 text-[11px] font-bold text-white shadow-sm"
-            >
-              {deferredPrompt ? t("설치", "Install") : t("방법 보기", "How")}
-            </button>
-            <button
-              onClick={dismissPwa}
-              className="shrink-0 border-none bg-transparent p-1 text-gray-300 hover:text-gray-500"
-            >
-              ✕
-            </button>
-          </div>
-        </div>
+        <PwaBanner
+          t={t}
+          deferredPrompt={deferredPrompt}
+          onInstall={handlePwaInstall}
+          onDismiss={dismissPwa}
+        />
       )}
 
       {/* ── Footer ── */}
-      {phase === "setup" && (
-        <footer className="border-t border-gray-100 bg-gray-50/50 px-6 py-10">
-          <div>
-            <div className="mb-6 flex items-center gap-2">
-              <div className="bg-pastel-lime-dark flex h-7 w-7 items-center justify-center rounded-xl shadow-sm">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                  <circle
-                    cx="11"
-                    cy="11"
-                    r="5"
-                    stroke="white"
-                    strokeWidth="2"
-                    strokeOpacity="0.9"
-                  />
-                  <path
-                    d="M15 15L19 19"
-                    stroke="white"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeOpacity="0.9"
-                  />
-                </svg>
-              </div>
-              <span className="font-display text-sm font-bold text-gray-600">
-                skindit
-              </span>
-            </div>
-            <div className="mb-6 grid grid-cols-2 gap-4 text-xs">
-              <div className="space-y-2">
-                <p className="font-bold text-gray-500">
-                  {t("서비스", "Service")}
-                </p>
-                <a
-                  href="/chat"
-                  className="block text-gray-400 no-underline hover:text-pastel-lime-dark"
-                >
-                  {t("AI 상담", "AI Chat")}
-                </a>
-                <a
-                  href="/diary"
-                  className="block text-gray-400 no-underline hover:text-pastel-lime-dark"
-                >
-                  {t("피부 일지", "Skin Diary")}
-                </a>
-                <a
-                  href="/diary/report"
-                  className="block text-gray-400 no-underline hover:text-pastel-lime-dark"
-                >
-                  {t("피부 리포트", "Report")}
-                </a>
-                <a
-                  href="/history"
-                  className="block text-gray-400 no-underline hover:text-pastel-lime-dark"
-                >
-                  {t("분석 기록", "History")}
-                </a>
-              </div>
-              <div className="space-y-2">
-                <p className="font-bold text-gray-500">
-                  {t("계정", "Account")}
-                </p>
-                <a
-                  href="/profile"
-                  className="block text-gray-400 no-underline hover:text-pastel-lime-dark"
-                >
-                  {t("피부 프로필", "Skin Profile")}
-                </a>
-                <a
-                  href="/pricing"
-                  className="block text-gray-400 no-underline hover:text-pastel-lime-dark"
-                >
-                  {t("프로 플랜", "Pro Plan")}
-                </a>
-              </div>
-            </div>
-            <div className="border-t border-gray-100 pt-4 text-[10px] text-gray-300">
-              <p>
-                © 2026 skindit.{" "}
-                {t(
-                  "2만 개+ 성분 데이터 기반 AI 스킨 분석",
-                  "AI skin analysis powered by 20K+ ingredient data"
-                )}
-              </p>
-            </div>
-          </div>
-        </footer>
-      )}
+      {phase === "setup" && <HomeFooter t={t} />}
     </div>
   )
 }
