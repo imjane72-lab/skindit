@@ -100,6 +100,12 @@ importers:
       puppeteer-core:
         specifier: ^24.40.0
         version: 24.40.0
+      puppeteer-extra:
+        specifier: ^3.3.6
+        version: 3.3.6(puppeteer-core@24.40.0)(puppeteer@24.40.0(typescript@5.9.3))
+      puppeteer-extra-plugin-stealth:
+        specifier: ^2.11.2
+        version: 2.11.2(puppeteer-extra@3.3.6(puppeteer-core@24.40.0)(puppeteer@24.40.0(typescript@5.9.3)))
       react:
         specifier: ^19.2.4
         version: 19.2.4
