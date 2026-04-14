@@ -78,7 +78,11 @@ const END_PATTERNS =
  *   - country_code=kr: 한국 IP 우선 (지역 제한 사이트 대응)
  *   - wait=2000: 추가 2초 대기 (지연 로딩 대비)
  */
-async function scrapeHtml(targetUrl: string, apiKey: string): Promise<string> {
+async function scrapeHtml(
+  targetUrl: string,
+  apiKey: string,
+  jsScenario?: object
+): Promise<string> {
   const params = new URLSearchParams({
     api_key: apiKey,
     url: targetUrl,
@@ -88,6 +92,9 @@ async function scrapeHtml(targetUrl: string, apiKey: string): Promise<string> {
     wait: "2000",
     block_resources: "false",
   })
+  if (jsScenario) {
+    params.set("js_scenario", JSON.stringify(jsScenario))
+  }
   const maxAttempts = 3
   let lastError = ""
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
@@ -223,8 +230,25 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // ── 3단계: 상세 페이지 받기 (JS 렌더링 후 충분한 대기 시간 부여) ──
-    const detailHtml = await scrapeHtml(productInfo.url, apiKey)
+    // ── 3단계: 상세 페이지 받기 ──
+    // "상품정보 제공고시" 섹션은 접혀있어 초기 HTML에 전성분이 없을 수 있음.
+    // js_scenario로 해당 섹션까지 스크롤 + 클릭해 펼친 뒤 HTML을 받음.
+    const detailScenario = {
+      instructions: [
+        { scroll_y: 3000 },
+        { wait: 1000 },
+        {
+          evaluate:
+            "document.querySelectorAll('button, a, dt, .btn_toggle, [class*=\"artcInfo\"]').forEach(el => { if (el.textContent && el.textContent.includes('상품정보 제공고시')) el.click() })",
+        },
+        { wait: 2000 },
+      ],
+    }
+    const detailHtml = await scrapeHtml(
+      productInfo.url,
+      apiKey,
+      detailScenario
+    )
 
     // ── 4단계: 전성분 텍스트 추출 ──
     const ingredients = extractIngredients(detailHtml)
