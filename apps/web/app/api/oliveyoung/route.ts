@@ -107,7 +107,7 @@ function extractFirstProduct(html: string): {
   const thumbMatch = html.match(
     /<a[^>]*class="[^"]*prd_thumb[^"]*"[^>]*href="([^"]+)"/i
   )
-  if (!thumbMatch) return null
+  if (!thumbMatch || !thumbMatch[1]) return null
 
   let url = thumbMatch[1]
   // 상대 경로 → 절대 경로 보정
@@ -136,8 +136,8 @@ function extractFirstProduct(html: string): {
 
   return {
     url,
-    name: nameMatch ? stripTags(nameMatch[1]) : "",
-    brand: brandMatch ? stripTags(brandMatch[1]) : "",
+    name: nameMatch?.[1] ? stripTags(nameMatch[1]) : "",
+    brand: brandMatch?.[1] ? stripTags(brandMatch[1]) : "",
   }
 }
 
