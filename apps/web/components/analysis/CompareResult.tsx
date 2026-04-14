@@ -201,21 +201,17 @@ export default function CompareResult({
         </ResultSection>
       )}
 
-      {cRes.verdict && (
-        <InfoCard icon="💬" label={t("최종 의견", "Verdict")}>
-          {cRes.verdict}
-        </InfoCard>
-      )}
-
-      <ResultActions
-        t={t}
-        reset={reset}
-        lang={lang}
-        historyId={historyId}
-        tab="compare"
-        newLabelKo="새 비교"
-        newLabelEn="New"
-      />
+      <div className="pt-6">
+        <ResultActions
+          t={t}
+          reset={reset}
+          lang={lang}
+          historyId={historyId}
+          tab="compare"
+          newLabelKo="새 비교"
+          newLabelEn="New"
+        />
+      </div>
     </div>
   )
 }

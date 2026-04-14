@@ -272,19 +272,15 @@ export default function RoutineResult({
         </ResultSection>
       )}
 
-      {rRes.verdict && (
-        <InfoCard icon="💬" label={t("최종 의견", "Verdict")}>
-          {rRes.verdict}
-        </InfoCard>
-      )}
-
-      <ResultActions
-        t={t}
-        reset={reset}
-        lang={lang}
-        historyId={historyId}
-        tab="routine"
-      />
+      <div className="pt-6">
+        <ResultActions
+          t={t}
+          reset={reset}
+          lang={lang}
+          historyId={historyId}
+          tab="routine"
+        />
+      </div>
     </div>
   )
 }

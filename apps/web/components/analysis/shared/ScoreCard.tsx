@@ -7,10 +7,9 @@ interface ScoreCardProps {
   score: number
   label: string
   caption?: string
-  date?: string
 }
 
-export default function ScoreCard({ score, label, caption, date }: ScoreCardProps) {
+export default function ScoreCard({ score, label, caption }: ScoreCardProps) {
   return (
     <div className="flex flex-col items-center py-2 text-center">
       <ScoreRing score={score} size={180} />
@@ -24,9 +23,6 @@ export default function ScoreCard({ score, label, caption, date }: ScoreCardProp
           {caption}
         </p>
       )}
-      <p className="mt-1.5 text-[11px] text-gray-400">
-        {date || new Date().toLocaleDateString("ko-KR")}
-      </p>
     </div>
   )
 }

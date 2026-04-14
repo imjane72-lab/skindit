@@ -42,14 +42,14 @@ export default function ResultHero({
               <span className="font-display text-[11px] font-bold tracking-wider text-pastel-olive/60">
                 {badgeLabel(i)}
               </span>
-              <span className="flex-1 font-accent text-[22px] leading-tight font-semibold break-keep text-gray-900 italic">
+              <span className="flex-1 font-accent text-[22px] leading-tight font-semibold break-keep text-gray-900">
                 {n}
               </span>
             </div>
           ))}
         </div>
       ) : (
-        <h1 className="font-accent text-[28px] leading-tight font-semibold wrap-break-word text-gray-900 italic">
+        <h1 className="font-accent text-[28px] leading-tight font-semibold wrap-break-word text-gray-900">
           {title}
         </h1>
       )}
