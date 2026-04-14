@@ -1,27 +1,43 @@
 "use client"
 
+import { useEffect, useState } from "react"
+
 interface LoadingPhaseProps {
   t: (ko: string, en: string) => string
-  /** Anthropic SSE 스트림에서 누적된 텍스트. 비어있으면 기본 로딩 문구만 표시 */
+  /** 스트리밍 시작 감지용 (내용은 표시하지 않음) */
   streamingPreview: string
 }
 
 /**
  * AI 분석 진행 중 화면.
  *
- * [표시 단계]
- *   1) 초기 (streamingPreview === "")
- *      → "꼼꼼하게 분석 중!" + 점멸 텍스트 (사용자에게 진행 중임을 알림)
- *   2) 스트리밍 진행 중 (streamingPreview 누적됨)
- *      → "답변을 작성 중…" + 마지막 180자를 실시간 미리보기로 노출
- *
- * [설계 의도]
- *   LLM 응답이 5~10초 걸리므로 빈 화면을 두면 사용자 이탈 위험.
- *   스트리밍으로 받는 텍스트의 최근 180자를 보여줌으로써
- *   "AI가 실제로 답을 작성 중"이라는 신호를 시각적으로 전달.
+ * 원시 LLM 스트리밍 텍스트를 노출하던 이전 구현은 마크다운 조각/잘린 문장이
+ * 그대로 보여 사용자에게 당황감을 줬음. 진행 단계 UI로 교체해 "지금 뭘 하고 있는지"를
+ * 정제된 언어로 전달. 단계는 대략적인 시간 기반으로 진행되며
+ * streamingPreview 도착 시 자동으로 두 번째 단계로 이동.
  */
 export default function LoadingPhase({ t, streamingPreview }: LoadingPhaseProps) {
-  const isStreaming = streamingPreview.length > 0
+  const steps = [
+    { icon: "🔍", ko: "성분 읽는 중", en: "Reading ingredients" },
+    { icon: "📋", ko: "안전성 평가 중", en: "Evaluating safety" },
+    { icon: "⚖️", ko: "조합 체크 중", en: "Checking combinations" },
+    { icon: "✨", ko: "점수 계산 중", en: "Calculating score" },
+  ]
+
+  const [step, setStep] = useState(0)
+  const streamStarted = streamingPreview.length > 0
+
+  useEffect(() => {
+    if (streamStarted && step === 0) setStep(1)
+  }, [streamStarted, step])
+
+  useEffect(() => {
+    if (step < steps.length - 1) {
+      const delay = step === 0 ? 3500 : 2200
+      const timer = setTimeout(() => setStep((s) => Math.min(s + 1, steps.length - 1)), delay)
+      return () => clearTimeout(timer)
+    }
+  }, [step, steps.length])
 
   return (
     <div className="anim-fade-in py-16 text-center">
@@ -31,31 +47,57 @@ export default function LoadingPhase({ t, streamingPreview }: LoadingPhaseProps)
         <div className="dot" />
       </div>
 
-      <p className="font-display mb-2 text-base font-bold text-gray-800">
-        {isStreaming
-          ? t("스킨딧이 답변을 작성하고 있어요…", "skindit is composing the answer…")
-          : t("스킨딧이 꼼꼼하게 분석하고 있어요!", "skindit is carefully analyzing!")}
+      <p className="font-display mb-1 text-base font-bold text-gray-800">
+        {t("스킨딧이 꼼꼼하게 분석하고 있어요", "skindit is carefully analyzing")}
+      </p>
+      <p className="mb-8 text-xs text-gray-400">
+        {t("잠시만 기다려 주세요", "Just a moment please")}
       </p>
 
-      <p
-        className="mb-6 text-sm text-gray-400"
-        style={{ animation: isStreaming ? undefined : "pulse-text 1.6s ease infinite" }}
-      >
-        {isStreaming
-          ? t("결과를 실시간으로 받아오는 중이에요.", "Streaming the result in real time.")
-          : t("성분 하나하나 확인 중이라 시간이 조금 걸립니다~!", "Checking each ingredient — this may take a moment~")}
-      </p>
-
-      {isStreaming && (
-        <div className="mx-auto max-w-100 rounded-2xl border border-gray-100 bg-gray-50/70 p-4 text-left">
-          <p className="mb-1.5 text-[10px] font-bold tracking-wide text-pastel-lime-dark uppercase">
-            {t("실시간 스트림", "Live stream")}
-          </p>
-          <p className="line-clamp-3 text-[11px] leading-relaxed text-gray-500">
-            …{streamingPreview.slice(-180)}
-          </p>
-        </div>
-      )}
+      <ul className="mx-auto flex max-w-xs flex-col gap-2.5">
+        {steps.map((s, i) => {
+          const isDone = i < step
+          const isCurrent = i === step
+          return (
+            <li
+              key={i}
+              className={`flex items-center gap-3 rounded-xl px-4 py-2.5 text-left transition-all duration-500 ${
+                isCurrent
+                  ? "bg-pastel-lime/40 scale-[1.02]"
+                  : isDone
+                    ? "opacity-60"
+                    : "opacity-30"
+              }`}
+            >
+              <span
+                className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-sm ${
+                  isDone
+                    ? "bg-pastel-lime-dark text-white"
+                    : isCurrent
+                      ? "bg-white shadow-sm"
+                      : "bg-gray-100"
+                }`}
+              >
+                {isDone ? "✓" : s.icon}
+              </span>
+              <span
+                className={`text-sm ${
+                  isCurrent ? "font-bold text-gray-900" : "text-gray-600"
+                }`}
+              >
+                {t(s.ko, s.en)}
+                {isCurrent && (
+                  <span className="ml-1 inline-flex gap-0.5">
+                    <span className="anim-loading-dot">.</span>
+                    <span className="anim-loading-dot [animation-delay:.2s]">.</span>
+                    <span className="anim-loading-dot [animation-delay:.4s]">.</span>
+                  </span>
+                )}
+              </span>
+            </li>
+          )
+        })}
+      </ul>
     </div>
   )
 }

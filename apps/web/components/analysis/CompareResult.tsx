@@ -158,47 +158,34 @@ export default function CompareResult({
           icon="📋"
           title={t("사용 가이드", "Usage Guide")}
         >
-          <div className="space-y-3">
+          <div className="divide-y divide-sky-100/70">
             {cRes.usage_guide.best_time && (
-              <div className="flex items-start gap-3">
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-sky-100 text-sm">
-                  ⏰
-                </span>
-                <div>
-                  <p className="mb-0.5 text-[11px] font-bold text-sky-700">
-                    {t("사용 시간", "Best Time")}
-                  </p>
-                  <p className="text-xs leading-relaxed text-gray-600">
-                    {cRes.usage_guide.best_time}
-                  </p>
-                </div>
+              <div className="py-2.5 first:pt-0">
+                <p className="mb-1 text-[10px] font-bold tracking-[0.14em] text-sky-700 uppercase">
+                  {t("사용 시간", "Best Time")}
+                </p>
+                <p className="text-xs leading-relaxed text-gray-600">
+                  {cRes.usage_guide.best_time}
+                </p>
               </div>
             )}
             {cRes.usage_guide.effect_timeline && (
-              <div className="flex items-start gap-3">
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-sky-100 text-sm">
-                  📅
-                </span>
-                <div>
-                  <p className="mb-0.5 text-[11px] font-bold text-sky-700">
-                    {t("효과 시기", "Effect Timeline")}
-                  </p>
-                  <p className="text-xs leading-relaxed text-gray-600">
-                    {cRes.usage_guide.effect_timeline}
-                  </p>
-                </div>
+              <div className="py-2.5 first:pt-0">
+                <p className="mb-1 text-[10px] font-bold tracking-[0.14em] text-sky-700 uppercase">
+                  {t("효과 시기", "Effect Timeline")}
+                </p>
+                <p className="text-xs leading-relaxed text-gray-600">
+                  {cRes.usage_guide.effect_timeline}
+                </p>
               </div>
             )}
             {cRes.usage_guide.beginner_tips &&
               cRes.usage_guide.beginner_tips.length > 0 && (
-                <div className="flex items-start gap-3">
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-sky-100 text-sm">
-                    💡
-                  </span>
+                <div className="py-2.5 first:pt-0 last:pb-0">
+                  <p className="mb-1 text-[10px] font-bold tracking-[0.14em] text-sky-700 uppercase">
+                    {t("초보자 팁", "Beginner Tips")}
+                  </p>
                   <div>
-                    <p className="mb-1 text-[11px] font-bold text-sky-700">
-                      {t("초보자 팁", "Beginner Tips")}
-                    </p>
                     {cRes.usage_guide.beginner_tips.map((tip, i) => (
                       <p
                         key={i}

@@ -6,52 +6,58 @@ interface ResultHeroProps {
   variant?: "single" | "list" | "versus"
 }
 
+/**
+ * 분석 결과 상단 히어로.
+ * Editorial Warm Minimal — 화이트 기반 + Playfair 이탤릭 제품명 + 파스텔 포인트.
+ * 이전엔 그라데이션 + blob으로 시각 노이즈가 많아 제품명 계층이 흐렸음.
+ */
 export default function ResultHero({
   title,
   productNames,
   variant = "single",
 }: ResultHeroProps) {
-  const badgeBg = (i: number, total: number) => {
-    if (variant === "versus") return i === 0 ? "bg-pastel-lime-dark" : "bg-pastel-gold"
-    const palette = ["bg-pastel-lime-dark", "bg-pastel-gold", "bg-pastel-olive"]
-    return palette[i % palette.length] || "bg-pastel-lime-dark"
-  }
-  const badgeText = (i: number) =>
+  const badgeLabel = (i: number) =>
     variant === "versus" ? (i === 0 ? "A" : "B") : `${i + 1}`
 
+  const today = new Date().toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  })
+
   return (
-    <div className="relative overflow-hidden rounded-3xl">
-      <div className="absolute inset-0 bg-linear-to-br from-pastel-lime via-pastel-cream to-pastel-blush" />
-      <div className="blob bg-pastel-lime-dark/25 absolute -top-12 -right-10 h-40 w-40" />
-      <div className="blob bg-pastel-gold/20 absolute -bottom-16 -left-8 h-36 w-36" />
+    <div className="relative border-l-2 border-pastel-lime-dark/70 bg-white px-6 pt-7 pb-8">
+      <p className="font-display mb-4 flex items-center gap-2 text-[10px] font-bold tracking-[0.28em] text-pastel-olive/80 uppercase">
+        <span>skindit</span>
+        <span className="text-pastel-olive/30">·</span>
+        <span className="text-pastel-olive/60">{today}</span>
+      </p>
 
-      <div className="relative px-6 pt-7 pb-8">
-        <p className="mb-5 text-[10px] font-bold tracking-[0.24em] text-pastel-olive/75 uppercase">
-          skindit
-        </p>
+      {(variant === "list" || variant === "versus") &&
+      productNames &&
+      productNames.length > 0 ? (
+        <div className="flex flex-col gap-3">
+          {productNames.map((n, i) => (
+            <div key={i} className="flex items-baseline gap-3">
+              <span className="font-display text-[11px] font-bold tracking-wider text-pastel-olive/60">
+                {badgeLabel(i)}
+              </span>
+              <span className="flex-1 font-accent text-[22px] leading-tight font-semibold break-keep text-gray-900 italic">
+                {n}
+              </span>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <h1 className="font-accent text-[28px] leading-tight font-semibold wrap-break-word text-gray-900 italic">
+          {title}
+        </h1>
+      )}
 
-        {(variant === "list" || variant === "versus") &&
-        productNames &&
-        productNames.length > 0 ? (
-          <div className="flex flex-col gap-3">
-            {productNames.map((n, i) => (
-              <div key={i} className="flex items-start gap-3">
-                <span
-                  className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full font-display text-[12px] font-extrabold text-white shadow-sm ${badgeBg(i, productNames.length)}`}
-                >
-                  {badgeText(i)}
-                </span>
-                <span className="min-w-0 flex-1 font-display text-[18px] leading-snug font-extrabold break-keep text-gray-900">
-                  {n}
-                </span>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <h1 className="font-display text-2xl leading-tight font-extrabold wrap-break-word text-gray-900">
-            {title}
-          </h1>
-        )}
+      <div className="mt-5 flex items-center gap-1.5">
+        <span className="h-1.5 w-1.5 rounded-full bg-pastel-lime-dark" />
+        <span className="h-1 w-1 rounded-full bg-pastel-gold" />
+        <span className="h-1 w-1 rounded-full bg-pastel-blush" />
       </div>
     </div>
   )

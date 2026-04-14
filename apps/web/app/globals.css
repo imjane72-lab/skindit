@@ -148,6 +148,10 @@ button, [role="button"], a, label, select, summary, [tabindex]:not([tabindex="-1
 .anim-float {
   animation: float 3s ease-in-out infinite;
 }
+.anim-loading-dot {
+  animation: pulse-text 1.2s ease-in-out infinite;
+  display: inline-block;
+}
 
 /* ── Skindit loading dots (몽글몽글) ── */
 @keyframes skindit-dot {
