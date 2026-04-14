@@ -1,7 +1,7 @@
 "use client"
 
 import Counter from "@/components/ui/Counter"
-import { scoreHex, scoreColor } from "@/lib/score-utils"
+import { scoreHex } from "@/lib/score-utils"
 
 export default function ScoreRing({
   score,
@@ -50,7 +50,7 @@ export default function ScoreRing({
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         <span
-          className={`font-display ${numSize} leading-none font-extrabold tracking-tight ${scoreColor(s)}`}
+          className={`font-display ${numSize} leading-none font-extrabold tracking-tight text-gray-900`}
         >
           <Counter to={s} />
         </span>

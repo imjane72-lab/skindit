@@ -1,5 +1,7 @@
-// 에디토리얼 팔레트: 헤더의 pastel-olive/lime 톤과 맞추기 위해 채도 낮춘 톤으로 통일.
-// 기존: emerald/amber/rose (채도 높은 "앱스러운" 팔레트) → 매거진/에디토리얼 느낌으로 전환.
+// 링 fill은 브랜드 단일색(pastel-lime-dark)으로 고정.
+// 점수 정보는 "링이 채워진 비율 + 숫자"로 이미 충분히 전달되므로
+// 색상 변동은 브랜드 정체성을 희석할 뿐. Apple Health, Duolingo, Linear 접근.
+// 카테고리(좋음/보통/주의) 시그널은 텍스트 컬러에만 미세하게 반영.
 export const scoreColor = (s: number) =>
   s >= 80
     ? "text-[#6B8E23]"
@@ -7,8 +9,7 @@ export const scoreColor = (s: number) =>
       ? "text-pastel-olive"
       : "text-[#B8564A]"
 
-export const scoreHex = (s: number) =>
-  s >= 80 ? "#9bce26" : s >= 60 ? "#b89758" : "#c87b6a"
+export const scoreHex = (_s: number) => "#9bce26"
 
 export const scoreGradient = (s: number) =>
   s >= 80

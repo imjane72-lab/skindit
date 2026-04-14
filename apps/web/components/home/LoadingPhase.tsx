@@ -52,18 +52,20 @@ export default function LoadingPhase({ t, streamingPreview }: LoadingPhaseProps)
           return (
             <li
               key={i}
-              className={`anim-fade-up flex items-center justify-center gap-2.5 ${
-                isCurrent ? "anim-breathe" : ""
-              }`}
+              className="anim-fade-up flex items-center justify-center gap-3"
             >
               <span
                 className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] ${
                   isCurrent
-                    ? "bg-pastel-lime text-pastel-olive"
+                    ? "bg-pastel-lime-dark/20 ring-2 ring-pastel-lime-dark/40"
                     : "bg-pastel-olive/15 text-pastel-olive"
                 }`}
               >
-                {isCurrent ? "" : "✓"}
+                {isCurrent ? (
+                  <span className="anim-breathe block h-2 w-2 rounded-full bg-pastel-lime-dark" />
+                ) : (
+                  "✓"
+                )}
               </span>
               <span
                 className={`text-sm ${

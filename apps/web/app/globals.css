@@ -153,11 +153,11 @@ button, [role="button"], a, label, select, summary, [tabindex]:not([tabindex="-1
   display: inline-block;
 }
 @keyframes breathe {
-  0%, 100% { opacity: 0.55; }
-  50% { opacity: 1; }
+  0%, 100% { opacity: 0.35; transform: scale(0.85); }
+  50% { opacity: 1; transform: scale(1.15); }
 }
 .anim-breathe {
-  animation: breathe 2.8s ease-in-out infinite;
+  animation: breathe 1.8s ease-in-out infinite;
 }
 
 /* ── Skindit loading dots (몽글몽글) ── */
