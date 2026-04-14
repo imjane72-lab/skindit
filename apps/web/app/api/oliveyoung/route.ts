@@ -22,15 +22,13 @@
  *   - puppeteer 자체 에러 → 500
  */
 import { NextRequest, NextResponse } from "next/server"
-import { addExtra } from "puppeteer-extra"
-import stealth from "puppeteer-extra-plugin-stealth"
-import puppeteerCore from "puppeteer-core"
-import chromium from "@sparticuz/chromium-min"
 
-// puppeteer-extra가 puppeteer-core를 감싸도록 명시적으로 연결한 뒤 stealth 적용.
-// (기본 puppeteer-extra는 puppeteer 패키지를 찾는데 우리는 chromium-min 호환성 위해 core 사용)
-const puppeteer = addExtra(puppeteerCore as never)
-puppeteer.use(stealth())
+/* puppeteer-extra와 stealth는 모듈 최상단이 아니라 핸들러 안에서 lazy-load.
+ * 이유:
+ *   1) Next.js의 "collect page data" 빌드 단계가 라우트 모듈을 import하는데,
+ *      stealth 플러그인은 내부에서 dynamic require로 evasion 모듈들을 끌어옴
+ *   2) 그 dynamic require가 빌드 환경의 번들러 컨텍스트에서 실패 → 빌드 깨짐
+ *   3) 핸들러 호출 시점(런타임)에 import하면 Vercel Serverless에서 정상 동작 */
 
 export const maxDuration = 60
 export const dynamic = "force-dynamic"
@@ -94,6 +92,18 @@ export async function POST(req: NextRequest) {
   let browser
   try {
     const isLocal = process.env.NODE_ENV === "development"
+
+    /* 런타임에 동적으로 import — 빌드 단계에선 평가되지 않음.
+     * puppeteer-extra가 puppeteer-core를 감싸도록 명시적으로 연결한 뒤 stealth 적용. */
+    const { addExtra } = await import("puppeteer-extra")
+    const stealthMod = await import("puppeteer-extra-plugin-stealth")
+    const puppeteerCoreMod = await import("puppeteer-core")
+    const chromiumMod = await import("@sparticuz/chromium-min")
+    const stealth = stealthMod.default
+    const puppeteerCore = puppeteerCoreMod.default
+    const chromium = chromiumMod.default
+    const puppeteer = addExtra(puppeteerCore as never)
+    puppeteer.use(stealth())
 
     /* stealth 적용된 puppeteer 인스턴스로 브라우저 실행.
      * launch 옵션은 기존 chromium-min 호환 그대로 유지. */
