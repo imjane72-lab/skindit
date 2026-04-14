@@ -86,12 +86,18 @@ async function scrapeHtml(targetUrl: string, apiKey: string): Promise<string> {
     premium_proxy: "true",
     country_code: "kr",
     wait: "2000",
+    block_resources: "false",
   })
-  const res = await fetch(`https://app.scrapingbee.com/api/v1/?${params}`)
-  if (!res.ok) {
-    throw new Error(`ScrapingBee error ${res.status}: ${await res.text()}`)
+  const maxAttempts = 3
+  let lastError = ""
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    const res = await fetch(`https://app.scrapingbee.com/api/v1/?${params}`)
+    if (res.ok) return await res.text()
+    lastError = `ScrapingBee error ${res.status}: ${await res.text()}`
+    if (res.status < 500 || attempt === maxAttempts) break
+    await new Promise((r) => setTimeout(r, 1000 * attempt))
   }
-  return await res.text()
+  throw new Error(lastError)
 }
 
 /**
