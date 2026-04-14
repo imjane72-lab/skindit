@@ -3,6 +3,7 @@
 import ScoreRing from "@/components/ui/ScoreRing"
 import Md from "@/components/ui/Md"
 import { scoreColor, scoreBg, scoreLabel } from "@/lib/score-utils"
+import { CONCERN_BG } from "@/constants/skin-data"
 
 export default function ConcernCard({
   concern,
@@ -10,6 +11,7 @@ export default function ConcernCard({
   comment,
   lang,
   delay,
+  index,
 }: {
   concern: string
   score: number
@@ -19,9 +21,10 @@ export default function ConcernCard({
   index: number
 }) {
   const s = Number.isFinite(score) ? Math.max(0, Math.min(100, score)) : 50
+  const bg = CONCERN_BG[index % CONCERN_BG.length]
   return (
     <div
-      className="max-w-72 min-w-60 shrink-0 anim-pop-in rounded-2xl border border-gray-200 bg-white p-5 shadow-sm"
+      className={`max-w-72 min-w-60 shrink-0 bg-linear-to-br ${bg} anim-pop-in rounded-2xl border border-white/60 p-5 shadow-sm backdrop-blur-sm`}
       style={{ animationDelay: `${delay}ms` }}
     >
       <div className="mb-3 flex items-center justify-between">

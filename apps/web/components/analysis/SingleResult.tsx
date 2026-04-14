@@ -55,7 +55,7 @@ export default function SingleResult({
 
       {res.concern_analysis && res.concern_analysis.length > 0 && (
         <ResultSection
-          tone="info"
+          tone="neutral"
           icon="🫧"
           title={t("피부 고민별 분석", "By Concern")}
           subtitle={t("내 피부에 맞는 성분인지 점수로", "Score per concern")}

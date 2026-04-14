@@ -1,5 +1,7 @@
 "use client"
 
+import { useEffect, useState } from "react"
+
 interface ResultHeroProps {
   title?: string
   productNames?: string[]
@@ -19,11 +21,17 @@ export default function ResultHero({
   const badgeLabel = (i: number) =>
     variant === "versus" ? (i === 0 ? "A" : "B") : `${i + 1}`
 
-  const today = new Date().toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  })
+  // 클라이언트 마운트 후에만 날짜 렌더 (SSR/클라이언트 타임존 차이로 인한 하이드레이션 불일치 방지)
+  const [today, setToday] = useState("")
+  useEffect(() => {
+    setToday(
+      new Date().toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      })
+    )
+  }, [])
 
   return (
     <div className="relative border-l-2 border-pastel-lime-dark/70 bg-white px-6 pt-7 pb-8">
