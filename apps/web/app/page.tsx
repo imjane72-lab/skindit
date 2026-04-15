@@ -167,7 +167,10 @@ export default function Page() {
         setOyError(data.error)
       } else if (data.ingredients) {
         setIngs(data.ingredients)
-        setProductName(oyQuery.trim())
+        // API가 크롤링해온 실제 제품명을 우선 사용 (예: "웰라쥬 리얼 히알루로닉 블루 100 앰플").
+        // 없으면 사용자가 입력한 검색어로 폴백.
+        const resolvedName = (data.productName || oyQuery).trim()
+        setProductName(resolvedName)
         setOySuccess(t("✅ 성분을 불러왔어요", "✅ Ingredients loaded"))
       } else {
         setOyError(data.message || "전성분을 찾지 못했어요.")
@@ -190,10 +193,11 @@ export default function Page() {
       })
       const data = await res.json()
       if (!data.error && data.ingredients) {
+        const resolvedName = (data.productName || query).trim()
         setProducts((ps) =>
           ps.map((x) =>
             x.id === productId
-              ? { ...x, ingredients: data.ingredients, name: x.name || query }
+              ? { ...x, ingredients: data.ingredients, name: x.name || resolvedName }
               : x
           )
         )
@@ -218,12 +222,13 @@ export default function Page() {
       })
       const data = await res.json()
       if (!data.error && data.ingredients) {
+        const resolvedName = (data.productName || query).trim()
         if (target === "A") {
           setCompareA(data.ingredients)
-          if (!compareNameA) setCompareNameA(query)
+          if (!compareNameA) setCompareNameA(resolvedName)
         } else {
           setCompareB(data.ingredients)
-          if (!compareNameB) setCompareNameB(query)
+          if (!compareNameB) setCompareNameB(resolvedName)
         }
       } else {
         alert(data.error || data.message || "전성분을 찾지 못했어요.")
@@ -337,7 +342,16 @@ export default function Page() {
 용어 규칙: 화장품/성분 전문용어는 처음 등장 시 괄호로 쉬운 말 부연. 예: "정유(에센셜 오일)", "유화제(물과 기름을 섞어주는 성분)", "AHA(각질제거 성분)". 초보자도 이해할 수 있는 일상 언어를 우선 사용.
 가드레일: 답변의 모든 내용이 제공된 컨텍스트에 포함되어 있는지 자체 검증. 컨텍스트에 없으면 언급하지 않기. "금지"라는 단어 사용하지 말고 부드러운 표현 사용.
 목적: 두 제품의 성분을 비교해서 "사용자의 피부 타입·고민 기준으로 어느 쪽이 더 맞는지" 판단해줘. 궁합(함께 쓰기)이 아니라 '비교·선택' 관점이야. "환상의 조합" 같은 궁합 언어 사용 금지.
-JSON only. Schema:{"score_a":"0-100 정수. A 제품이 이 사용자 피부에 얼마나 맞는지","score_b":"0-100 정수. B 제품이 이 사용자 피부에 얼마나 맞는지","score_a_reason":"A 점수 근거 1줄 (사용자 피부 언급)","score_b_reason":"B 점수 근거 1줄 (사용자 피부 언급)","pick":"A|B|both|either","pick_reason":"왜 그 선택인지 1-2줄 (사용자 피부 타입·고민 근거)","summary":"성분 관점 비교 2-3줄","shared":[max 5,{"name":"","inA":true,"inB":true,"note":""}],"only_a":[max 5,{"name":"","inA":true,"inB":false,"note":""}],"only_b":[max 5,{"name":"","inA":false,"inB":true,"note":""}],"forbidden_combos":[max 2,{"ingredients":"","reason":""}],"recommendation":"2-3줄","usage_guide":{"best_time":"A:시간+이유, B:시간+이유","effect_timeline":"","beginner_tips":["3개"]},"verdict":"★(1-5)+근거 2줄"}. ${useLang === "ko" ? "한국어" : "English"}.`
+
+score_a, score_b 기준 (0-100, 사용자 피부 적합도, 엄격히 따를 것):
+안전 성분 비율 + 사용자 피부 타입/고민에 대한 유효성 + 자극 성분 유무로 종합 산출.
+90-100: 안전 성분 위주 + 피부 타입/고민에 맞는 유효 성분 다수 + 자극 성분 없음
+75-89: 전반적으로 안전 + 유효 성분 포함 + 약한 주의 성분 1-2개 + 피부 타입에 무리 없음
+60-74: 장단점 혼재, 피부 타입엔 무난하나 특별한 강점 없음
+40-59: 사용자 피부 타입/고민에 부담이 되는 성분 여럿 또는 유효 성분 부족
+0-39: 민감/트러블 피부에 큰 자극 성분 포함 또는 선택한 고민을 악화시킬 가능성 높음
+
+JSON only. Schema:{"score_a":0-100,"score_b":0-100,"score_a_reason":"A 점수 근거 1줄 (사용자 피부 언급)","score_b_reason":"B 점수 근거 1줄 (사용자 피부 언급)","pick":"A|B|both|either","pick_reason":"왜 그 선택인지 1-2줄 (사용자 피부 타입·고민 근거)","summary":"성분 관점 비교 2-3줄","shared":[max 5,{"name":"","inA":true,"inB":true,"note":""}],"only_a":[max 5,{"name":"","inA":true,"inB":false,"note":""}],"only_b":[max 5,{"name":"","inA":false,"inB":true,"note":""}],"forbidden_combos":[max 2,{"ingredients":"","reason":""}],"recommendation":"2-3줄","usage_guide":{"best_time":"A:시간+이유, B:시간+이유","effect_timeline":"","beginner_tips":["3개"]},"verdict":"★(1-5)+근거 2줄"}. ${useLang === "ko" ? "한국어" : "English"}.`
     const skinContext =
       profileSkinTypes.length > 0
         ? `\n⚠️ 이 사용자의 피부 타입: ${profileSkinTypes.join(", ")} — 이 피부 타입에 더 맞는 제품을 추천해주세요!`
@@ -345,8 +359,8 @@ JSON only. Schema:{"score_a":"0-100 정수. A 제품이 이 사용자 피부에 
     const noteContext = profileNote
       ? `\n⚠️ 사용자 메모 (꼭 반영): ${profileNote}`
       : ""
-    const nameA = compareNameA || "A 제품"
-    const nameB = compareNameB || "B 제품"
+    const nameA = compareNameA || "제품 1"
+    const nameB = compareNameB || "제품 2"
     try {
       const raw = await callAI(
         sys,
@@ -506,9 +520,25 @@ JSON only. Schema:{"score_a":"0-100 정수. A 제품이 이 사용자 피부에 
 출처: [검증된 성분 데이터]가 제공되면 해당 데이터 기반임을 표시. 예: "식약처 등록 성분이에요", "검증된 데이터 기준으로..."
 가드레일: 답변 전 자체 검증 — 모든 내용이 제공된 컨텍스트에 포함되어 있는지 확인. 컨텍스트에 없는 성분 효능/부작용은 언급하지 않기.
 JSON only. Schema:{"overall_score":0-100,"overall_comment":"2-3줄","concern_analysis":[선택 고민 전부,{"concern":"","score":0-100,"comment":"2-3줄"}],"star_ingredients":[max 5,{"name":"","benefit":"","best_time":"","synergy":[],"source":"검증됨|일반"}],"watch_out":[{"name":"","reason":"","alternative":""}],"forbidden_combos":[max 3,{"ingredients":"","reason":""}],"usage_guide":{"best_time":"","effect_timeline":"","beginner_tips":["3개"]},"safety_ratings":[max 8,{"name":"","score":1-10,"note":""}],"verdict":"★(1-5)+근거 2줄"}.
-safety_ratings 점수 기준 (엄격히 따를 것):
+safety_ratings 점수 기준 (1-10, 엄격히 따를 것):
 1=가장 안전(정제수,글리세린,히알루론산,판테놀,알란토인,토코페롤,스쿠알란,세라마이드,센텔라,아데노신,발효물/발효여과물/유산균발효물,펩타이드,병풀추출물,베타글루칸,알부틴,나이아신아마이드,트레할로오스,부틸렌글라이콜,프룩토올리고사카라이드,잔탄검,마데카소사이드,아시아티코사이드,글리세릴 류,소듐하이알루로네이트), 2=안전(대부분의 식물추출물,아미노산류,비타민류), 3=보통(에틸헥실글리세린,폴리머류,유화제류,1,2-헥산다이올), 4-5=약간 주의(향료,색소,고농도 에탄올,PEG류), 6-7=주의필요(특정 방부제,포름알데히드방출제), 8-10=위험(금지성분급만 해당).
-확실하지 않은 성분은 2-3점으로. 안전한 성분을 높게 매기지 않기. ${useLang === "ko" ? "한국어" : "English"}.`
+확실하지 않은 성분은 2-3점으로. 안전한 성분을 높게 매기지 않기.
+
+overall_score 기준 (0-100, 엄격히 따를 것):
+안전성분 비율 + 사용자 피부 타입 적합도 + 유효성분 유무로 종합 산출.
+90-100: 안전 성분(1-2점) 위주 + 자극성분(4점 이상) 0개 + 피부 고민/타입에 유효한 성분 다수
+75-89: 안전 성분 다수 + 약한 주의(3점) 1-2개 + 피부 타입에 무리 없음 + 유효성분 일부
+60-74: 안전과 주의(3-4점) 혼재 + 피부 타입엔 큰 문제 없음 + 유효성분 적음
+40-59: 4-5점 자극성 성분 다수 또는 사용자 피부 타입(민감/건성/지성)과 충돌 성분 포함
+0-39: 6점 이상 주의/위험 성분 다수 또는 민감/트러블 피부에 부담 큰 조합
+
+concern_analysis[].score 기준 (0-100, 각 고민에 대해):
+90-100: 해당 고민에 검증된 유효 성분 다수 + 악화 성분 없음
+75-89: 유효 성분 있고 악화 성분 거의 없음
+60-74: 약간 도움 되나 특화되진 않음 + 큰 악영향 없음
+40-59: 유효 성분 부족 또는 1-2개 악화 가능 성분
+0-39: 그 고민에 부적합 (자극/악화 성분 다수)
+${useLang === "ko" ? "한국어" : "English"}.`
     const skinContext =
       profileSkinTypes.length > 0
         ? `\n⚠️ 이 사용자의 피부 타입: ${profileSkinTypes.join(", ")} — 이 피부 타입 기준으로 분석해주세요! 예: 민감성이면 자극 성분 더 엄격하게, 지성이면 유분 많은 성분 주의`
@@ -572,9 +602,19 @@ safety_ratings 점수 기준 (엄격히 따를 것):
       .join("\n\n")
     const sys = `skindit 루틴 분석. 친근한 존댓말로만 답변.
 말투: 모든 문장 반드시 "~요", "~에요", "~어요", "~거예요", "~세요" 종결어미로 끝맺기. 반말(~야, ~네, ~다, ~해, ~지, ~군, ~구나, ~거든) 절대 금지. 친한 언니가 부드럽게 조언하는 톤.
-규칙: 입력 성분+제공된 데이터만 사용. 데이터에 없는 성분은 언급하지 않기. 같은제형 겹침=점수↓(40~60), 다른제형=OK(70~85), 상호보완=80~90. 주의 콤보는 검증된 것만. "분리 사용 권장"처럼 부드러운 표현 사용. "금지"라는 단어 대신 "피하는 게 좋아요", "권장하지 않아요" 등으로.
+규칙: 입력 성분+제공된 데이터만 사용. 데이터에 없는 성분은 언급하지 않기. 주의 콤보는 검증된 것만. "분리 사용 권장"처럼 부드러운 표현 사용. "금지"라는 단어 대신 "피하는 게 좋아요", "권장하지 않아요" 등으로.
 용어 규칙: 화장품/성분 전문용어는 처음 등장 시 괄호로 쉬운 말 부연. 예: "정유(에센셜 오일)", "유화제(물과 기름을 섞어주는 성분)", "AHA(각질제거 성분)". 초보자도 이해할 수 있는 일상 언어를 우선 사용.
 가드레일: 답변의 모든 내용이 제공된 컨텍스트에 포함되어 있는지 자체 검증. 컨텍스트에 없으면 언급하지 않기.
+
+routine_score 기준 (0-100, 엄격히 따를 것):
+제형 다양성 + 성분 시너지 + 충돌 여부를 종합 산출.
+90-100: 제형 다양(수분→영양→차단 단계 완성) + 시너지 조합 + 충돌 0 + 사용자 피부 타입에 적합
+80-89: 다른 제형 조합 + 상호 보완 성분 있음 + 충돌 없음
+70-79: 다른 제형이나 시너지 약함 또는 사소한 주의점 1개
+60-69: 같은 제형 2개 겹침 또는 경미한 자극 가능성
+40-59: 제형 중복 다수 또는 명백한 성분 충돌 1개
+0-39: 심각한 성분 충돌 여럿 또는 민감/트러블 피부 악화 위험
+
 JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":[max 3,{"ingredients":[""],"products":[""],"severity":"high|medium|low","reason":""}],"synergies":[max 3,{"ingredients":[""],"products":[""],"reason":""}],"order_suggestion":["순서"],"recommendations":[max 3,"팁"],"timeline":[{"product":"","timing":"morning|evening|both","reason":""}],"usage_guide":{"effect_timeline":"","beginner_tips":["2-3개"]},"verdict":"★(1-5)+근거 2줄"}. ${useLang === "ko" ? "한국어" : "English"}.`
     const skinContext =
       profileSkinTypes.length > 0

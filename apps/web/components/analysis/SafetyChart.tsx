@@ -22,8 +22,21 @@ export default function SafetyChart({
   const bgColor = (s: number) =>
     s <= 2 ? "bg-emerald-50" : s <= 6 ? "bg-amber-50" : "bg-rose-50"
 
+  // AI가 간혹 토큰화 잔재("나", "는", "이다" 같은 조각)를 성분명으로 넣는 경우가 있어
+  // 최소 길이 + 한글/영문 문자 포함 조건으로 노이즈 제거.
+  const isValidIngredientName = (name: string) => {
+    const trimmed = (name || "").trim()
+    if (trimmed.length < 2) return false
+    // 괄호 제거 후에도 최소 2자 이상인지 확인 (예: "물(H2O)" → "물" 한 글자는 제외)
+    const coreName = trimmed.replace(/\([^)]*\)/g, "").trim()
+    if (coreName.length < 2) return false
+    // 조사/의미없는 한글 한 음절만 있는 경우 제외
+    if (/^[가-힣]$/.test(coreName)) return false
+    return true
+  }
+
   const validRatings = ratings
-    .filter((r) => r && r.name)
+    .filter((r) => r && isValidIngredientName(r.name))
     .map((r) => ({ ...r, score: safeScore(r.score) }))
 
   return (

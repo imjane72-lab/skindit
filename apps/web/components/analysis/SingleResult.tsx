@@ -35,7 +35,7 @@ export default function SingleResult({
     ""
 
   return (
-    <div className="anim-scale-in space-y-4">
+    <div className="anim-scale-in space-y-8">
       <ResultHero title={displayName || t("성분 분석 결과", "Ingredient Analysis")} />
 
       <ScoreCard

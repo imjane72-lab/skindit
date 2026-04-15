@@ -35,7 +35,7 @@ export default function CompareResult({
     .join("\n\n")
 
   return (
-    <div className="anim-scale-in space-y-4">
+    <div className="anim-scale-in space-y-8">
       <ResultHero variant="versus" productNames={[displayA, displayB]} />
 
       <CompareScore

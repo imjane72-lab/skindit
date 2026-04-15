@@ -30,7 +30,7 @@ export default function RoutineResult({
   const names = (productNames || []).filter(Boolean)
 
   return (
-    <div className="anim-scale-in space-y-4">
+    <div className="anim-scale-in space-y-8">
       {names.length > 0 ? (
         <ResultHero variant="list" productNames={names} />
       ) : (

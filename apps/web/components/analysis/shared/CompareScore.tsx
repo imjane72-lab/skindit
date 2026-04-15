@@ -37,31 +37,37 @@ export default function CompareScore({
   return (
     <div className="flex flex-col items-center py-2">
       <div className="flex items-center justify-center gap-4">
-        <div className="flex flex-col items-center">
+        <div className="flex max-w-[45%] flex-col items-center">
           <ScoreRing score={scoreA} size={170} />
           <span className="mt-3 flex items-center gap-1.5">
             <span className="flex h-5 w-5 items-center justify-center rounded-full bg-pastel-lime-dark font-display text-[10px] font-extrabold text-white">
               1
             </span>
-            <span className="text-[11px] font-bold tracking-wide text-gray-500 uppercase">
-              {t("피부 적합도", "For You")}
+            <span className="line-clamp-2 text-[12px] font-bold break-keep text-gray-800">
+              {nameA || t("제품 1", "Product 1")}
             </span>
+          </span>
+          <span className="mt-1 text-[10px] font-bold tracking-wide text-gray-400 uppercase">
+            {t("피부 적합도", "For You")}
           </span>
         </div>
 
-        <span className="mb-5 shrink-0 rounded-full border border-pastel-olive/20 bg-white/70 px-2.5 py-1 text-[10px] font-bold tracking-[0.2em] text-pastel-olive uppercase">
+        <span className="mb-12 shrink-0 rounded-full border border-pastel-olive/20 bg-white/70 px-2.5 py-1 text-[10px] font-bold tracking-[0.2em] text-pastel-olive uppercase">
           vs
         </span>
 
-        <div className="flex flex-col items-center">
+        <div className="flex max-w-[45%] flex-col items-center">
           <ScoreRing score={scoreB} size={170} />
           <span className="mt-3 flex items-center gap-1.5">
             <span className="flex h-5 w-5 items-center justify-center rounded-full bg-pastel-gold font-display text-[10px] font-extrabold text-white">
               2
             </span>
-            <span className="text-[11px] font-bold tracking-wide text-gray-500 uppercase">
-              {t("피부 적합도", "For You")}
+            <span className="line-clamp-2 text-[12px] font-bold break-keep text-gray-800">
+              {nameB || t("제품 2", "Product 2")}
             </span>
+          </span>
+          <span className="mt-1 text-[10px] font-bold tracking-wide text-gray-400 uppercase">
+            {t("피부 적합도", "For You")}
           </span>
         </div>
       </div>

@@ -61,7 +61,7 @@ function SingleShareView({ rj, score }: { rj: Record<string, unknown>; score: nu
     | undefined
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-8">
       <ScoreCard score={score} label={scoreLabel(score, "ko")} />
 
       {Boolean(rj.overall_comment) && (
@@ -234,7 +234,7 @@ function RoutineShareView({ rj }: { rj: Record<string, unknown> }) {
   const recommendations = (rj.recommendations as string[]) || []
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-8">
       {Boolean(rj.routine_comment) && (
         <ResultSection
           tone="brand"
@@ -341,7 +341,7 @@ function CompareShareView({ rj }: { rj: Record<string, unknown> }) {
   const onlyB = (rj.only_b as Array<{ name: string; note?: string }>) || []
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-8">
       {Boolean(rj.summary) && (
         <ResultSection
           tone="brand"

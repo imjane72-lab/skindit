@@ -28,7 +28,7 @@ function FullResultView({ item, displayType }: { item: HistoryItem; displayType:
     const concernAnalysis = (rj.concern_analysis as Array<{concern: string; score: number; comment: string}>) || []
 
     return (
-      <div className="space-y-4">
+      <div className="space-y-8">
         {Boolean(rj.overall_comment) && (
           <ResultSection tone="brand" icon="🌿" title="종합 의견">
             <p className="text-sm leading-relaxed text-gray-700"><Md>{String(rj.overall_comment)}</Md></p>
@@ -155,7 +155,7 @@ function FullResultView({ item, displayType }: { item: HistoryItem; displayType:
     const usageGuide = rj.usage_guide as {effect_timeline?: string; beginner_tips?: string[]} | undefined
 
     return (
-      <div className="space-y-4">
+      <div className="space-y-8">
         {Boolean(rj.routine_comment) && (
           <ResultSection tone="brand" icon="🌿" title="종합 의견">
             <p className="text-sm leading-relaxed text-gray-700"><Md>{String(rj.routine_comment)}</Md></p>
@@ -256,7 +256,7 @@ function FullResultView({ item, displayType }: { item: HistoryItem; displayType:
   const usageGuide = rj.usage_guide as {best_time?: string; effect_timeline?: string; beginner_tips?: string[]} | undefined
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-8">
       {Boolean(rj.summary) && (
         <ResultSection tone="brand" icon="🌿" title="비교 요약">
           <p className="text-sm leading-relaxed text-gray-700"><Md>{String(rj.summary)}</Md></p>
