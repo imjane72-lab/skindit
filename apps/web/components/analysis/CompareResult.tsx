@@ -14,8 +14,6 @@ interface CompareResultProps {
   reset: () => void
   lang: string
   historyId?: string | null
-  nameA?: string
-  nameB?: string
 }
 
 export default function CompareResult({
@@ -24,11 +22,9 @@ export default function CompareResult({
   reset,
   lang,
   historyId,
-  nameA,
-  nameB,
 }: CompareResultProps) {
-  const displayA = nameA || t("제품 1", "Product 1")
-  const displayB = nameB || t("제품 2", "Product 2")
+  const displayA = cRes.compareNameA || t("제품 1", "Product 1")
+  const displayB = cRes.compareNameB || t("제품 2", "Product 2")
 
   const summary = [cRes.summary, cRes.recommendation]
     .filter((s) => s && s.trim())
@@ -161,7 +157,7 @@ export default function CompareResult({
           <div className="divide-y divide-sky-100/70">
             {cRes.usage_guide.best_time && (
               <div className="py-2.5 first:pt-0">
-                <p className="mb-1 text-base font-bold text-sky-700">
+                <p className="mb-1 text-[13px] font-bold text-sky-700">
                   {t("사용 시간", "Best Time")}
                 </p>
                 {/* AI가 "A:..., B:..." 또는 "1:..., 2:..." 형식으로 한 줄에 작성.
@@ -178,7 +174,7 @@ export default function CompareResult({
             )}
             {cRes.usage_guide.effect_timeline && (
               <div className="py-2.5 first:pt-0">
-                <p className="mb-1 text-base font-bold text-sky-700">
+                <p className="mb-1 text-[13px] font-bold text-sky-700">
                   {t("효과 시기", "Effect Timeline")}
                 </p>
                 <p className="text-xs leading-relaxed text-gray-600">
@@ -189,7 +185,7 @@ export default function CompareResult({
             {cRes.usage_guide.beginner_tips &&
               cRes.usage_guide.beginner_tips.length > 0 && (
                 <div className="py-2.5 first:pt-0 last:pb-0">
-                  <p className="mb-1 text-base font-bold text-sky-700">
+                  <p className="mb-1 text-[13px] font-bold text-sky-700">
                     {t("초보자 팁", "Beginner Tips")}
                   </p>
                   <div>

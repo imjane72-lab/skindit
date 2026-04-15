@@ -16,7 +16,6 @@ interface RoutineResultProps {
   reset: () => void
   lang: string
   historyId?: string | null
-  productNames?: string[]
 }
 
 export default function RoutineResult({
@@ -25,9 +24,8 @@ export default function RoutineResult({
   reset,
   lang,
   historyId,
-  productNames,
 }: RoutineResultProps) {
-  const names = (productNames || []).filter(Boolean)
+  const names = (rRes.productNames || []).filter(Boolean)
 
   return (
     <div className="anim-scale-in space-y-8">
@@ -242,7 +240,7 @@ export default function RoutineResult({
           <div className="divide-y divide-sky-100/70">
             {rRes.usage_guide.effect_timeline && (
               <div className="py-2.5 first:pt-0">
-                <p className="mb-1 text-base font-bold text-sky-700">
+                <p className="mb-1 text-[13px] font-bold text-sky-700">
                   {t("효과 체감 시기", "Effect Timeline")}
                 </p>
                 <p className="text-xs leading-relaxed text-gray-600">
@@ -253,7 +251,7 @@ export default function RoutineResult({
             {rRes.usage_guide.beginner_tips &&
               rRes.usage_guide.beginner_tips.length > 0 && (
                 <div className="py-2.5 first:pt-0 last:pb-0">
-                  <p className="mb-1 text-base font-bold text-sky-700">
+                  <p className="mb-1 text-[13px] font-bold text-sky-700">
                     {t("초보자 주의사항", "Beginner Tips")}
                   </p>
                   <div>

@@ -42,6 +42,9 @@ export interface SingleRes {
   safety_ratings?: SafetyRating[]
   forbidden_combos?: ForbiddenCombo[]
   usage_guide?: UsageGuide
+  /** 헤더 표시용 제품 이름. 분석 실행 시점의 입력값을 결과와 함께 저장해
+   *  새로고침/뒤로가기 후에도 헤더에서 이름이 유지되도록 함. */
+  productName?: string
 }
 
 export interface RoutineConflict {
@@ -75,6 +78,8 @@ export interface RoutineRes {
   recommendations?: string[]
   timeline?: RoutineTimeline[]
   usage_guide?: UsageGuide
+  /** 헤더 표시용 제품 이름들. 분석 실행 시점에 저장. */
+  productNames?: string[]
 }
 
 export interface Product {
@@ -109,4 +114,7 @@ export interface CompareRes {
   usage_guide?: UsageGuide
   compatibility_score?: number
   compatibility_comment?: string
+  /** 헤더 표시용 제품 이름. 분석 실행 시점에 저장. */
+  compareNameA?: string
+  compareNameB?: string
 }

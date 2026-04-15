@@ -18,7 +18,6 @@ interface SingleResultProps {
   reset: () => void
   lang: string
   historyId?: string | null
-  productName?: string
 }
 
 export default function SingleResult({
@@ -27,12 +26,8 @@ export default function SingleResult({
   reset,
   lang,
   historyId,
-  productName,
 }: SingleResultProps) {
-  const displayName =
-    productName ||
-    ((res as unknown as Record<string, unknown>).productName as string) ||
-    ""
+  const displayName = res.productName || ""
 
   return (
     <div className="anim-scale-in space-y-8">
@@ -171,7 +166,7 @@ export default function SingleResult({
           <div className="divide-y divide-sky-100/70">
             {res.usage_guide.best_time && (
               <div className="py-2.5 first:pt-0">
-                <p className="mb-1 text-base font-bold text-sky-700">
+                <p className="mb-1 text-[13px] font-bold text-sky-700">
                   {t("최적 사용 시간", "Best Time")}
                 </p>
                 <p className="text-xs leading-relaxed text-gray-600">
@@ -181,7 +176,7 @@ export default function SingleResult({
             )}
             {res.usage_guide.effect_timeline && (
               <div className="py-2.5 first:pt-0">
-                <p className="mb-1 text-base font-bold text-sky-700">
+                <p className="mb-1 text-[13px] font-bold text-sky-700">
                   {t("효과 체감 시기", "Effect Timeline")}
                 </p>
                 <p className="text-xs leading-relaxed text-gray-600">
@@ -192,7 +187,7 @@ export default function SingleResult({
             {res.usage_guide.beginner_tips &&
               res.usage_guide.beginner_tips.length > 0 && (
                 <div className="py-2.5 first:pt-0 last:pb-0">
-                  <p className="mb-1 text-base font-bold text-sky-700">
+                  <p className="mb-1 text-[13px] font-bold text-sky-700">
                     {t("초보자 주의사항", "Beginner Tips")}
                   </p>
                   <div>
