@@ -3,52 +3,22 @@
 import { useState, useEffect } from "react"
 import { useParams, useRouter } from "next/navigation"
 import NavBar from "@/components/ui/NavBar"
-import ScoreRing from "@/components/ui/ScoreRing"
-import { scoreColor } from "@/lib/score-utils"
+import Md from "@/components/ui/Md"
+import ResultHero from "@/components/analysis/shared/ResultHero"
+import ResultSection from "@/components/analysis/shared/ResultSection"
+import ScoreCard from "@/components/analysis/shared/ScoreCard"
+import IngredientPill from "@/components/analysis/shared/IngredientPill"
+import ConcernCard from "@/components/analysis/ConcernCard"
+import SafetyChart from "@/components/analysis/SafetyChart"
+import { scoreLabel } from "@/lib/score-utils"
 
-/* ── 마크다운 파서 ── */
-function Md({ children }: { children: string }) {
-  if (!children) return null
-  if (!children.includes("**") && !children.includes("\n")) return <>{children}</>
-  return <>{children.split(/(\*\*[^*]+\*\*)/).map((part, i) =>
-    part.startsWith("**") && part.endsWith("**")
-      ? <strong key={i} className="font-bold text-gray-800">{part.slice(2, -2)}</strong>
-      : part
-  )}</>
-}
+/**
+ * 공유 페이지.
+ * 단일/루틴/비교 분석 결과를 통일된 디자인 시스템(ResultHero, ResultSection,
+ * ConcernCard, IngredientPill, ScoreCard)으로 렌더링. 결과 페이지(SingleResult 등)와
+ * 동일한 시각 언어를 사용해 브랜드 일관성을 확보.
+ */
 
-/* ── 섹션 컴포넌트 ── */
-function Section({ icon, title, color, children }: { icon: string; title: string; color: string; children: React.ReactNode }) {
-  return (
-    <div className={`rounded-2xl ${color} p-4 mb-3`}>
-      <p className="mb-2 text-xs font-extrabold flex items-center gap-1.5 text-gray-800">{icon} {title}</p>
-      {children}
-    </div>
-  )
-}
-
-/* ── 성분 알약 버튼 ── */
-function Pill({ name, detail, good }: { name: string; detail: string; good: boolean }) {
-  const [open, setOpen] = useState(false)
-  return (
-    <div className="w-full">
-      <button onClick={() => setOpen(!open)} className={`w-full flex items-center gap-2 rounded-xl border p-3 text-left text-sm font-semibold transition-all ${open ? good ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-rose-200 bg-rose-50 text-rose-700" : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"}`}>
-        <span className={`h-5 w-5 shrink-0 rounded-full ${good ? "bg-emerald-400" : "bg-rose-400"} inline-flex items-center justify-center text-[9px] font-bold text-white`}>{good ? "✓" : "!"}</span>
-        <span className="flex-1">{name}</span>
-        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" className={`shrink-0 text-gray-300 transition-transform ${open ? "rotate-180" : ""}`}>
-          <path d="M4 6L8 10L12 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      </button>
-      {open && detail && (
-        <div className="mt-1.5 rounded-xl bg-gray-50 border border-gray-100 p-3 text-xs leading-relaxed text-gray-600 whitespace-pre-line">
-          {detail}
-        </div>
-      )}
-    </div>
-  )
-}
-
-/* ── 타입 정의 ── */
 interface ShareData {
   id: string
   type: "SINGLE" | "ROUTINE"
@@ -58,237 +28,388 @@ interface ShareData {
   createdAt: string
 }
 
-/* ── 결과 뷰 ── */
-function SharedResultView({ data }: { data: ShareData }) {
-  const rj = data.resultJson || {}
-  const isRoutine = data.type === "ROUTINE"
-  const isCompare = rj.type === "compare"
+const t = (ko: string, _en: string) => ko
 
-  if (!isRoutine && !isCompare) {
-    // 단일 성분 분석
-    const starIngs = (rj.star_ingredients as Array<{name: string; benefit?: string; best_time?: string; synergy?: string[]}>) || []
-    const watchOut = (rj.watch_out as Array<{name: string; reason?: string; alternative?: string}>) || []
-    const safetyRatings = (rj.safety_ratings as Array<{name: string; score: number; note?: string}>) || []
-    const concernAnalysis = (rj.concern_analysis as Array<{concern: string; score: number; comment: string}>) || []
-    const forbiddenCombos = (rj.forbidden_combos as Array<{ingredients: string; reason: string}>) || []
-    const usageGuide = rj.usage_guide as {best_time?: string; effect_timeline?: string; beginner_tips?: string[]} | undefined
-
-    return (
-      <div className="space-y-3">
-        {/* ── 점수 ── */}
-        <div className="text-center py-2">
-          <div className="flex justify-center mb-2">
-            <ScoreRing score={data.score} size={180} />
-          </div>
-          <p className={`text-sm font-bold ${scoreColor(data.score)}`}>
-            {data.score >= 80 ? "우수" : data.score >= 60 ? "보통" : "주의"}
-          </p>
-        </div>
-
-        {Boolean(rj.overall_comment) && (
-          <Section icon="🤎" title="종합 의견" color="bg-lime-50">
-            <p className="text-sm leading-relaxed text-gray-700"><Md>{String(rj.overall_comment)}</Md></p>
-          </Section>
-        )}
-        {concernAnalysis.length > 0 && (
-          <Section icon="🫧" title="피부 고민별 분석" color="bg-gray-50/80">
-            <div className="hide-scrollbar -mx-1 flex gap-2.5 overflow-x-auto px-1 pb-1">
-              {concernAnalysis.map((c, i) => (
-                <div key={i} className="min-w-50 max-w-55 shrink-0 rounded-xl border border-gray-100 bg-white p-3.5">
-                  <div className="mb-1.5 flex items-center justify-between">
-                    <span className="text-sm font-bold text-gray-800">{c.concern}</span>
-                    <span className={`rounded-full px-2 py-0.5 text-xs font-bold ${c.score >= 80 ? "bg-emerald-50 text-emerald-600" : c.score >= 60 ? "bg-amber-50 text-amber-600" : "bg-rose-50 text-rose-600"}`}>{c.score}점</span>
-                  </div>
-                  <p className="text-xs leading-relaxed text-gray-600">{c.comment}</p>
-                </div>
-              ))}
-            </div>
-          </Section>
-        )}
-        {starIngs.length > 0 && (
-          <Section icon="✨" title="주목 성분" color="bg-emerald-50/60">
-            <div className="space-y-2">
-              {starIngs.map((ing, i) => {
-                const extra = [ing.benefit || "", ing.best_time ? `⏰ 사용 시간: ${ing.best_time}` : "", ing.synergy ? `🤎 시너지: ${ing.synergy.join(", ")}` : ""].filter(Boolean).join("\n\n")
-                return <Pill key={i} name={ing.name} detail={extra} good />
-              })}
-            </div>
-          </Section>
-        )}
-        {watchOut.length > 0 && (
-          <Section icon="⚠️" title="주의 성분" color="bg-rose-50/60">
-            <div className="space-y-2">
-              {watchOut.map((ing, i) => (
-                <Pill key={i} name={ing.name} detail={`${ing.reason || ""}${ing.alternative ? `\n\n💡 대안: ${ing.alternative}` : ""}`} good={false} />
-              ))}
-            </div>
-          </Section>
-        )}
-        {safetyRatings.length > 0 && (
-          <Section icon="🛡" title="안전 등급" color="bg-gray-50/80">
-            <div className="space-y-2.5">
-              {safetyRatings.map((r, i) => (
-                <div key={i}>
-                  <div className="mb-1 flex items-center justify-between">
-                    <span className="text-sm font-medium text-gray-700">{r.name}</span>
-                    <span className={`text-xs font-bold ${r.score <= 2 ? "text-emerald-600" : r.score <= 6 ? "text-amber-600" : "text-rose-600"}`}>{r.score}/10</span>
-                  </div>
-                  <div className="h-2 overflow-hidden rounded-full bg-gray-200">
-                    <div className={`h-full rounded-full ${r.score <= 2 ? "bg-emerald-400" : r.score <= 6 ? "bg-amber-400" : "bg-rose-400"}`} style={{ width: `${r.score * 10}%` }} />
-                  </div>
-                  {r.note && <p className="mt-0.5 text-xs text-gray-400">{r.note}</p>}
-                </div>
-              ))}
-            </div>
-          </Section>
-        )}
-        {forbiddenCombos.length > 0 && (
-          <Section icon="🚫" title="주의 콤보" color="bg-rose-50/50">
-            <div className="space-y-2">
-              {forbiddenCombos.map((combo, i) => (
-                <div key={i} className="rounded-xl border border-rose-100 bg-white/60 p-3.5">
-                  <p className="text-xs font-bold text-rose-600 mb-1">{combo.ingredients}</p>
-                  <p className="text-[12px] leading-relaxed text-gray-600"><Md>{combo.reason}</Md></p>
-                </div>
-              ))}
-            </div>
-          </Section>
-        )}
-        {usageGuide && (
-          <Section icon="📋" title="사용 가이드" color="bg-blue-50/50">
-            <div className="space-y-3">
-              {usageGuide.best_time && (
-                <div className="flex gap-3 items-start">
-                  <span className="shrink-0 w-8 h-8 rounded-xl bg-blue-100/60 flex items-center justify-center text-sm">⏰</span>
-                  <div><p className="text-[11px] font-bold text-blue-700 mb-0.5">최적 사용 시간</p><p className="text-xs text-gray-600 leading-relaxed">{usageGuide.best_time}</p></div>
-                </div>
-              )}
-              {usageGuide.effect_timeline && (
-                <div className="flex gap-3 items-start">
-                  <span className="shrink-0 w-8 h-8 rounded-xl bg-blue-100/60 flex items-center justify-center text-sm">📅</span>
-                  <div><p className="text-[11px] font-bold text-blue-700 mb-0.5">효과 체감 시기</p><p className="text-xs text-gray-600 leading-relaxed">{usageGuide.effect_timeline}</p></div>
-                </div>
-              )}
-              {usageGuide.beginner_tips && usageGuide.beginner_tips.length > 0 && (
-                <div className="flex gap-3 items-start">
-                  <span className="shrink-0 w-8 h-8 rounded-xl bg-blue-100/60 flex items-center justify-center text-sm">💡</span>
-                  <div>
-                    <p className="text-[11px] font-bold text-blue-700 mb-1">초보자 주의사항</p>
-                    {usageGuide.beginner_tips.map((tip, i) => (
-                      <p key={i} className="text-xs text-gray-600 leading-relaxed mb-0.5 font-medium">· {tip.replace(/\*\*/g, "")}</p>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          </Section>
-        )}
-      </div>
-    )
-  }
-
-  if (isRoutine) {
-    const conflicts = (rj.conflicts as Array<{ingredients?: string[]; products?: string[]; severity: string; reason: string}>) || []
-    const synergies = (rj.synergies as Array<{ingredients?: string[]; reason: string}>) || []
-    const orderSuggestion = (rj.order_suggestion as string[]) || []
-    const recommendations = (rj.recommendations as string[]) || []
-
-    return (
-      <div className="space-y-3">
-        {Boolean(rj.routine_comment) && (
-          <Section icon="🌿" title="종합 의견" color="bg-lime-50">
-            <p className="text-sm leading-relaxed text-gray-700"><Md>{String(rj.routine_comment)}</Md></p>
-          </Section>
-        )}
-        {conflicts.length > 0 && (
-          <Section icon="⚠️" title="성분 충돌" color="bg-rose-50/60">
-            {conflicts.map((c, i) => (
-              <div key={i} className="mb-2 last:mb-0 rounded-xl border border-rose-100 bg-white/60 p-3">
-                <p className="text-sm font-bold text-rose-600">{c.ingredients?.join(" × ")}</p>
-                <p className="text-xs text-rose-400 mb-1">{c.products?.join(" + ")}</p>
-                <p className="text-sm leading-relaxed text-gray-600"><Md>{c.reason}</Md></p>
-              </div>
-            ))}
-          </Section>
-        )}
-        {synergies.length > 0 && (
-          <Section icon="✨" title="시너지" color="bg-emerald-50/60">
-            {synergies.map((s, i) => (
-              <div key={i} className="mb-2 last:mb-0 rounded-xl border border-emerald-100 bg-white/60 p-3">
-                <p className="text-sm font-bold text-emerald-600 mb-1">{s.ingredients?.join(" + ")}</p>
-                <p className="text-sm leading-relaxed text-gray-600"><Md>{s.reason}</Md></p>
-              </div>
-            ))}
-          </Section>
-        )}
-        {orderSuggestion.length > 0 && (
-          <Section icon="#️⃣" title="추천 순서" color="bg-blue-50/60">
-            {orderSuggestion.map((name, i) => (
-              <div key={i} className="mb-1.5 flex items-center gap-2">
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-blue-500 text-xs font-bold text-white">{i + 1}</span>
-                <span className="text-sm font-medium text-gray-700">{name}</span>
-              </div>
-            ))}
-          </Section>
-        )}
-        {recommendations.length > 0 && (
-          <Section icon="💡" title="개선 팁" color="bg-amber-50/60">
-            {recommendations.map((tip, i) => (
-              <div key={i} className="mb-1.5 flex items-start gap-2">
-                <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-amber-200 text-[10px] font-bold text-amber-700">{i + 1}</span>
-                <span className="text-sm leading-relaxed text-gray-700">{tip}</span>
-              </div>
-            ))}
-          </Section>
-        )}
-      </div>
-    )
-  }
-
-  // 비교 분석
-  const shared = (rj.shared as Array<{name: string}>) || []
-  const onlyA = (rj.only_a as Array<{name: string; note?: string}>) || []
-  const onlyB = (rj.only_b as Array<{name: string; note?: string}>) || []
+function SingleShareView({ rj, score }: { rj: Record<string, unknown>; score: number }) {
+  const starIngs =
+    (rj.star_ingredients as Array<{
+      name: string
+      benefit?: string
+      best_time?: string
+      synergy?: string[]
+    }>) || []
+  const watchOut =
+    (rj.watch_out as Array<{
+      name: string
+      reason?: string
+      alternative?: string
+    }>) || []
+  const safetyRatings =
+    (rj.safety_ratings as Array<{ name: string; score: number; note?: string }>) ||
+    []
+  const concernAnalysis =
+    (rj.concern_analysis as Array<{
+      concern: string
+      score: number
+      comment: string
+    }>) || []
+  const forbiddenCombos =
+    (rj.forbidden_combos as Array<{ ingredients: string; reason: string }>) || []
+  const usageGuide = rj.usage_guide as
+    | { best_time?: string; effect_timeline?: string; beginner_tips?: string[] }
+    | undefined
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
+      <ScoreCard
+        score={score}
+        label={scoreLabel(score, "ko")}
+        caption={String(rj.overall_comment || "")}
+      />
+
+      {concernAnalysis.length > 0 && (
+        <ResultSection
+          tone="neutral"
+          icon="🫧"
+          title={t("피부 고민별 분석", "By Concern")}
+          subtitle={t("내 피부에 맞는 성분인지 점수로", "Score per concern")}
+          right={
+            <span className="text-[10px] text-gray-400">
+              {t("← 밀어서 보기", "swipe →")}
+            </span>
+          }
+        >
+          <div className="hide-scrollbar -mx-1 flex gap-2.5 overflow-x-auto px-1 pb-1">
+            {concernAnalysis.map((c, i) => (
+              <ConcernCard
+                key={i}
+                concern={c.concern}
+                score={c.score}
+                comment={c.comment}
+                lang="ko"
+                delay={i * 55}
+                index={i}
+              />
+            ))}
+          </div>
+        </ResultSection>
+      )}
+
+      {starIngs.length > 0 && (
+        <ResultSection tone="good" icon="✨" title={t("주목 성분", "Star Ingredients")}>
+          <div className="space-y-2">
+            {starIngs.map((ing, i) => {
+              const parts = [
+                ing.benefit || "",
+                ing.best_time ? `⏰ 사용 시간: ${ing.best_time}` : "",
+                ing.synergy?.length
+                  ? `🤎 시너지: ${ing.synergy.join(", ")}`
+                  : "",
+              ].filter(Boolean)
+              return (
+                <IngredientPill
+                  key={i}
+                  name={ing.name}
+                  detail={parts.length > 0 ? parts.join("\n\n") : undefined}
+                  good
+                />
+              )
+            })}
+          </div>
+        </ResultSection>
+      )}
+
+      {watchOut.length > 0 && (
+        <ResultSection tone="warn" icon="⚠️" title={t("주의 성분", "Watch Out")}>
+          <div className="space-y-2">
+            {watchOut.map((ing, i) => (
+              <IngredientPill
+                key={i}
+                name={ing.name}
+                detail={`${ing.reason || ""}${
+                  ing.alternative ? `\n\n💡 대안: ${ing.alternative}` : ""
+                }`}
+                good={false}
+              />
+            ))}
+          </div>
+        </ResultSection>
+      )}
+
+      {safetyRatings.length > 0 && (
+        <SafetyChart
+          ratings={safetyRatings.map((r) => ({
+            name: r.name,
+            score: r.score,
+            note: r.note || "",
+          }))}
+          t={t}
+        />
+      )}
+
+      {forbiddenCombos.length > 0 && (
+        <ResultSection tone="warn" icon="🚫" title={t("주의 콤보", "Caution Combos")}>
+          <div className="space-y-2">
+            {forbiddenCombos.map((combo, i) => (
+              <div
+                key={i}
+                className="rounded-xl border border-rose-100 bg-white/60 p-3.5"
+              >
+                <p className="mb-1 text-xs font-bold text-rose-600">
+                  {combo.ingredients}
+                </p>
+                <p className="text-[12px] leading-relaxed text-gray-600">
+                  <Md>{combo.reason}</Md>
+                </p>
+              </div>
+            ))}
+          </div>
+        </ResultSection>
+      )}
+
+      {usageGuide && (
+        <ResultSection
+          tone="info"
+          icon="📋"
+          title={t("사용 가이드", "Usage Guide")}
+          subtitle={t("이렇게 쓰면 더 좋아요", "Apply this way")}
+        >
+          <div className="divide-y divide-sky-100/70">
+            {usageGuide.best_time && (
+              <div className="py-2.5 first:pt-0">
+                <p className="mb-1 text-[10px] font-bold tracking-[0.14em] text-sky-700 uppercase">
+                  {t("최적 사용 시간", "Best Time")}
+                </p>
+                <p className="text-xs leading-relaxed text-gray-600">
+                  {usageGuide.best_time}
+                </p>
+              </div>
+            )}
+            {usageGuide.effect_timeline && (
+              <div className="py-2.5 first:pt-0">
+                <p className="mb-1 text-[10px] font-bold tracking-[0.14em] text-sky-700 uppercase">
+                  {t("효과 체감 시기", "Effect Timeline")}
+                </p>
+                <p className="text-xs leading-relaxed text-gray-600">
+                  {usageGuide.effect_timeline}
+                </p>
+              </div>
+            )}
+            {usageGuide.beginner_tips && usageGuide.beginner_tips.length > 0 && (
+              <div className="py-2.5 first:pt-0 last:pb-0">
+                <p className="mb-1 text-[10px] font-bold tracking-[0.14em] text-sky-700 uppercase">
+                  {t("초보자 주의사항", "Beginner Tips")}
+                </p>
+                {usageGuide.beginner_tips.map((tip, i) => (
+                  <p
+                    key={i}
+                    className="mb-0.5 text-xs leading-relaxed font-medium text-gray-600"
+                  >
+                    · {tip.replace(/\*\*/g, "")}
+                  </p>
+                ))}
+              </div>
+            )}
+          </div>
+        </ResultSection>
+      )}
+    </div>
+  )
+}
+
+function RoutineShareView({ rj }: { rj: Record<string, unknown> }) {
+  const conflicts =
+    (rj.conflicts as Array<{
+      ingredients?: string[]
+      products?: string[]
+      severity: string
+      reason: string
+    }>) || []
+  const synergies =
+    (rj.synergies as Array<{ ingredients?: string[]; reason: string }>) || []
+  const orderSuggestion = (rj.order_suggestion as string[]) || []
+  const recommendations = (rj.recommendations as string[]) || []
+
+  return (
+    <div className="space-y-4">
+      {Boolean(rj.routine_comment) && (
+        <ResultSection
+          tone="brand"
+          icon="🌿"
+          title={t("종합 의견", "Overview")}
+        >
+          <p className="text-sm leading-relaxed text-gray-700">
+            <Md>{String(rj.routine_comment)}</Md>
+          </p>
+        </ResultSection>
+      )}
+
+      {conflicts.length > 0 && (
+        <ResultSection
+          tone="warn"
+          icon="⚠️"
+          title={t("성분 충돌", "Conflicts")}
+        >
+          <div className="space-y-2">
+            {conflicts.map((c, i) => (
+              <div
+                key={i}
+                className="rounded-xl border border-rose-100 bg-white/60 p-3"
+              >
+                <p className="text-sm font-bold text-rose-600">
+                  {c.ingredients?.join(" × ")}
+                </p>
+                <p className="mb-1 text-xs text-rose-400">
+                  {c.products?.join(" + ")}
+                </p>
+                <p className="text-sm leading-relaxed text-gray-600">
+                  <Md>{c.reason}</Md>
+                </p>
+              </div>
+            ))}
+          </div>
+        </ResultSection>
+      )}
+
+      {synergies.length > 0 && (
+        <ResultSection
+          tone="good"
+          icon="✨"
+          title={t("시너지", "Synergies")}
+        >
+          <div className="space-y-2">
+            {synergies.map((s, i) => (
+              <div
+                key={i}
+                className="rounded-xl border border-emerald-100 bg-white/60 p-3"
+              >
+                <p className="mb-1 text-sm font-bold text-emerald-600">
+                  {s.ingredients?.join(" + ")}
+                </p>
+                <p className="text-sm leading-relaxed text-gray-600">
+                  <Md>{s.reason}</Md>
+                </p>
+              </div>
+            ))}
+          </div>
+        </ResultSection>
+      )}
+
+      {orderSuggestion.length > 0 && (
+        <ResultSection
+          tone="info"
+          icon="#️⃣"
+          title={t("추천 순서", "Recommended Order")}
+        >
+          {orderSuggestion.map((name, i) => (
+            <div key={i} className="mb-1.5 flex items-center gap-2">
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-sky-500 text-xs font-bold text-white">
+                {i + 1}
+              </span>
+              <span className="text-sm font-medium text-gray-700">{name}</span>
+            </div>
+          ))}
+        </ResultSection>
+      )}
+
+      {recommendations.length > 0 && (
+        <ResultSection
+          tone="tip"
+          icon="💡"
+          title={t("개선 팁", "Tips")}
+        >
+          {recommendations.map((tip, i) => (
+            <div key={i} className="mb-1.5 flex items-start gap-2">
+              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-amber-200 text-[10px] font-bold text-amber-700">
+                {i + 1}
+              </span>
+              <span className="text-sm leading-relaxed text-gray-700">{tip}</span>
+            </div>
+          ))}
+        </ResultSection>
+      )}
+    </div>
+  )
+}
+
+function CompareShareView({ rj }: { rj: Record<string, unknown> }) {
+  const shared = (rj.shared as Array<{ name: string }>) || []
+  const onlyA = (rj.only_a as Array<{ name: string; note?: string }>) || []
+  const onlyB = (rj.only_b as Array<{ name: string; note?: string }>) || []
+
+  return (
+    <div className="space-y-4">
       {Boolean(rj.summary) && (
-        <Section icon="🌿" title="비교 요약" color="bg-lime-50">
-          <p className="text-sm leading-relaxed text-gray-700"><Md>{String(rj.summary)}</Md></p>
-        </Section>
+        <ResultSection
+          tone="brand"
+          icon="🌿"
+          title={t("비교 요약", "Summary")}
+        >
+          <p className="text-sm leading-relaxed text-gray-700">
+            <Md>{String(rj.summary)}</Md>
+          </p>
+        </ResultSection>
       )}
+
       {shared.length > 0 && (
-        <Section icon="🤝" title="공통 성분" color="bg-emerald-50/60">
-          <div className="flex flex-wrap gap-1.5">{shared.map((s, i) => <span key={i} className="rounded-full bg-emerald-100 border border-emerald-200 px-2.5 py-1 text-xs font-medium text-emerald-700">{s.name}</span>)}</div>
-        </Section>
+        <ResultSection
+          tone="good"
+          icon="🤝"
+          title={t("공통 성분", "Shared Ingredients")}
+        >
+          <div className="flex flex-wrap gap-1.5">
+            {shared.map((s, i) => (
+              <span
+                key={i}
+                className="rounded-full border border-emerald-200 bg-emerald-100 px-2.5 py-1 text-xs font-medium text-emerald-700"
+              >
+                {s.name}
+              </span>
+            ))}
+          </div>
+        </ResultSection>
       )}
+
       {(onlyA.length > 0 || onlyB.length > 0) && (
         <div className="grid grid-cols-1 gap-2">
-          <div className="rounded-2xl bg-lime-50/50 p-4 border border-lime-100">
-            <p className="text-xs font-bold text-lime-700 mb-2">A 전용 성분</p>
-            {onlyA.length > 0 ? onlyA.map((s, i) => (
-              <div key={i} className="mb-1.5 last:mb-0">
-                <span className="text-sm font-medium text-gray-700">{s.name}</span>
-                {s.note && <p className="text-xs text-gray-500 mt-0.5">{s.note}</p>}
-              </div>
-            )) : <p className="text-xs text-gray-400">고유 성분 없음</p>}
-          </div>
-          <div className="rounded-2xl bg-orange-50/50 p-4 border border-orange-100">
-            <p className="text-xs font-bold text-orange-600 mb-2">B 전용 성분</p>
-            {onlyB.length > 0 ? onlyB.map((s, i) => (
-              <div key={i} className="mb-1.5 last:mb-0">
-                <span className="text-sm font-medium text-gray-700">{s.name}</span>
-                {s.note && <p className="text-xs text-gray-500 mt-0.5">{s.note}</p>}
-              </div>
-            )) : <p className="text-xs text-gray-400">고유 성분 없음</p>}
-          </div>
+          <ResultSection tone="brand" icon="A" title={t("A 전용 성분", "A Only")}>
+            {onlyA.length > 0 ? (
+              onlyA.map((s, i) => (
+                <div key={i} className="mb-1.5 last:mb-0">
+                  <span className="text-sm font-medium text-gray-700">
+                    {s.name}
+                  </span>
+                  {s.note && (
+                    <p className="mt-0.5 text-xs text-gray-500">{s.note}</p>
+                  )}
+                </div>
+              ))
+            ) : (
+              <p className="text-xs text-gray-400">고유 성분 없음</p>
+            )}
+          </ResultSection>
+          <ResultSection tone="accent" icon="B" title={t("B 전용 성분", "B Only")}>
+            {onlyB.length > 0 ? (
+              onlyB.map((s, i) => (
+                <div key={i} className="mb-1.5 last:mb-0">
+                  <span className="text-sm font-medium text-gray-700">
+                    {s.name}
+                  </span>
+                  {s.note && (
+                    <p className="mt-0.5 text-xs text-gray-500">{s.note}</p>
+                  )}
+                </div>
+              ))
+            ) : (
+              <p className="text-xs text-gray-400">고유 성분 없음</p>
+            )}
+          </ResultSection>
         </div>
       )}
     </div>
   )
 }
 
-/* ── 공유 페이지 ── */
 export default function SharePage() {
   const params = useParams()
   const router = useRouter()
@@ -301,7 +422,7 @@ export default function SharePage() {
   useEffect(() => {
     if (!id) return
     fetch(`/api/share/${id}`)
-      .then(r => {
+      .then((r) => {
         if (!r.ok) throw new Error("Not found")
         return r.json()
       })
@@ -313,10 +434,10 @@ export default function SharePage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <div className="max-w-160 mx-auto bg-white min-h-screen shadow-xl">
+        <div className="mx-auto min-h-screen max-w-160 bg-white shadow-xl">
           <NavBar title="Share" />
-          <div className="flex items-center justify-center h-[60vh]">
-            <div className="w-8 h-8 border-3 border-pastel-lime-dark/30 border-t-pastel-lime-dark rounded-full animate-spin" />
+          <div className="flex h-[60vh] items-center justify-center">
+            <div className="h-8 w-8 animate-spin rounded-full border-3 border-pastel-lime-dark/30 border-t-pastel-lime-dark" />
           </div>
         </div>
       </div>
@@ -326,15 +447,19 @@ export default function SharePage() {
   if (error || !data) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <div className="max-w-160 mx-auto bg-white min-h-screen shadow-xl">
+        <div className="mx-auto min-h-screen max-w-160 bg-white shadow-xl">
           <NavBar title="Share" />
           <div className="px-6 py-16 text-center">
-            <div className="text-4xl mb-4">🔍</div>
-            <p className="text-sm font-bold text-gray-700 mb-1">분석 결과를 찾을 수 없어요</p>
-            <p className="text-xs text-gray-400 mb-6">링크가 만료되었거나 잘못된 링크일 수 있어요.</p>
+            <div className="mb-4 text-4xl">🔍</div>
+            <p className="mb-1 text-sm font-bold text-gray-700">
+              분석 결과를 찾을 수 없어요
+            </p>
+            <p className="mb-6 text-xs text-gray-400">
+              링크가 만료되었거나 잘못된 링크일 수 있어요.
+            </p>
             <button
               onClick={() => router.push("/")}
-              className="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-pastel-lime-dark shadow-md"
+              className="rounded-xl bg-pastel-lime-dark px-5 py-2.5 text-xs font-bold text-white shadow-md"
             >
               skindit 홈으로
             </button>
@@ -348,35 +473,50 @@ export default function SharePage() {
   const productName = String(rj.productName || "")
   const isRoutine = data.type === "ROUTINE"
   const isCompare = rj.type === "compare"
-  const title = isCompare ? "성분 비교 결과" : isRoutine ? "루틴 궁합 분석" : productName || "성분 분석 결과"
-  const dateStr = new Date(data.createdAt).toLocaleDateString("ko-KR")
+  const productNames = Array.isArray(rj.productNames)
+    ? (rj.productNames as string[])
+    : []
+  const heroTitle = isCompare
+    ? "성분 비교"
+    : isRoutine
+      ? "루틴 궁합"
+      : productName || "성분 분석"
+  const heroVariant: "single" | "list" | "versus" = isCompare
+    ? "versus"
+    : isRoutine
+      ? "list"
+      : "single"
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-160 mx-auto bg-white min-h-screen shadow-xl">
+      <div className="mx-auto min-h-screen max-w-160 bg-white shadow-xl">
         <NavBar title="Share" />
 
         <div className="px-6 py-8 pb-24">
-          {/* Header */}
-          <div className="bg-linear-to-r from-[#c5e384] via-[#f0d078] to-[#c4a35a] px-6 py-6 rounded-2xl mb-6">
-            <p className="text-gray-500 text-[10px] font-bold uppercase tracking-widest mb-1">skindit 분석 결과</p>
-            <h1 className="font-display text-gray-900 text-lg font-extrabold">{title}</h1>
-            <div className="flex items-center gap-3 mt-2">
-              {!isCompare && <span className="bg-gray-900/10 rounded-full px-3 py-1 text-xs font-bold text-gray-800">{data.score}점</span>}
-              <span className="text-gray-500 text-xs">{dateStr}</span>
-            </div>
+          <div className="mb-6">
+            <ResultHero
+              title={heroTitle}
+              productNames={productNames.length > 0 ? productNames : undefined}
+              variant={heroVariant}
+            />
           </div>
 
-          {/* Result */}
-          <SharedResultView data={data} />
+          {!isRoutine && !isCompare && (
+            <SingleShareView rj={rj} score={data.score} />
+          )}
+          {isRoutine && <RoutineShareView rj={rj} />}
+          {isCompare && <CompareShareView rj={rj} />}
 
-          {/* CTA */}
-          <div className="mt-8 rounded-2xl border border-lime-100 bg-lime-50/50 p-5 text-center">
-            <p className="text-sm font-bold text-gray-700 mb-1">나도 성분 분석해보고 싶다면?</p>
-            <p className="text-xs text-gray-400 mb-4">화장품 성분을 AI가 분석해드려요</p>
+          <div className="mt-10 rounded-2xl border border-pastel-lime-dark/20 bg-pastel-lime/30 p-5 text-center">
+            <p className="mb-1 text-sm font-bold text-gray-700">
+              나도 성분 분석해보고 싶다면?
+            </p>
+            <p className="mb-4 text-xs text-gray-400">
+              화장품 성분을 AI가 분석해드려요
+            </p>
             <button
               onClick={() => router.push("/")}
-              className="px-6 py-2.5 rounded-xl text-xs font-bold text-white bg-pastel-lime-dark shadow-md hover:shadow-lg transition-all"
+              className="rounded-xl bg-pastel-lime-dark px-6 py-2.5 text-xs font-bold text-white shadow-md transition-all hover:shadow-lg"
             >
               skindit 시작하기
             </button>
@@ -386,4 +526,3 @@ export default function SharePage() {
     </div>
   )
 }
-

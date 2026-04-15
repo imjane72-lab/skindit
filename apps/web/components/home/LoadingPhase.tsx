@@ -52,7 +52,7 @@ export default function LoadingPhase({ t, streamingPreview }: LoadingPhaseProps)
   return (
     <div className="anim-fade-in py-16">
       <div className="mx-auto max-w-sm">
-        <div className="mb-12 text-center">
+        <div className="mb-20 text-center">
           <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-pastel-lime/50 px-4 py-1.5">
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-pastel-lime-dark opacity-60" />
@@ -73,10 +73,10 @@ export default function LoadingPhase({ t, streamingPreview }: LoadingPhaseProps)
           </p>
         </div>
 
-        <ol className="relative">
+        <ol className="relative mx-auto mt-10 w-fit">
           <span
             aria-hidden
-            className="absolute top-4 bottom-4 left-[14px] w-px bg-linear-to-b from-pastel-olive/10 via-pastel-olive/20 to-pastel-olive/5"
+            className="absolute top-4 bottom-4 left-3.5 w-px bg-linear-to-b from-pastel-olive/10 via-pastel-olive/20 to-pastel-olive/5"
           />
           {steps.map((s, i) => {
             const isDone = i < step
