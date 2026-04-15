@@ -62,6 +62,11 @@ export default function Page() {
           if (saved.sRes) setSRes(saved.sRes)
           if (saved.rRes) setRRes(saved.rRes)
           if (saved.cRes) setCRes(saved.cRes)
+          // 헤더에 표시할 제품 이름들도 복원 (새로고침/뒤로가기 후에도 유지)
+          if (saved.productName) setProductName(saved.productName)
+          if (Array.isArray(saved.products)) setProducts(saved.products)
+          if (saved.compareNameA) setCompareNameA(saved.compareNameA)
+          if (saved.compareNameB) setCompareNameB(saved.compareNameB)
           return
         }
       }
@@ -252,7 +257,18 @@ export default function Page() {
     try {
       sessionStorage.setItem(
         "skindit_result",
-        JSON.stringify({ tab: t, phase: "result", sRes: s, rRes: r, cRes: c })
+        JSON.stringify({
+          tab: t,
+          phase: "result",
+          sRes: s,
+          rRes: r,
+          cRes: c,
+          // 헤더에 표시할 제품 이름 보존 (새로고침 후 복원용)
+          productName,
+          products,
+          compareNameA,
+          compareNameB,
+        })
       )
     } catch {
       /* */
