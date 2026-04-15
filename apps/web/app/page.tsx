@@ -262,22 +262,13 @@ export default function Page() {
     setCRes(null)
   }
 
+  // "새 분석" 클릭 시 결과 화면 → 설정 화면으로 돌아감. 기존 입력(이름/성분)은 유지.
+  // 같은 제품을 재분석하거나 일부만 수정해 재분석하는 경우가 많아 입력 보존이 UX에 유리.
   const reset = () => {
     setPhase("setup")
     setSRes(null)
     setRRes(null)
     setCRes(null)
-    setConcerns(profileConcerns.length > 0 ? [...profileConcerns] : [])
-    setIngs("")
-    setProductName("")
-    setProducts([
-      { id: 1, name: "", ingredients: "" },
-      { id: 2, name: "", ingredients: "" },
-    ])
-    setCompareA("")
-    setCompareB("")
-    setCompareNameA("")
-    setCompareNameB("")
     try {
       sessionStorage.removeItem("skindit_result")
     } catch {

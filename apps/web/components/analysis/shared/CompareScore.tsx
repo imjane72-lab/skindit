@@ -26,8 +26,8 @@ export default function CompareScore({
   t,
 }: CompareScoreProps) {
   const winnerLabel = () => {
-    if (pick === "A") return `A · ${nameA || t("제품 A", "Product A")}`
-    if (pick === "B") return `B · ${nameB || t("제품 B", "Product B")}`
+    if (pick === "A") return `1 · ${nameA || t("제품 1", "Product 1")}`
+    if (pick === "B") return `2 · ${nameB || t("제품 2", "Product 2")}`
     if (pick === "both") return t("둘 다 추천해요", "Both work well")
     if (pick === "either") return t("어느 쪽이든 괜찮아요", "Either is fine")
     return null
@@ -36,12 +36,12 @@ export default function CompareScore({
 
   return (
     <div className="flex flex-col items-center py-2">
-      <div className="flex items-center justify-center gap-3">
+      <div className="flex items-center justify-center gap-4">
         <div className="flex flex-col items-center">
-          <ScoreRing score={scoreA} size={130} />
+          <ScoreRing score={scoreA} size={170} />
           <span className="mt-3 flex items-center gap-1.5">
             <span className="flex h-5 w-5 items-center justify-center rounded-full bg-pastel-lime-dark font-display text-[10px] font-extrabold text-white">
-              A
+              1
             </span>
             <span className="text-[11px] font-bold tracking-wide text-gray-500 uppercase">
               {t("피부 적합도", "For You")}
@@ -54,10 +54,10 @@ export default function CompareScore({
         </span>
 
         <div className="flex flex-col items-center">
-          <ScoreRing score={scoreB} size={130} />
+          <ScoreRing score={scoreB} size={170} />
           <span className="mt-3 flex items-center gap-1.5">
             <span className="flex h-5 w-5 items-center justify-center rounded-full bg-pastel-gold font-display text-[10px] font-extrabold text-white">
-              B
+              2
             </span>
             <span className="text-[11px] font-bold tracking-wide text-gray-500 uppercase">
               {t("피부 적합도", "For You")}
@@ -98,9 +98,6 @@ export default function CompareScore({
         </div>
       )}
 
-      <p className="mt-4 text-[11px] text-gray-400">
-        {new Date().toLocaleDateString("ko-KR")}
-      </p>
     </div>
   )
 }

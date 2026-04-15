@@ -8,6 +8,7 @@ import ResultHero from "@/components/analysis/shared/ResultHero"
 import ResultSection from "@/components/analysis/shared/ResultSection"
 import ScoreCard from "@/components/analysis/shared/ScoreCard"
 import IngredientPill from "@/components/analysis/shared/IngredientPill"
+import InfoCard from "@/components/analysis/shared/InfoCard"
 import ConcernCard from "@/components/analysis/ConcernCard"
 import SafetyChart from "@/components/analysis/SafetyChart"
 import { scoreLabel } from "@/lib/score-utils"
@@ -61,11 +62,13 @@ function SingleShareView({ rj, score }: { rj: Record<string, unknown>; score: nu
 
   return (
     <div className="space-y-4">
-      <ScoreCard
-        score={score}
-        label={scoreLabel(score, "ko")}
-        caption={String(rj.overall_comment || "")}
-      />
+      <ScoreCard score={score} label={scoreLabel(score, "ko")} />
+
+      {Boolean(rj.overall_comment) && (
+        <InfoCard variant="brand" icon="🤎" label="종합 의견">
+          {String(rj.overall_comment)}
+        </InfoCard>
+      )}
 
       {concernAnalysis.length > 0 && (
         <ResultSection
@@ -177,7 +180,7 @@ function SingleShareView({ rj, score }: { rj: Record<string, unknown>; score: nu
           <div className="divide-y divide-sky-100/70">
             {usageGuide.best_time && (
               <div className="py-2.5 first:pt-0">
-                <p className="mb-1 text-[10px] font-bold tracking-[0.14em] text-sky-700 uppercase">
+                <p className="mb-1 text-base font-bold text-sky-700">
                   {t("최적 사용 시간", "Best Time")}
                 </p>
                 <p className="text-xs leading-relaxed text-gray-600">
@@ -187,7 +190,7 @@ function SingleShareView({ rj, score }: { rj: Record<string, unknown>; score: nu
             )}
             {usageGuide.effect_timeline && (
               <div className="py-2.5 first:pt-0">
-                <p className="mb-1 text-[10px] font-bold tracking-[0.14em] text-sky-700 uppercase">
+                <p className="mb-1 text-base font-bold text-sky-700">
                   {t("효과 체감 시기", "Effect Timeline")}
                 </p>
                 <p className="text-xs leading-relaxed text-gray-600">
@@ -197,7 +200,7 @@ function SingleShareView({ rj, score }: { rj: Record<string, unknown>; score: nu
             )}
             {usageGuide.beginner_tips && usageGuide.beginner_tips.length > 0 && (
               <div className="py-2.5 first:pt-0 last:pb-0">
-                <p className="mb-1 text-[10px] font-bold tracking-[0.14em] text-sky-700 uppercase">
+                <p className="mb-1 text-base font-bold text-sky-700">
                   {t("초보자 주의사항", "Beginner Tips")}
                 </p>
                 {usageGuide.beginner_tips.map((tip, i) => (
@@ -372,7 +375,7 @@ function CompareShareView({ rj }: { rj: Record<string, unknown> }) {
 
       {(onlyA.length > 0 || onlyB.length > 0) && (
         <div className="grid grid-cols-1 gap-2">
-          <ResultSection tone="brand" icon="A" title={t("A 전용 성분", "A Only")}>
+          <ResultSection tone="brand" icon="1" title={t("1번 전용 성분", "1 Only")}>
             {onlyA.length > 0 ? (
               onlyA.map((s, i) => (
                 <div key={i} className="mb-1.5 last:mb-0">
@@ -388,7 +391,7 @@ function CompareShareView({ rj }: { rj: Record<string, unknown> }) {
               <p className="text-xs text-gray-400">고유 성분 없음</p>
             )}
           </ResultSection>
-          <ResultSection tone="accent" icon="B" title={t("B 전용 성분", "B Only")}>
+          <ResultSection tone="accent" icon="2" title={t("2번 전용 성분", "2 Only")}>
             {onlyB.length > 0 ? (
               onlyB.map((s, i) => (
                 <div key={i} className="mb-1.5 last:mb-0">
@@ -507,7 +510,7 @@ export default function SharePage() {
           {isRoutine && <RoutineShareView rj={rj} />}
           {isCompare && <CompareShareView rj={rj} />}
 
-          <div className="mt-10 rounded-2xl border border-pastel-lime-dark/20 bg-pastel-lime/30 p-5 text-center">
+          <div className="mt-10 p-5 text-center">
             <p className="mb-1 text-sm font-bold text-gray-700">
               나도 성분 분석해보고 싶다면?
             </p>

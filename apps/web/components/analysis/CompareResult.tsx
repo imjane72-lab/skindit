@@ -27,8 +27,8 @@ export default function CompareResult({
   nameA,
   nameB,
 }: CompareResultProps) {
-  const displayA = nameA || t("제품 A", "Product A")
-  const displayB = nameB || t("제품 B", "Product B")
+  const displayA = nameA || t("제품 1", "Product 1")
+  const displayB = nameB || t("제품 2", "Product 2")
 
   const summary = [cRes.summary, cRes.recommendation]
     .filter((s) => s && s.trim())
@@ -84,9 +84,9 @@ export default function CompareResult({
         <ResultSection
           tone="brand"
           icon={
-            <span className="font-display text-sm font-extrabold">A</span>
+            <span className="font-display text-sm font-extrabold">1</span>
           }
-          title={t("A에만 있어요", "Only in A")}
+          title={t("1번에만 있어요", "Only in 1")}
           subtitle={displayA}
         >
           <div className="flex flex-col gap-1.5">
@@ -106,9 +106,9 @@ export default function CompareResult({
         <ResultSection
           tone="accent"
           icon={
-            <span className="font-display text-sm font-extrabold">B</span>
+            <span className="font-display text-sm font-extrabold">2</span>
           }
-          title={t("B에만 있어요", "Only in B")}
+          title={t("2번에만 있어요", "Only in 2")}
           subtitle={displayB}
         >
           <div className="flex flex-col gap-1.5">
@@ -161,17 +161,24 @@ export default function CompareResult({
           <div className="divide-y divide-sky-100/70">
             {cRes.usage_guide.best_time && (
               <div className="py-2.5 first:pt-0">
-                <p className="mb-1 text-[10px] font-bold tracking-[0.14em] text-sky-700 uppercase">
+                <p className="mb-1 text-base font-bold text-sky-700">
                   {t("사용 시간", "Best Time")}
                 </p>
-                <p className="text-xs leading-relaxed text-gray-600">
-                  {cRes.usage_guide.best_time}
-                </p>
+                {/* AI가 "A:..., B:..." 또는 "1:..., 2:..." 형식으로 한 줄에 작성.
+                    읽기 쉽게 각 제품을 개행해서 렌더링. */}
+                <div className="space-y-1 text-xs leading-relaxed text-gray-600">
+                  {cRes.usage_guide.best_time
+                    .split(/\s*,?\s*(?=(?:[AB]|[12])\s*[:.])/)
+                    .filter((s) => s.trim())
+                    .map((line, i) => (
+                      <p key={i}>{line.trim()}</p>
+                    ))}
+                </div>
               </div>
             )}
             {cRes.usage_guide.effect_timeline && (
               <div className="py-2.5 first:pt-0">
-                <p className="mb-1 text-[10px] font-bold tracking-[0.14em] text-sky-700 uppercase">
+                <p className="mb-1 text-base font-bold text-sky-700">
                   {t("효과 시기", "Effect Timeline")}
                 </p>
                 <p className="text-xs leading-relaxed text-gray-600">
@@ -182,7 +189,7 @@ export default function CompareResult({
             {cRes.usage_guide.beginner_tips &&
               cRes.usage_guide.beginner_tips.length > 0 && (
                 <div className="py-2.5 first:pt-0 last:pb-0">
-                  <p className="mb-1 text-[10px] font-bold tracking-[0.14em] text-sky-700 uppercase">
+                  <p className="mb-1 text-base font-bold text-sky-700">
                     {t("초보자 팁", "Beginner Tips")}
                   </p>
                   <div>
@@ -201,7 +208,7 @@ export default function CompareResult({
         </ResultSection>
       )}
 
-      <div className="pt-6">
+      <div className="pt-12">
         <ResultActions
           t={t}
           reset={reset}

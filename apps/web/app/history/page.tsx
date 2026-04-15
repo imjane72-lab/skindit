@@ -121,19 +121,19 @@ function FullResultView({ item, displayType }: { item: HistoryItem; displayType:
             <div className="divide-y divide-sky-100/70">
               {usageGuide.best_time && (
                 <div className="py-2.5 first:pt-0">
-                  <p className="mb-1 text-[10px] font-bold tracking-[0.14em] text-sky-700 uppercase">최적 사용 시간</p>
+                  <p className="mb-1 text-base font-bold text-sky-700">최적 사용 시간</p>
                   <p className="text-xs leading-relaxed text-gray-600">{usageGuide.best_time}</p>
                 </div>
               )}
               {usageGuide.effect_timeline && (
                 <div className="py-2.5 first:pt-0">
-                  <p className="mb-1 text-[10px] font-bold tracking-[0.14em] text-sky-700 uppercase">효과 체감 시기</p>
+                  <p className="mb-1 text-base font-bold text-sky-700">효과 체감 시기</p>
                   <p className="text-xs leading-relaxed text-gray-600">{usageGuide.effect_timeline}</p>
                 </div>
               )}
               {usageGuide.beginner_tips && usageGuide.beginner_tips.length > 0 && (
                 <div className="py-2.5 first:pt-0 last:pb-0">
-                  <p className="mb-1 text-[10px] font-bold tracking-[0.14em] text-sky-700 uppercase">초보자 주의사항</p>
+                  <p className="mb-1 text-base font-bold text-sky-700">초보자 주의사항</p>
                   {usageGuide.beginner_tips.map((tip, i) => (
                     <p key={i} className="mb-0.5 text-xs leading-relaxed font-medium text-gray-600">· {tip.replace(/\*\*/g, "")}</p>
                   ))}
@@ -229,13 +229,13 @@ function FullResultView({ item, displayType }: { item: HistoryItem; displayType:
             <div className="divide-y divide-sky-100/70">
               {usageGuide.effect_timeline && (
                 <div className="py-2.5 first:pt-0">
-                  <p className="mb-1 text-[10px] font-bold tracking-[0.14em] text-sky-700 uppercase">효과 체감 시기</p>
+                  <p className="mb-1 text-base font-bold text-sky-700">효과 체감 시기</p>
                   <p className="text-xs leading-relaxed text-gray-600">{usageGuide.effect_timeline}</p>
                 </div>
               )}
               {usageGuide.beginner_tips && usageGuide.beginner_tips.length > 0 && (
                 <div className="py-2.5 first:pt-0 last:pb-0">
-                  <p className="mb-1 text-[10px] font-bold tracking-[0.14em] text-sky-700 uppercase">초보자 주의사항</p>
+                  <p className="mb-1 text-base font-bold text-sky-700">초보자 주의사항</p>
                   {usageGuide.beginner_tips.map((tip, i) => (
                     <p key={i} className="mb-0.5 text-xs leading-relaxed text-gray-600">· {tip}</p>
                   ))}
@@ -276,7 +276,7 @@ function FullResultView({ item, displayType }: { item: HistoryItem; displayType:
       )}
 
       <div className="grid grid-cols-1 gap-2">
-        <ResultSection tone="brand" icon="A" title={names.a}>
+        <ResultSection tone="brand" icon="1" title={names.a}>
           {onlyA.length > 0 ? onlyA.map((s, i) => (
             <div key={i} className="mb-1.5 last:mb-0">
               <span className="text-sm font-medium text-gray-700">{s.name}</span>
@@ -284,7 +284,7 @@ function FullResultView({ item, displayType }: { item: HistoryItem; displayType:
             </div>
           )) : <p className="text-xs text-gray-400">고유 성분 없음</p>}
         </ResultSection>
-        <ResultSection tone="accent" icon="B" title={names.b}>
+        <ResultSection tone="accent" icon="2" title={names.b}>
           {onlyB.length > 0 ? onlyB.map((s, i) => (
             <div key={i} className="mb-1.5 last:mb-0">
               <span className="text-sm font-medium text-gray-700">{s.name}</span>
@@ -312,19 +312,19 @@ function FullResultView({ item, displayType }: { item: HistoryItem; displayType:
           <div className="divide-y divide-sky-100/70">
             {usageGuide.best_time && (
               <div className="py-2.5 first:pt-0">
-                <p className="mb-1 text-[10px] font-bold tracking-[0.14em] text-sky-700 uppercase">사용 시간</p>
+                <p className="mb-1 text-base font-bold text-sky-700">사용 시간</p>
                 <p className="text-xs leading-relaxed text-gray-600">{usageGuide.best_time}</p>
               </div>
             )}
             {usageGuide.effect_timeline && (
               <div className="py-2.5 first:pt-0">
-                <p className="mb-1 text-[10px] font-bold tracking-[0.14em] text-sky-700 uppercase">효과 시기</p>
+                <p className="mb-1 text-base font-bold text-sky-700">효과 시기</p>
                 <p className="text-xs leading-relaxed text-gray-600">{usageGuide.effect_timeline}</p>
               </div>
             )}
             {usageGuide.beginner_tips && usageGuide.beginner_tips.length > 0 && (
               <div className="py-2.5 first:pt-0 last:pb-0">
-                <p className="mb-1 text-[10px] font-bold tracking-[0.14em] text-sky-700 uppercase">초보자 주의사항</p>
+                <p className="mb-1 text-base font-bold text-sky-700">초보자 주의사항</p>
                 {usageGuide.beginner_tips.map((tip, i) => (
                   <p key={i} className="mb-0.5 text-xs leading-relaxed text-gray-600">· {tip}</p>
                 ))}
