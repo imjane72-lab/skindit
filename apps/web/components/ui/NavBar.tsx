@@ -1,7 +1,5 @@
 "use client"
 
-import { useRouter } from "next/navigation"
-
 interface NavBarProps {
   title?: string
 }
@@ -39,11 +37,22 @@ export function Logo() {
 }
 
 export default function NavBar({ title }: NavBarProps) {
-  const router = useRouter()
+  // 로고 클릭 시 항상 하드 네비게이션으로 "/"로 이동 → 홈에 이미 있어도 새로고침되면서
+  // 분석 결과·입력 state가 전부 초기 상태로 돌아감. 사용자가 "로고 누르면 깨끗하게
+  // 처음부터 시작"이라는 일반적 UX 기대를 충족.
+  const goHome = () => {
+    try {
+      sessionStorage.removeItem("skindit_result")
+    } catch {
+      /* */
+    }
+    window.location.href = "/"
+  }
+
   return (
     <nav className="sticky top-0 z-50 flex h-14 items-center justify-between border-b border-gray-100/80 bg-white/80 px-6 backdrop-blur-2xl">
       <button
-        onClick={() => router.push("/")}
+        onClick={goHome}
         className="flex items-center gap-3 border-none bg-transparent p-0"
       >
         <Logo />

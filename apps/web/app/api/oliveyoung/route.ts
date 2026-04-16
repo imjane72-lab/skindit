@@ -30,6 +30,10 @@
  *   - ScrapingBee 자체 에러 → 502
  */
 import { NextRequest, NextResponse } from "next/server"
+import { PrismaClient } from "@prisma/client"
+
+const prisma = new PrismaClient()
+const CACHE_DAYS = 30
 
 export const maxDuration = 60
 export const dynamic = "force-dynamic"
@@ -214,7 +218,29 @@ export async function POST(req: NextRequest) {
     )
   }
 
+  const normalizedKeyword = keyword.trim().toLowerCase()
+
   try {
+    // ── 0단계: 캐시 확인 (DB에 저장된 이전 크롤링 결과) ──
+    const cutoff = new Date(Date.now() - CACHE_DAYS * 24 * 60 * 60 * 1000)
+    const cached = await prisma.productCache.findFirst({
+      where: {
+        keyword: normalizedKeyword,
+        createdAt: { gte: cutoff },
+      },
+      orderBy: { createdAt: "desc" },
+    })
+
+    if (cached) {
+      return NextResponse.json({
+        productName: cached.productName,
+        brand: cached.brand,
+        url: cached.url,
+        ingredients: cached.ingredients,
+        cached: true,
+      })
+    }
+
     // ── 1단계: 검색 결과 페이지 받기 (ScrapingBee 위임) ──
     const searchUrl = `https://www.oliveyoung.co.kr/store/search/getSearchMain.do?query=${encodeURIComponent(
       keyword.trim()
@@ -231,8 +257,6 @@ export async function POST(req: NextRequest) {
     }
 
     // ── 3단계: 상세 페이지 받기 ──
-    // "상품정보 제공고시" 섹션은 접혀있어 초기 HTML에 전성분이 없을 수 있음.
-    // js_scenario로 해당 섹션까지 스크롤 + 클릭해 펼친 뒤 HTML을 받음.
     const detailScenario = {
       instructions: [
         { scroll_y: 3000 },
@@ -262,6 +286,19 @@ export async function POST(req: NextRequest) {
         message: "제품은 찾았지만 전성분을 추출하지 못했어요.",
       })
     }
+
+    // ── 5단계: 캐시 저장 (다음 검색 시 ScrapingBee 호출 불필요) ──
+    prisma.productCache
+      .create({
+        data: {
+          keyword: normalizedKeyword,
+          productName: productInfo.name,
+          brand: productInfo.brand,
+          url: productInfo.url,
+          ingredients,
+        },
+      })
+      .catch(() => {})
 
     return NextResponse.json({
       productName: productInfo.name,
