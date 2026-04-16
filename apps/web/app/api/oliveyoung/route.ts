@@ -261,7 +261,7 @@ export async function POST(req: NextRequest) {
       { wait: 1000 },
       {
         evaluate:
-          "document.querySelectorAll('button, a, dt, .btn_toggle, [class*=\"artcInfo\"]').forEach(el => { if (el.textContent && el.textContent.includes('상품정보 제공고시')) el.click() })",
+          "document.querySelectorAll('button, a, dt, div, [class*=\"toggle\"], [class*=\"artc\"]').forEach(el => { if (el.textContent && el.textContent.includes('상품정보 제공고시')) el.click() })",
       },
       { wait: 2000 },
     ])
