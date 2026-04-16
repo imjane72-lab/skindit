@@ -85,23 +85,29 @@ const END_PATTERNS =
 async function scrapeHtml(
   targetUrl: string,
   apiKey: string,
-  jsInstructions?: object[],
+  options?: { jsScenario?: object; premiumProxy?: boolean },
 ): Promise<string> {
   const params = new URLSearchParams({
     api_key: apiKey,
     url: targetUrl,
-    render: "true",
+    render_js: "true",
     country_code: "kr",
+    block_resources: "false",
   })
-  if (jsInstructions) {
-    params.set("js_instructions", JSON.stringify(jsInstructions))
+  // premium_proxy는 Cloudflare 우회에 필수지만 25크레딧/요청.
+  // 검색 페이지는 보호가 약해 없이도 될 수 있음 → 호출 시 선택.
+  if (options?.premiumProxy !== false) {
+    params.set("premium_proxy", "true")
+  }
+  if (options?.jsScenario) {
+    params.set("js_scenario", JSON.stringify(options.jsScenario))
   }
   const maxAttempts = 3
   let lastError = ""
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    const res = await fetch(`https://api.scraperapi.com?${params}`)
+    const res = await fetch(`https://app.scrapingbee.com/api/v1/?${params}`)
     if (res.ok) return await res.text()
-    lastError = `ScraperAPI error ${res.status}: ${await res.text()}`
+    lastError = `ScrapingBee error ${res.status}: ${await res.text()}`
     if (res.status < 500 || attempt === maxAttempts) break
     await new Promise((r) => setTimeout(r, 1000 * attempt))
   }
@@ -189,12 +195,12 @@ export async function POST(req: NextRequest) {
   const limit = rateLimit(ip)
   if (!limit.ok) return NextResponse.json({ error: limit.msg }, { status: 429 })
 
-  const apiKey = process.env.SCRAPER_API_KEY
+  const apiKey = process.env.SCRAPINGBEE_API_KEY
   if (!apiKey) {
     return NextResponse.json(
       {
         error:
-          "올리브영 검색 기능을 사용하려면 SCRAPER_API_KEY 환경변수가 필요해요.",
+          "올리브영 검색 기능을 사용하려면 SCRAPINGBEE_API_KEY 환경변수가 필요해요.",
       },
       { status: 500 }
     )
@@ -238,11 +244,11 @@ export async function POST(req: NextRequest) {
       })
     }
 
-    // ── 1단계: 검색 결과 페이지 받기 (JS 렌더링 불필요 → render=false로 빠르게) ──
+    // ── 1단계: 검색 결과 페이지 (premium_proxy 없이 → 5크레딧 절약) ──
     const searchUrl = `https://www.oliveyoung.co.kr/store/search/getSearchMain.do?query=${encodeURIComponent(
       keyword.trim()
     )}`
-    const searchHtml = await scrapeHtml(searchUrl, apiKey)
+    const searchHtml = await scrapeHtml(searchUrl, apiKey, { premiumProxy: false })
 
     // ── 2단계: 첫 번째 제품 카드 추출 ──
     const productInfo = extractFirstProduct(searchHtml)
@@ -256,7 +262,21 @@ export async function POST(req: NextRequest) {
     // ── 3단계: 상세 페이지 받기 ──
     // "상품정보 제공고시" 섹션이 접혀있어 클릭해야 전성분이 DOM에 로드됨.
     // ScraperAPI의 js_instructions로 해당 섹션 클릭 + 대기.
-    const detailHtml = await scrapeHtml(productInfo.url, apiKey)
+    // ── 3단계: 상세 페이지 (premium_proxy + js_scenario로 "상품정보 제공고시" 클릭) ──
+    const detailHtml = await scrapeHtml(productInfo.url, apiKey, {
+      premiumProxy: true,
+      jsScenario: {
+        instructions: [
+          { scroll_y: 3000 },
+          { wait: 1000 },
+          {
+            evaluate:
+              "document.querySelectorAll('button, a, dt, div, [class*=\"toggle\"], [class*=\"artc\"]').forEach(el => { if (el.textContent && el.textContent.includes('상품정보 제공고시')) el.click() })",
+          },
+          { wait: 2000 },
+        ],
+      },
+    })
 
     // ── 4단계: 전성분 텍스트 추출 ──
     const ingredients = extractIngredients(detailHtml)
