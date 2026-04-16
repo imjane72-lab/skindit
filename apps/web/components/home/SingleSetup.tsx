@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { CONCERNS, SAMPLE_S_KO, SAMPLE_S_EN } from "@/constants/skin-data"
 
 interface SingleSetupProps {
@@ -147,6 +148,7 @@ export default function SingleSetup({
             )}
           </button>
         </div>
+        {oyLoading && <OyLoadingMessage t={t} />}
         {oyError && <p className="mt-2 text-xs text-rose-500">{oyError}</p>}
         {oySuccess && (
           <div className="mt-3 rounded-xl border border-pastel-lime-dark/30 bg-pastel-lime-dark/10 px-4 py-3">
@@ -289,6 +291,35 @@ export default function SingleSetup({
       >
         {t("분석해볼까요?", "Analyze Ingredients")}
       </button>
+    </div>
+  )
+}
+
+function OyLoadingMessage({ t }: { t: (ko: string, en: string) => string }) {
+  const [step, setStep] = useState(0)
+  const messages = [
+    t("제품 찾는 중...", "Searching product..."),
+    t("성분 정보 가져오는 중...", "Fetching ingredient info..."),
+    t("처음 검색하는 제품이라 시간이 좀 걸려요~", "First-time search takes a moment~"),
+    t("거의 다 됐어요! 조금만 기다려주세요", "Almost done! Just a moment"),
+  ]
+
+  useEffect(() => {
+    const timers = [
+      setTimeout(() => setStep(1), 3000),
+      setTimeout(() => setStep(2), 7000),
+      setTimeout(() => setStep(3), 12000),
+    ]
+    return () => timers.forEach(clearTimeout)
+  }, [])
+
+  return (
+    <div className="mt-2 flex items-center gap-2">
+      <span
+        className="inline-block h-3 w-3 shrink-0 rounded-full border-2 border-pastel-lime-dark/30 border-t-pastel-lime-dark"
+        style={{ animation: "spin 1s linear infinite" }}
+      />
+      <p className="text-xs text-gray-500 transition-all">{messages[step]}</p>
     </div>
   )
 }
