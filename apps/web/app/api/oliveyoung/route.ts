@@ -85,26 +85,19 @@ const END_PATTERNS =
 async function scrapeHtml(
   targetUrl: string,
   apiKey: string,
-  jsScenario?: object
 ): Promise<string> {
   const params = new URLSearchParams({
     api_key: apiKey,
     url: targetUrl,
-    render_js: "true",
-    premium_proxy: "true",
+    render: "true",
     country_code: "kr",
-    wait: "2000",
-    block_resources: "false",
   })
-  if (jsScenario) {
-    params.set("js_scenario", JSON.stringify(jsScenario))
-  }
   const maxAttempts = 3
   let lastError = ""
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    const res = await fetch(`https://app.scrapingbee.com/api/v1/?${params}`)
+    const res = await fetch(`https://api.scraperapi.com?${params}`)
     if (res.ok) return await res.text()
-    lastError = `ScrapingBee error ${res.status}: ${await res.text()}`
+    lastError = `ScraperAPI error ${res.status}: ${await res.text()}`
     if (res.status < 500 || attempt === maxAttempts) break
     await new Promise((r) => setTimeout(r, 1000 * attempt))
   }
@@ -192,12 +185,12 @@ export async function POST(req: NextRequest) {
   const limit = rateLimit(ip)
   if (!limit.ok) return NextResponse.json({ error: limit.msg }, { status: 429 })
 
-  const apiKey = process.env.SCRAPINGBEE_API_KEY
+  const apiKey = process.env.SCRAPER_API_KEY
   if (!apiKey) {
     return NextResponse.json(
       {
         error:
-          "올리브영 검색 기능을 사용하려면 SCRAPINGBEE_API_KEY 환경변수가 필요해요.",
+          "올리브영 검색 기능을 사용하려면 SCRAPER_API_KEY 환경변수가 필요해요.",
       },
       { status: 500 }
     )
@@ -257,22 +250,7 @@ export async function POST(req: NextRequest) {
     }
 
     // ── 3단계: 상세 페이지 받기 ──
-    const detailScenario = {
-      instructions: [
-        { scroll_y: 3000 },
-        { wait: 1000 },
-        {
-          evaluate:
-            "document.querySelectorAll('button, a, dt, .btn_toggle, [class*=\"artcInfo\"]').forEach(el => { if (el.textContent && el.textContent.includes('상품정보 제공고시')) el.click() })",
-        },
-        { wait: 2000 },
-      ],
-    }
-    const detailHtml = await scrapeHtml(
-      productInfo.url,
-      apiKey,
-      detailScenario
-    )
+    const detailHtml = await scrapeHtml(productInfo.url, apiKey)
 
     // ── 4단계: 전성분 텍스트 추출 ──
     const ingredients = extractIngredients(detailHtml)
