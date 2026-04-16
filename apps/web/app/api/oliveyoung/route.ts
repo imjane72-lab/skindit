@@ -239,7 +239,7 @@ export async function POST(req: NextRequest) {
     const searchUrl = `https://www.oliveyoung.co.kr/store/search/getSearchMain.do?query=${encodeURIComponent(
       keyword.trim()
     )}`
-    const searchHtml = await scrapeHtml(searchUrl, apiKey, false)
+    const searchHtml = await scrapeHtml(searchUrl, apiKey)
 
     // ── 2단계: 첫 번째 제품 카드 추출 ──
     const productInfo = extractFirstProduct(searchHtml)
