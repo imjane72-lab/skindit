@@ -85,11 +85,12 @@ const END_PATTERNS =
 async function scrapeHtml(
   targetUrl: string,
   apiKey: string,
+  renderJs = true,
 ): Promise<string> {
   const params = new URLSearchParams({
     api_key: apiKey,
     url: targetUrl,
-    render: "true",
+    render: renderJs ? "true" : "false",
     country_code: "kr",
   })
   const maxAttempts = 3
@@ -234,11 +235,11 @@ export async function POST(req: NextRequest) {
       })
     }
 
-    // ── 1단계: 검색 결과 페이지 받기 (ScrapingBee 위임) ──
+    // ── 1단계: 검색 결과 페이지 받기 (JS 렌더링 불필요 → render=false로 빠르게) ──
     const searchUrl = `https://www.oliveyoung.co.kr/store/search/getSearchMain.do?query=${encodeURIComponent(
       keyword.trim()
     )}`
-    const searchHtml = await scrapeHtml(searchUrl, apiKey)
+    const searchHtml = await scrapeHtml(searchUrl, apiKey, false)
 
     // ── 2단계: 첫 번째 제품 카드 추출 ──
     const productInfo = extractFirstProduct(searchHtml)

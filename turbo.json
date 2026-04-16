@@ -15,7 +15,9 @@
         "KAKAO_CLIENT_ID",
         "KAKAO_CLIENT_SECRET",
         "MFDS_API_KEY",
-        "NEXTAUTH_URL"
+        "NEXTAUTH_URL",
+        "SCRAPER_API_KEY",
+        "OPENAI_API_KEY"
       ]
     },
     "lint": {
