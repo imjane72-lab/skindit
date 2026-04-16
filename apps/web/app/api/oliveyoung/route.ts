@@ -85,14 +85,17 @@ const END_PATTERNS =
 async function scrapeHtml(
   targetUrl: string,
   apiKey: string,
-  renderJs = true,
+  jsInstructions?: object[],
 ): Promise<string> {
   const params = new URLSearchParams({
     api_key: apiKey,
     url: targetUrl,
-    render: renderJs ? "true" : "false",
+    render: "true",
     country_code: "kr",
   })
+  if (jsInstructions) {
+    params.set("js_instructions", JSON.stringify(jsInstructions))
+  }
   const maxAttempts = 3
   let lastError = ""
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
@@ -251,7 +254,17 @@ export async function POST(req: NextRequest) {
     }
 
     // ── 3단계: 상세 페이지 받기 ──
-    const detailHtml = await scrapeHtml(productInfo.url, apiKey)
+    // "상품정보 제공고시" 섹션이 접혀있어 클릭해야 전성분이 DOM에 로드됨.
+    // ScraperAPI의 js_instructions로 해당 섹션 클릭 + 대기.
+    const detailHtml = await scrapeHtml(productInfo.url, apiKey, [
+      { scroll_y: 3000 },
+      { wait: 1000 },
+      {
+        evaluate:
+          "document.querySelectorAll('button, a, dt, .btn_toggle, [class*=\"artcInfo\"]').forEach(el => { if (el.textContent && el.textContent.includes('상품정보 제공고시')) el.click() })",
+      },
+      { wait: 2000 },
+    ])
 
     // ── 4단계: 전성분 텍스트 추출 ──
     const ingredients = extractIngredients(detailHtml)
