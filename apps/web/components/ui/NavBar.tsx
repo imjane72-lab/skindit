@@ -43,10 +43,16 @@ export default function NavBar({ title }: NavBarProps) {
   const goHome = () => {
     try {
       sessionStorage.removeItem("skindit_result")
+      sessionStorage.removeItem("skindit_pending")
     } catch {
       /* */
     }
-    window.location.href = "/"
+    // 이미 홈이면 reload, 아니면 이동. 둘 다 React state 완전 초기화.
+    if (window.location.pathname === "/") {
+      window.location.reload()
+    } else {
+      window.location.href = "/"
+    }
   }
 
   return (
