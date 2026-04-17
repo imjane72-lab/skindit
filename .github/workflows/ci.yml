@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-build:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: skindit
+          POSTGRES_PASSWORD: skindit1234
+          POSTGRES_DB: skindit
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U skindit"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgresql://skindit:skindit1234@localhost:5432/skindit
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.0.6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Type check
+        run: pnpm typecheck
+
+      - name: Generate Prisma client
+        run: pnpm --filter web exec prisma generate
+
+      - name: Run migrations
+        run: pnpm --filter web exec prisma migrate deploy
+
+      - name: Build
+        run: pnpm build
+        env:
+          NEXTAUTH_SECRET: ci-test-secret
+          NEXTAUTH_URL: http://localhost:3000
+          ANTHROPIC_API_KEY: dummy
+          MFDS_API_KEY: dummy
+
+      - name: Build Docker image
+        run: |
+          docker build -t skindit-web .
+          echo "Docker image built successfully"

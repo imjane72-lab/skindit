@@ -5,6 +5,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: "standalone",
   transpilePackages: ["@workspace/ui"],
 
   /* pnpm 모노레포 환경에서 Next.js 파일 추적기가 부모 node_modules까지
