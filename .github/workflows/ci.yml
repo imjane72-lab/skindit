@@ -61,10 +61,18 @@ jobs:
       - name: Build
         run: pnpm build
         env:
+          NODE_OPTIONS: "--max-old-space-size=4096"
           NEXTAUTH_SECRET: ci-test-secret
           NEXTAUTH_URL: http://localhost:3000
           ANTHROPIC_API_KEY: dummy
           MFDS_API_KEY: dummy
+          OPENAI_API_KEY: dummy
+          SCRAPER_API_KEY: dummy
+          SCRAPINGBEE_API_KEY: dummy
+          GOOGLE_CLIENT_ID: dummy
+          GOOGLE_CLIENT_SECRET: dummy
+          KAKAO_CLIENT_ID: dummy
+          KAKAO_CLIENT_SECRET: dummy
 
       - name: Build Docker image
         run: |
