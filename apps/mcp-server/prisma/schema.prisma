@@ -183,3 +183,17 @@ model ChatMessage {
   @@index([userId, createdAt(sort: Desc)]) /// 사용자별 대화 순서 최적화
   @@map("chat_messages")
 }
+
+/// 올리브영 크롤링 결과 캐시. 같은 제품 재검색 시 ScrapingBee 호출 없이 DB에서 반환.
+model ProductCache {
+  id          String   @id @default(cuid())
+  keyword     String
+  productName String   @map("product_name")
+  brand       String   @default("")
+  url         String
+  ingredients String   @db.Text
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([keyword])
+  @@map("product_cache")
+}

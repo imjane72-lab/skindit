@@ -52,8 +52,10 @@ jobs:
       - name: Type check
         run: pnpm typecheck
 
-      - name: Generate Prisma client
-        run: pnpm --filter web exec prisma generate
+      - name: Generate Prisma clients
+        run: |
+          pnpm --filter mcp-server exec prisma generate
+          pnpm --filter web exec prisma generate
 
       - name: Run migrations
         run: pnpm --filter web exec prisma migrate deploy
