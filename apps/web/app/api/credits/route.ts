@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma"
 import { apiResponse, apiError } from "@/lib/api-utils"
 import { DAILY_FREE } from "@/lib/credit-costs"
 
+export const dynamic = "force-dynamic"
+
 /**
  * @swagger
  * /api/credits:

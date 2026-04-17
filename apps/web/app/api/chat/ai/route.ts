@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma"
 import { apiResponse, apiError, rateLimit, getIp } from "@/lib/api-utils"
 import { TOOL_DEFINITIONS, executeTool } from "@/lib/chat-tools"
 
+export const dynamic = "force-dynamic"
+
 const MAX_TOOL_ITERATIONS = 5
 
 const SYSTEM_PROMPT = `너는 피부과 경력 30년차 유쾌한 여자 의사야. 말투는 친한 언니처럼 친근하되, 문장 끝은 반드시 존댓말로 마무리해. 예: "좋아요", "바르세요", "추천해요", "해보세요".

@@ -5,6 +5,8 @@ import { prisma } from "@/lib/prisma"
 import { apiResponse, apiError } from "@/lib/api-utils"
 import { PACKAGES } from "@/lib/credit-costs"
 
+export const dynamic = "force-dynamic"
+
 const chargeSchema = z.object({
   package: z.enum(["basic", "standard", "premium"]),
 })

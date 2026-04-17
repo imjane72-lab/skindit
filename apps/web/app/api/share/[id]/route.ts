@@ -2,6 +2,8 @@ import { NextRequest } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { apiResponse, apiError } from "@/lib/api-utils"
 
+export const dynamic = "force-dynamic"
+
 /**
  * 공유용 공개 API — 인증 없이 분석 결과 조회 (읽기 전용)
  */

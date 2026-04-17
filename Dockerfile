@@ -23,6 +23,20 @@ COPY --from=deps /app/packages/ui/node_modules ./packages/ui/node_modules
 COPY . .
 
 RUN pnpm --filter web exec prisma generate
+
+# 빌드 시 필요한 환경변수 (런타임에는 docker-compose에서 주입)
+ENV NEXTAUTH_SECRET=build-placeholder
+ENV NEXTAUTH_URL=http://localhost:3000
+ENV ANTHROPIC_API_KEY=build-placeholder
+ENV MFDS_API_KEY=build-placeholder
+ENV OPENAI_API_KEY=build-placeholder
+ENV GOOGLE_CLIENT_ID=build-placeholder
+ENV GOOGLE_CLIENT_SECRET=build-placeholder
+ENV KAKAO_CLIENT_ID=build-placeholder
+ENV KAKAO_CLIENT_SECRET=build-placeholder
+ENV SCRAPER_API_KEY=build-placeholder
+ENV SCRAPINGBEE_API_KEY=build-placeholder
+
 RUN pnpm --filter web build
 
 # ── Stage 3: Production ──

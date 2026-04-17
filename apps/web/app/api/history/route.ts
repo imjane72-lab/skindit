@@ -5,6 +5,8 @@ import { prisma } from "@/lib/prisma"
 import { apiResponse, apiError } from "@/lib/api-utils"
 import { generateAndSaveEmbedding } from "@/lib/embedding"
 
+export const dynamic = "force-dynamic"
+
 const createSchema = z.object({
   type: z.enum(["SINGLE", "ROUTINE"]),
   ingredients: z.string().min(1),

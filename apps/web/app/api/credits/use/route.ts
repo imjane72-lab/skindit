@@ -5,6 +5,8 @@ import { prisma } from "@/lib/prisma"
 import { apiResponse, apiError } from "@/lib/api-utils"
 import { CREDIT_COSTS, DAILY_FREE } from "@/lib/credit-costs"
 
+export const dynamic = "force-dynamic"
+
 const useSchema = z.object({
   type: z.enum(["analysis", "chat", "report_trouble", "report_treatment", "report_derma"]),
   cost: z.number().int().min(0).optional(),

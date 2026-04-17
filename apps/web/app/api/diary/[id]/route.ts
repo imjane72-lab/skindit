@@ -4,6 +4,8 @@ import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { apiResponse, apiError } from "@/lib/api-utils"
 
+export const dynamic = "force-dynamic"
+
 const updateSchema = z.object({
   date: z.coerce.date().optional(),
   condition: z.enum(["good", "normal", "bad"]).optional(),

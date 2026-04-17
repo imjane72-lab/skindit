@@ -3,6 +3,8 @@ import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { apiResponse, apiError } from "@/lib/api-utils"
 
+export const dynamic = "force-dynamic"
+
 export async function GET(req: NextRequest) {
   const session = await auth()
   if (!session?.user?.id) {

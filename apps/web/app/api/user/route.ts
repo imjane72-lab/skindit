@@ -2,6 +2,8 @@ import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { apiResponse, apiError } from "@/lib/api-utils"
 
+export const dynamic = "force-dynamic"
+
 /**
  * @swagger
  * /api/user:

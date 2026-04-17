@@ -4,6 +4,8 @@ import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { apiResponse, apiError } from "@/lib/api-utils"
 
+export const dynamic = "force-dynamic"
+
 const messageSchema = z.object({
   role: z.enum(["user", "assistant"]),
   content: z.string().min(1).max(10000),

@@ -4,6 +4,8 @@ import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { apiResponse, apiError } from "@/lib/api-utils"
 
+export const dynamic = "force-dynamic"
+
 const upsertSchema = z.object({
   skinType: z.array(z.string()).optional(),
   skinTypes: z.array(z.string()).optional(),

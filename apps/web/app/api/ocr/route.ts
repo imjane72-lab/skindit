@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic"
+
 /* ── 요청 횟수 제한 ── */
 const WINDOW_MS = 60 * 1000;
 const MAX_PER_WINDOW = 5;

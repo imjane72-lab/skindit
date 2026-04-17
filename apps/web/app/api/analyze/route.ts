@@ -18,6 +18,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getMfdsContext } from "@/lib/mfds-api";
 
+export const dynamic = "force-dynamic"
+
 /* ────────────────────────────────────────────────────────────
  * Rate Limiter — IP 기반 메모리 카운터
  * Vercel Serverless 환경 특성상 인스턴스마다 카운트가 분리되지만,
