@@ -2,69 +2,18 @@
 
 import type { ReactNode } from "react"
 
-export type SectionTone =
-  | "neutral"
-  | "good"
-  | "warn"
-  | "info"
-  | "tip"
-  | "brand"
-  | "accent"
+export type SectionTone = "neutral" | "warn"
 
-const TONES: Record<SectionTone, { bg: string; icon: string; title: string; sub: string; border: string }> = {
-  neutral: {
-    bg: "bg-white",
-    icon: "bg-gray-100 text-gray-600",
-    title: "text-gray-900",
-    sub: "text-gray-400",
-    border: "border-gray-100",
-  },
-  good: {
-    bg: "bg-emerald-50/60",
-    icon: "bg-emerald-100 text-emerald-700",
-    title: "text-emerald-900",
-    sub: "text-emerald-500/80",
-    border: "border-emerald-100",
-  },
-  warn: {
-    bg: "bg-rose-50/60",
-    icon: "bg-rose-100 text-rose-700",
-    title: "text-rose-900",
-    sub: "text-rose-500/80",
-    border: "border-rose-100",
-  },
-  info: {
-    bg: "bg-sky-50/60",
-    icon: "bg-sky-100 text-sky-700",
-    title: "text-sky-900",
-    sub: "text-sky-500/80",
-    border: "border-sky-100",
-  },
-  tip: {
-    bg: "bg-amber-50/60",
-    icon: "bg-amber-100 text-amber-700",
-    title: "text-amber-900",
-    sub: "text-amber-500/80",
-    border: "border-amber-100",
-  },
-  brand: {
-    bg: "bg-pastel-lime/60",
-    icon: "bg-pastel-lime-dark/15 text-[#6B8E23]",
-    title: "text-[#3a5a1a]",
-    sub: "text-[#6B8E23]/80",
-    border: "border-pastel-lime-dark/20",
-  },
-  accent: {
-    bg: "bg-pastel-cream/60",
-    icon: "bg-pastel-gold/20 text-pastel-olive",
-    title: "text-[#5c430c]",
-    sub: "text-pastel-olive/70",
-    border: "border-pastel-gold/25",
-  },
-}
-
+/**
+ * Muji-tone 섹션 카드.
+ * - 모든 섹션은 동일한 화이트 페이퍼 + hairline border (이전 6톤 제거).
+ * - 카테고리 구분(좋음/주의/정보)은 색이 아니라 타이포 위계와 본문 라벨로 처리.
+ * - tone="warn"만 예외적으로 아이콘 영역에 옅은 벽돌 톤을 둠 — "주의해주세요" 신호용.
+ *
+ * @param icon  lucide-react 모노라인 아이콘 권장 (size 14~16). 이모지 사용 지양.
+ */
 interface ResultSectionProps {
-  icon: ReactNode
+  icon?: ReactNode
   title: string
   subtitle?: string
   tone?: SectionTone
@@ -80,21 +29,27 @@ export default function ResultSection({
   children,
   right,
 }: ResultSectionProps) {
-  const s = TONES[tone]
+  const iconClass =
+    tone === "warn"
+      ? "bg-warn-soft text-warn-deep"
+      : "bg-rule-soft text-brand-deep"
+
   return (
-    <section className={`rounded-2xl border ${s.border} ${s.bg} p-5`}>
-      <header className="mb-3.5 flex items-center gap-2.5">
-        <span
-          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-sm ${s.icon}`}
-        >
-          {icon}
-        </span>
+    <section className="rounded-xl border border-rule bg-paper-card p-5">
+      <header className="mb-4 flex items-center gap-3">
+        {icon && (
+          <span
+            className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md ${iconClass}`}
+          >
+            {icon}
+          </span>
+        )}
         <div className="min-w-0 flex-1">
-          <p className={`text-[13px] font-bold leading-tight ${s.title}`}>
+          <p className="text-ink text-[13.5px] leading-tight font-semibold">
             {title}
           </p>
           {subtitle && (
-            <p className={`mt-0.5 text-[10px] leading-tight ${s.sub}`}>
+            <p className="text-ink-muted mt-1 text-[11px] leading-tight">
               {subtitle}
             </p>
           )}

@@ -1,5 +1,12 @@
 "use client"
 
+import {
+  Sparkles,
+  AlertTriangle,
+  Ban,
+  Clock,
+  Droplets,
+} from "lucide-react"
 import ConcernCard from "@/components/analysis/ConcernCard"
 import SafetyChart from "@/components/analysis/SafetyChart"
 import ResultHero from "@/components/analysis/shared/ResultHero"
@@ -30,37 +37,34 @@ export default function SingleResult({
   const displayName = res.productName || ""
 
   return (
-    <div className="anim-scale-in space-y-8">
+    <div className="anim-scale-in space-y-5">
       <ResultHero title={displayName || t("성분 분석 결과", "Ingredient Analysis")} />
 
-      <ScoreCard
-        score={res.overall_score}
-        label={scoreLabel(res.overall_score, lang)}
-      />
+      <div className="px-1">
+        <ScoreCard
+          score={res.overall_score}
+          label={scoreLabel(res.overall_score, lang)}
+        />
+      </div>
 
       {res.overall_comment && (
-        <InfoCard
-          variant="brand"
-          icon="🤎"
-          label={t("종합 의견", "Summary")}
-        >
+        <InfoCard label={t("종합 의견", "Summary")}>
           {res.overall_comment}
         </InfoCard>
       )}
 
       {res.concern_analysis && res.concern_analysis.length > 0 && (
         <ResultSection
-          tone="neutral"
-          icon="🫧"
+          icon={<Droplets size={14} strokeWidth={1.6} />}
           title={t("피부 고민별 분석", "By Concern")}
           subtitle={t("내 피부에 맞는 성분인지 점수로", "Score per concern")}
           right={
-            <span className="text-[10px] text-gray-400">
+            <span className="text-ink-faint text-[10px]">
               {t("← 밀어서 보기", "swipe →")}
             </span>
           }
         >
-          <div className="hide-scrollbar -mx-1 flex gap-2.5 overflow-x-auto px-1 pb-1">
+          <div className="hide-scrollbar -mx-1 flex gap-3 overflow-x-auto px-1 pb-1">
             {res.concern_analysis.map((c, i) => (
               <ConcernCard
                 key={i}
@@ -69,7 +73,6 @@ export default function SingleResult({
                 comment={c.comment}
                 lang={lang}
                 delay={i * 55}
-                index={i}
               />
             ))}
           </div>
@@ -78,8 +81,7 @@ export default function SingleResult({
 
       {res.star_ingredients && res.star_ingredients.length > 0 && (
         <ResultSection
-          tone="good"
-          icon="✨"
+          icon={<Sparkles size={14} strokeWidth={1.6} />}
           title={t("주목 성분", "Key Ingredients")}
           subtitle={t("피부에 좋은 활성 성분", "Powerful actives")}
         >
@@ -87,9 +89,9 @@ export default function SingleResult({
             {res.star_ingredients.map((ing, i) => {
               const extra: string[] = []
               if (ing.benefit) extra.push(ing.benefit)
-              if (ing.best_time) extra.push(`⏰ ${ing.best_time}`)
+              if (ing.best_time) extra.push(`${t("시간", "Time")}: ${ing.best_time}`)
               if (ing.synergy && Array.isArray(ing.synergy))
-                extra.push(`🤎 ${t("시너지", "Synergy")}: ${ing.synergy.join(", ")}`)
+                extra.push(`${t("시너지", "Synergy")}: ${ing.synergy.join(", ")}`)
               return (
                 <IngredientPill
                   key={i}
@@ -106,7 +108,7 @@ export default function SingleResult({
       {res.watch_out && res.watch_out.length > 0 && (
         <ResultSection
           tone="warn"
-          icon="⚠️"
+          icon={<AlertTriangle size={14} strokeWidth={1.6} />}
           title={t("주의 성분", "Watch Out")}
           subtitle={t("자극 가능성이 있는 성분", "Potential irritants")}
         >
@@ -117,7 +119,7 @@ export default function SingleResult({
                 name={ing.name}
                 detail={`${ing.reason || ""}${
                   ing.alternative
-                    ? `\n\n💡 ${t("대안", "Alternative")}: ${ing.alternative}`
+                    ? `\n\n${t("대안", "Alternative")}: ${ing.alternative}`
                     : ""
                 }`}
                 good={false}
@@ -134,7 +136,7 @@ export default function SingleResult({
       {res.forbidden_combos && res.forbidden_combos.length > 0 && (
         <ResultSection
           tone="warn"
-          icon="🚫"
+          icon={<Ban size={14} strokeWidth={1.6} />}
           title={t("주의 콤보", "Caution Combos")}
           subtitle={t("같이 쓰면 주의가 필요해요", "Use with caution")}
         >
@@ -142,12 +144,12 @@ export default function SingleResult({
             {res.forbidden_combos.map((combo, i) => (
               <div
                 key={i}
-                className="rounded-xl border border-rose-100 bg-white/70 p-3.5"
+                className="border-rule rounded-lg border px-3.5 py-3"
               >
-                <p className="mb-1 text-xs font-bold text-rose-600">
+                <p className="text-warn-deep mb-1 text-[12px] font-semibold">
                   {combo.ingredients}
                 </p>
-                <p className="text-[12px] leading-relaxed text-gray-600">
+                <p className="text-ink-soft text-[12px] leading-relaxed">
                   <Md>{combo.reason}</Md>
                 </p>
               </div>
@@ -158,43 +160,42 @@ export default function SingleResult({
 
       {res.usage_guide && (
         <ResultSection
-          tone="info"
-          icon="📋"
+          icon={<Clock size={14} strokeWidth={1.6} />}
           title={t("사용 가이드", "Usage Guide")}
           subtitle={t("이렇게 쓰면 더 좋아요", "Apply this way")}
         >
-          <div className="divide-y divide-sky-100/70">
+          <div className="divide-rule-soft divide-y">
             {res.usage_guide.best_time && (
-              <div className="py-2.5 first:pt-0">
-                <p className="mb-1 text-[13px] font-bold text-sky-700">
+              <div className="py-3 first:pt-0">
+                <p className="text-brand-deep mb-1 text-[11.5px] font-medium tracking-tight">
                   {t("최적 사용 시간", "Best Time")}
                 </p>
-                <p className="text-xs leading-relaxed text-gray-600">
+                <p className="text-ink-soft text-[12.5px] leading-relaxed">
                   {res.usage_guide.best_time}
                 </p>
               </div>
             )}
             {res.usage_guide.effect_timeline && (
-              <div className="py-2.5 first:pt-0">
-                <p className="mb-1 text-[13px] font-bold text-sky-700">
+              <div className="py-3 first:pt-0">
+                <p className="text-brand-deep mb-1 text-[11.5px] font-medium tracking-tight">
                   {t("효과 체감 시기", "Effect Timeline")}
                 </p>
-                <p className="text-xs leading-relaxed text-gray-600">
+                <p className="text-ink-soft text-[12.5px] leading-relaxed">
                   {res.usage_guide.effect_timeline}
                 </p>
               </div>
             )}
             {res.usage_guide.beginner_tips &&
               res.usage_guide.beginner_tips.length > 0 && (
-                <div className="py-2.5 first:pt-0 last:pb-0">
-                  <p className="mb-1 text-[13px] font-bold text-sky-700">
+                <div className="py-3 first:pt-0 last:pb-0">
+                  <p className="text-brand-deep mb-1 text-[11.5px] font-medium tracking-tight">
                     {t("초보자 주의사항", "Beginner Tips")}
                   </p>
-                  <div>
+                  <div className="space-y-0.5">
                     {res.usage_guide.beginner_tips.map((tip, i) => (
                       <p
                         key={i}
-                        className="mb-0.5 text-xs leading-relaxed font-medium text-gray-600"
+                        className="text-ink-soft text-[12.5px] leading-relaxed"
                       >
                         · {tip.replace(/\*\*/g, "")}
                       </p>
@@ -206,7 +207,7 @@ export default function SingleResult({
         </ResultSection>
       )}
 
-      <div className="pt-12">
+      <div className="pt-8">
         <ResultActions
           t={t}
           reset={reset}
