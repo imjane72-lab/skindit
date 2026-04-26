@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react"
 import { useSession, signIn } from "next-auth/react"
-import { Pill, Layers, Scale } from "lucide-react"
 import {
   getIngredientContext,
   correctOcrIngredients,
@@ -864,23 +863,33 @@ JSON only. Schema:{"routine_score":0-100,"routine_comment":"2-3줄","conflicts":
         {phase === "setup" && (
           <div
             id="analysis-tabs"
-            className="bg-rule-soft mb-8 flex gap-1 rounded-xl p-1"
+            className="mb-8 flex gap-1 rounded-2xl bg-gray-100/80 p-1"
           >
             {[
-              { id: "single", ko: "단일 제품", en: "Single Product", Icon: Pill },
-              { id: "routine", ko: "루틴 궁합", en: "Routine Check", Icon: Layers },
-              { id: "compare", ko: "성분 비교", en: "Compare", Icon: Scale },
+              {
+                id: "single",
+                ko: "단일 제품",
+                en: "Single Product",
+                icon: "💊",
+              },
+              {
+                id: "routine",
+                ko: "루틴 궁합",
+                en: "Routine Check",
+                icon: "🧴",
+              },
+              { id: "compare", ko: "성분 비교", en: "Compare", icon: "⚖️" },
             ].map((tb) => (
               <button
                 key={tb.id}
                 onClick={() => setTab(tb.id)}
-                className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2.5 text-[13px] font-medium transition-all ${
+                className={`flex-1 rounded-xl py-2.5 text-sm font-semibold transition-all ${
                   tab === tb.id
-                    ? "bg-paper-card text-ink shadow-sm"
-                    : "text-ink-muted hover:text-ink-soft"
+                    ? "bg-white text-gray-900 shadow-sm"
+                    : "text-gray-400 hover:text-gray-600"
                 }`}
               >
-                <tb.Icon size={14} strokeWidth={1.6} />
+                <span className="mr-1.5">{tb.icon}</span>
                 {t(tb.ko, tb.en)}
               </button>
             ))}

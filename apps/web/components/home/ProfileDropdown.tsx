@@ -61,9 +61,7 @@ export default function ProfileDropdown({ t }: ProfileDropdownProps) {
         <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full border-3 border-pastel-lime-dark/40 bg-white transition-all hover:scale-105 hover:border-pastel-lime-dark/60 hover:shadow-lg">
           {session?.user?.image ? (
             <img
-              // 카카오 CDN이 http URL로 오는 경우 Mixed Content 경고 — https로 보정.
-              // Kakao CDN은 https를 정상 지원하므로 단순 protocol 치환으로 안전.
-              src={session.user.image.replace(/^http:\/\//, "https://")}
+              src={session.user.image}
               alt=""
               className="h-full w-full object-cover"
             />

@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Camera, ClipboardList, ShoppingBag, Tag, Droplets } from "lucide-react"
 import { CONCERNS, SAMPLE_S_KO, SAMPLE_S_EN } from "@/constants/skin-data"
 
 interface SingleSetupProps {
@@ -41,9 +40,9 @@ interface SingleSetupProps {
  *
  * [상태 관리 전략]
  *   모든 state/handler를 부모(page.tsx)가 소유하고 props로 전달.
- *   - 분석 결과(sRes)와 입력값을 부모의 saveResultState에서 함께 저장
- *   - 언어 전환 시 부모가 마지막 입력값(lastIngs/lastConcerns) 보관
- *   - OCR/올영 핸들러가 lib/ingredient-db, lib/api에 의존 → 부모에서 통합 관리
+ *   - 이유 1: 분석 결과(sRes)와 입력값이 부모의 saveResultState에서 함께 저장됨
+ *   - 이유 2: 언어 전환 시 부모가 마지막 입력값(lastIngs/lastConcerns) 보관
+ *   - 이유 3: OCR/올영 핸들러가 lib/ingredient-db, lib/api에 의존 → 부모에서 통합 관리
  */
 export default function SingleSetup({
   t,
@@ -67,96 +66,127 @@ export default function SingleSetup({
 }: SingleSetupProps) {
   return (
     <div className="anim-fade-up">
-      <SectionHeader
-        Icon={Droplets}
-        title={t("피부 고민", "Skin Concerns")}
-        sub={t("해당하는 거 다 골라주세요", "Select all that apply")}
-      />
-      <div className="mb-12 flex flex-wrap gap-2">
-        {CONCERNS.map((c) => {
-          const sel = concerns.includes(c.id)
-          return (
-            <button
-              key={c.id}
-              onClick={() =>
-                setConcerns((p) =>
-                  p.includes(c.id) ? p.filter((x) => x !== c.id) : [...p, c.id]
-                )
-              }
-              className={`rounded-full border px-3.5 py-2 text-[12px] font-medium transition-colors ${
-                sel
-                  ? "border-brand-deep bg-brand-deep/8 text-brand-deep"
-                  : "border-rule bg-paper-card text-ink-muted hover:border-ink-faint"
-              }`}
-            >
-              {t(c.ko, c.en)}
-            </button>
-          )
-        })}
-      </div>
-
-      <SectionHeader
-        Icon={ShoppingBag}
-        title={t("제품명으로 검색", "Search by Product Name")}
-        sub={t(
-          "올리브영에 등록된 제품만 가능. 브랜드 + 제품명 함께 입력하면 정확해요.",
-          "Olive Young products only. Brand + product name works best."
-        )}
-      />
-      <div className="mb-2 flex gap-2">
-        <input
-          value={oyQuery}
-          onChange={(e) => setOyQuery(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") handleOySearch()
-          }}
-          placeholder={t("제품 이름으로 검색", "Search by product name")}
-          disabled={oyLoading}
-          className="border-rule bg-paper-card text-ink placeholder:text-ink-faint focus:border-brand-deep flex-1 rounded-lg border px-4 py-3 text-[13px] transition-colors outline-none disabled:opacity-50"
-        />
-        <button
-          onClick={handleOySearch}
-          disabled={!oyQuery.trim() || oyLoading}
-          className="bg-brand-deep shrink-0 rounded-lg px-4 py-3 text-[13px] font-medium text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
-        >
-          {oyLoading ? (
-            <span
-              className="inline-block h-4 w-4 rounded-full border-2 border-white/40 border-t-white"
-              style={{ animation: "spin 1s linear infinite" }}
-            />
-          ) : (
-            t("검색", "Search")
-          )}
-        </button>
-      </div>
-      {oyLoading && <OyLoadingMessage t={t} />}
-      {oyError && <p className="text-warn-deep mt-2 text-[12px]">{oyError}</p>}
-      {oySuccess && (
-        <div className="border-rule mt-3 mb-8 rounded-lg border px-3.5 py-3">
-          <p className="text-brand-deep text-[12px] font-medium">{oySuccess}</p>
-          <p className="text-ink-muted mt-0.5 text-[11px]">
-            {t("전성분을 가져왔어요", "Ingredients loaded")}
-          </p>
+      {/* ── 피부 고민 ── */}
+      <div className="mt-12 mb-12">
+        <div className="mb-3 flex gap-2.5">
+          <span className="mt-0.5 text-base">🫧</span>
+          <div>
+            <p className="text-sm font-bold text-gray-800">
+              {t("피부 고민", "Skin Concerns")}
+            </p>
+            <p className="text-xs text-gray-400">
+              {t("해당하는 거 다 골라주세요~", "Select all that apply")}
+            </p>
+          </div>
         </div>
-      )}
-      {!oySuccess && <div className="mb-8" />}
+        <div className="flex flex-wrap gap-2">
+          {CONCERNS.map((c) => {
+            const sel = concerns.includes(c.id)
+            return (
+              <button
+                key={c.id}
+                onClick={() =>
+                  setConcerns((p) =>
+                    p.includes(c.id)
+                      ? p.filter((x) => x !== c.id)
+                      : [...p, c.id]
+                  )
+                }
+                className={`rounded-full border px-3.5 py-2 text-xs font-medium transition-all ${
+                  sel
+                    ? c.color + " font-semibold shadow-sm"
+                    : "border-gray-200 bg-white text-gray-500 hover:border-gray-300 hover:bg-gray-50"
+                }`}
+              >
+                <span className="mr-1">{c.icon}</span>
+                {t(c.ko, c.en)}
+              </button>
+            )
+          })}
+        </div>
+      </div>
 
-      <Divider label={t("또는 직접 등록", "or add manually")} />
-
-      <SectionHeader
-        Icon={Tag}
-        title={t("제품 이름", "Product Name")}
-        suffix={
-          <span className="text-ink-faint text-[11px]">
-            {t("(선택)", "(optional)")}
-          </span>
-        }
-        sub={t(
-          "기록에서 어떤 제품인지 구분하기 쉬워요",
-          "Makes it easy to identify in history"
-        )}
-      />
+      {/* ── 🛒 올리브영 제품 검색 ── */}
       <div className="mb-8">
+        <div className="mb-3 flex gap-2.5">
+          <span className="mt-0.5 text-base">🛒</span>
+          <div>
+            <p className="text-sm font-bold text-gray-800">
+              {t("제품명으로 검색", "Search by Product Name")}
+            </p>
+            <p className="text-xs text-gray-400">
+              {t(
+                "올리브영에 등록된 제품만 검색 가능해요. 브랜드명 + 제품명을 함께 입력하면 더 정확해요!",
+                "Only products on Olive Young are searchable. Enter brand + product name for best results!"
+              )}
+            </p>
+          </div>
+        </div>
+        <div className="flex gap-2">
+          <input
+            value={oyQuery}
+            onChange={(e) => setOyQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleOySearch()
+            }}
+            placeholder={t("제품 이름으로 검색", "Search by product name")}
+            disabled={oyLoading}
+            className="flex-1 rounded-xl border border-gray-200 bg-gray-50/50 px-4 py-3 text-sm text-gray-900 transition-all outline-none placeholder:text-gray-400 focus:border-pastel-lime-dark/50 focus:bg-white focus:ring-2 focus:ring-pastel-lime-dark/20 disabled:opacity-50"
+          />
+          <button
+            onClick={handleOySearch}
+            disabled={!oyQuery.trim() || oyLoading}
+            className="shrink-0 rounded-xl bg-pastel-lime-dark px-4 py-3 text-sm font-bold text-white transition-all hover:bg-[#8ab922] disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            {oyLoading ? (
+              <span
+                className="inline-block h-4 w-4 rounded-full border-2 border-white/40 border-t-white"
+                style={{ animation: "spin 1s linear infinite" }}
+              />
+            ) : (
+              t("검색", "Search")
+            )}
+          </button>
+        </div>
+        {oyLoading && <OyLoadingMessage t={t} />}
+        {oyError && <p className="mt-2 text-xs text-rose-500">{oyError}</p>}
+        {oySuccess && (
+          <div className="mt-3 rounded-xl border border-pastel-lime-dark/30 bg-pastel-lime-dark/10 px-4 py-3">
+            <p className="text-xs font-bold text-[#6b9a0a]">{oySuccess}</p>
+            <p className="mt-1 text-[11px] text-[#7dab18]">
+              {t("전성분을 가져왔어요!", "Ingredients loaded!")}
+            </p>
+          </div>
+        )}
+      </div>
+
+      <div className="mb-6 flex items-center gap-3">
+        <div className="h-px flex-1 bg-linear-to-r from-transparent via-gray-200 to-gray-200" />
+        <span className="text-xs font-semibold text-gray-400">
+          {t("또는 직접 등록", "or add manually")}
+        </span>
+        <div className="h-px flex-1 bg-linear-to-l from-transparent via-gray-200 to-gray-200" />
+      </div>
+
+      {/* ── 제품 이름 (선택) ── */}
+      <div className="mb-8">
+        <div className="mb-2 flex gap-2.5">
+          <span className="mt-0.5 text-base">🏷</span>
+          <div>
+            <p className="text-sm font-bold text-gray-800">
+              {t("제품 이름", "Product Name")}{" "}
+              <span className="text-xs font-normal text-gray-400">
+                {t("(선택)", "(optional)")}
+              </span>
+            </p>
+            <p className="text-xs text-gray-400">
+              {t(
+                "기록에서 어떤 제품인지 구분하기 쉬워요~",
+                "Makes it easy to identify in history"
+              )}
+            </p>
+          </div>
+        </div>
         <input
           value={productName}
           onChange={(e) => setProductName(e.target.value)}
@@ -164,31 +194,34 @@ export default function SingleSetup({
             "예) 에스트라 아토배리어365 크림",
             "e.g. Aestura Atobarrier 365 Cream"
           )}
-          className="border-rule bg-paper-card text-ink placeholder:text-ink-faint focus:border-brand-deep w-full rounded-lg border px-4 py-3 text-[13px] transition-colors outline-none"
+          className="w-full rounded-xl border border-gray-200 bg-gray-50/50 px-4 py-3 text-sm text-gray-900 transition-all outline-none placeholder:text-gray-400 focus:border-pastel-lime-dark/50 focus:bg-white focus:ring-2 focus:ring-pastel-lime-dark/20"
         />
       </div>
 
+      {/* ── 📷 성분표 스캔 (메인) ── */}
       <div className="mb-8">
         {ocrLoading ? (
-          <div className="border-rule flex flex-col items-center gap-3 rounded-xl border bg-paper-card px-6 py-8">
-            <span
-              className="border-brand-deep/30 border-t-brand-deep inline-block h-6 w-6 rounded-full border-2"
-              style={{ animation: "spin 1s linear infinite" }}
-            />
-            <p className="text-ink text-[13px] font-medium">
-              {t("성분 읽는 중", "Reading ingredients")}
+          <div className="flex flex-col items-center gap-3 rounded-2xl border-2 border-lime-200 bg-linear-to-br from-lime-50 to-lime-50 p-6">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow-sm">
+              <span
+                className="inline-block h-6 w-6 rounded-full border-3 border-pastel-lime-dark/30 border-t-pastel-lime-dark"
+                style={{ animation: "spin 1s linear infinite" }}
+              />
+            </div>
+            <p className="text-sm font-bold text-gray-800">
+              {t("성분 읽는 중...", "Reading ingredients...")}
             </p>
           </div>
         ) : (
-          <label className="border-rule bg-paper-card hover:border-ink-faint flex cursor-pointer flex-col items-center gap-3 rounded-xl border px-6 py-8 transition-colors">
-            <span className="bg-rule-soft text-brand-deep flex h-12 w-12 items-center justify-center rounded-full">
-              <Camera size={20} strokeWidth={1.6} />
-            </span>
+          <label className="flex cursor-pointer flex-col items-center gap-3 rounded-2xl border border-pastel-lime-dark/20 bg-linear-to-br from-pastel-lime-dark/8 via-pastel-gold/5 to-pastel-olive/3 p-6 transition-all hover:border-pastel-lime-dark/40 hover:shadow-sm">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-pastel-lime-dark/15 text-2xl">
+              📷
+            </div>
             <div className="text-center">
-              <p className="text-ink text-[13.5px] font-semibold">
+              <p className="text-sm font-bold text-gray-700">
                 {t("성분표 사진 등록", "Add Ingredient Photo")}
               </p>
-              <p className="text-ink-muted mt-0.5 text-[11px]">
+              <p className="mt-0.5 text-[11px] text-gray-400">
                 {t(
                   "사진 찍거나 갤러리에서 골라주세요",
                   "Take a photo or choose from gallery"
@@ -209,17 +242,30 @@ export default function SingleSetup({
         )}
       </div>
 
-      <Divider label={t("또는 직접 입력", "or paste manually")} />
+      <div className="mb-6 flex items-center gap-3">
+        <div className="h-px flex-1 bg-linear-to-r from-transparent via-gray-200 to-gray-200" />
+        <span className="text-xs font-semibold text-gray-400">
+          {t("또는 직접 입력", "or paste manually")}
+        </span>
+        <div className="h-px flex-1 bg-linear-to-l from-transparent via-gray-200 to-gray-200" />
+      </div>
 
-      <SectionHeader
-        Icon={ClipboardList}
-        title={t("전성분 붙여넣기", "Paste Ingredients")}
-        sub={t(
-          "올리브영이나 제품 상세 페이지에서 복사해서 붙여넣어주세요",
-          "Copy from Olive Young app or product detail page"
-        )}
-      />
+      {/* ── 전성분 직접 입력 ── */}
       <div className="mb-8">
+        <div className="mb-3 flex gap-2.5">
+          <span className="mt-0.5 text-base">📋</span>
+          <div>
+            <p className="text-sm font-bold text-gray-800">
+              {t("전성분 붙여넣기", "Paste Ingredients")}
+            </p>
+            <p className="text-xs text-gray-400">
+              {t(
+                "올리브영이나 제품 상세페이지에서 복사해서 붙여넣어주세요~",
+                "Copy from Hwahae app or product detail page and paste here"
+              )}
+            </p>
+          </div>
+        </div>
         <textarea
           value={ings}
           onChange={(e) => setIngs(e.target.value)}
@@ -228,11 +274,11 @@ export default function SingleSetup({
             "e.g. Water, Glycerin, Niacinamide..."
           )}
           rows={6}
-          className="border-rule bg-paper-card text-ink placeholder:text-ink-faint focus:border-brand-deep w-full resize-y rounded-lg border px-4 py-3.5 text-[13px] leading-relaxed transition-colors outline-none"
+          className="w-full resize-y rounded-2xl border border-gray-200 bg-gray-50/50 px-4 py-3.5 text-sm leading-relaxed text-gray-900 transition-all outline-none placeholder:text-gray-400 focus:border-pastel-lime-dark/50 focus:bg-white focus:ring-2 focus:ring-pastel-lime-dark/20"
         />
         <button
           onClick={() => setIngs(lang === "ko" ? SAMPLE_S_KO : SAMPLE_S_EN)}
-          className="text-ink-muted hover:text-brand-deep mt-2 border-none bg-transparent p-0 text-[11.5px] underline underline-offset-2 transition-colors"
+          className="mt-2 border-none bg-transparent p-0 text-xs font-medium text-gray-400 underline underline-offset-2 transition-colors hover:text-pastel-lime-dark"
         >
           {t("샘플로 한번 해볼래? →", "Try with sample →")}
         </button>
@@ -241,48 +287,10 @@ export default function SingleSetup({
       <button
         onClick={analyzeSingle}
         disabled={!canS}
-        className="bg-brand-deep w-full rounded-lg py-4 text-[14px] font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-30"
+        className="w-full rounded-2xl bg-pastel-lime-dark py-4 text-sm font-bold text-white shadow-md transition-all hover:-translate-y-0.5 hover:opacity-90 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:translate-y-0 disabled:hover:shadow-none"
       >
         {t("분석해볼까요?", "Analyze Ingredients")}
       </button>
-    </div>
-  )
-}
-
-/* ── 섹션 헤더 (라벨 + 서브) ── */
-function SectionHeader({
-  Icon,
-  title,
-  sub,
-  suffix,
-}: {
-  Icon: typeof Camera
-  title: string
-  sub?: string
-  suffix?: React.ReactNode
-}) {
-  return (
-    <div className="mb-3 flex gap-3">
-      <span className="bg-rule-soft text-brand-deep mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md">
-        <Icon size={14} strokeWidth={1.6} />
-      </span>
-      <div className="min-w-0 flex-1">
-        <p className="text-ink text-[13.5px] font-semibold">
-          {title} {suffix}
-        </p>
-        {sub && <p className="text-ink-muted mt-0.5 text-[11.5px]">{sub}</p>}
-      </div>
-    </div>
-  )
-}
-
-/* ── "또는" 디바이더 ── */
-function Divider({ label }: { label: string }) {
-  return (
-    <div className="my-6 flex items-center gap-3">
-      <div className="bg-rule h-px flex-1" />
-      <span className="text-ink-faint text-[11px] font-medium">{label}</span>
-      <div className="bg-rule h-px flex-1" />
     </div>
   )
 }
@@ -292,11 +300,8 @@ function OyLoadingMessage({ t }: { t: (ko: string, en: string) => string }) {
   const messages = [
     t("제품 찾는 중...", "Searching product..."),
     t("성분 정보 가져오는 중...", "Fetching ingredient info..."),
-    t(
-      "처음 검색하는 제품이라 시간이 좀 걸려요",
-      "First-time search takes a moment"
-    ),
-    t("거의 다 됐어요!", "Almost done!"),
+    t("처음 검색하는 제품이라 시간이 좀 걸려요~", "First-time search takes a moment~"),
+    t("거의 다 됐어요! 조금만 기다려주세요", "Almost done! Just a moment"),
   ]
 
   useEffect(() => {
@@ -311,10 +316,10 @@ function OyLoadingMessage({ t }: { t: (ko: string, en: string) => string }) {
   return (
     <div className="mt-2 flex items-center gap-2">
       <span
-        className="border-brand-deep/30 border-t-brand-deep inline-block h-3 w-3 shrink-0 rounded-full border-2"
+        className="inline-block h-3 w-3 shrink-0 rounded-full border-2 border-pastel-lime-dark/30 border-t-pastel-lime-dark"
         style={{ animation: "spin 1s linear infinite" }}
       />
-      <p className="text-ink-muted text-[12px] transition-all">{messages[step]}</p>
+      <p className="text-xs text-gray-500 transition-all">{messages[step]}</p>
     </div>
   )
 }
