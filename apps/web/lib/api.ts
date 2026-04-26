@@ -8,7 +8,14 @@
  * - LLM은 5~10초 걸리는데 한 번에 받으면 그동안 빈 화면 → 사용자 이탈
  * - 토큰 단위로 누적해 loading UI에 흘려보내면, 0.5~1초 안에 첫 글자가 보임
  * - 응답이 다 도착한 뒤에만 JSON.parse → 결과 화면으로 전환
+ *
+ * [에러 정책]
+ * - 서버가 이미 외부 API에 대해 내부 재시도(최대 3회)를 수행하므로,
+ *   클라이언트에서 HTTP 상태 기반 재시도는 더 이상 하지 않음 (사용자 대기 시간 단축).
+ * - 네트워크 오류(TypeError = fetch 자체 실패)만 1회 재시도 — transient 회복용.
+ * - SSE mid-stream 에러는 외부 원문이 사용자에게 노출되지 않도록 안전한 메시지로 치환.
  */
+import { ERROR_MESSAGES } from "@/lib/error-messages"
 
 export const API_HEADERS = {
   "Content-Type": "application/json",
@@ -31,7 +38,7 @@ async function readAnthropicStream(
   res: Response,
   onChunk?: (accumulated: string) => void
 ): Promise<{ text: string; errorMessage?: string }> {
-  if (!res.body) return { text: "", errorMessage: "응답 본문이 비어있어요." }
+  if (!res.body) return { text: "", errorMessage: ERROR_MESSAGES.GENERIC }
 
   const reader = res.body.getReader()
   const decoder = new TextDecoder()
@@ -65,7 +72,13 @@ async function readAnthropicStream(
           accumulated += json.delta.text || ""
           onChunk?.(accumulated)
         } else if (json.type === "error") {
-          errorMessage = json.error?.message || "스트림 에러"
+          // 원본 영문 메시지가 사용자에게 노출되지 않도록 안전한 메시지로 치환.
+          // 주로 mid-stream overloaded_error 케이스. 원본은 디버깅용으로 콘솔에만.
+          console.error("[stream] Anthropic mid-stream error:", json.error)
+          errorMessage =
+            json.error?.type === "overloaded_error"
+              ? ERROR_MESSAGES.BUSY
+              : ERROR_MESSAGES.GENERIC
         }
       } catch {
         // SSE 청크 일부가 잘렸을 수 있음 — 다음 read에서 buffer와 합쳐짐
@@ -79,30 +92,29 @@ async function readAnthropicStream(
 /**
  * 분석 결과를 JSON으로 받아오는 메인 호출.
  * Claude는 JSON 스키마에 맞춰 응답하지만, max_tokens 한도에 걸려
- * 끝부분이 잘리는 경우가 있어 3단계 복구 전략을 적용합니다.
+ * 끝부분이 잘리는 경우가 있어 2단계 복구 전략을 적용합니다.
  *
- * [복구 전략]
+ * [JSON 파싱 복구]
  *   1) 정상 파싱 시도
  *   2) 잘린 위치를 추측해 닫는 괄호 보강 후 재파싱
- *   3) 그래도 실패하면 800ms 후 재시도
+ *   3) 그래도 실패하면 1회만 재시도 (서버가 다시 호출됨 = 비싼 작업이므로 최소화)
  *
  * [재시도 정책]
- *   - 5xx · 429 응답: 800ms · 1600ms 선형 백오프 (최대 2회)
- *   - 네트워크 TypeError: 동일 백오프
- *   - 그 외 4xx: 즉시 실패 (재시도해도 같은 결과)
+ *   - HTTP 상태 기반 재시도는 클라이언트에서 하지 않음.
+ *     (서버가 외부 API에 대해 내부 재시도를 이미 수행 — 중복 대기 방지)
+ *   - 네트워크 TypeError: fetch 자체 실패 시 1회만 재시도
  *
  * @param sys     system prompt
  * @param usr     user message
  * @param onChunk SSE 토큰이 도착할 때마다 누적 텍스트 콜백 (loading UI용, 선택)
- * @param retries 재시도 횟수 (기본 2)
  */
 export async function callAI(
   sys: string,
   usr: string,
-  onChunk?: (partial: string) => void,
-  retries = 2
+  onChunk?: (partial: string) => void
 ): Promise<ReturnType<typeof JSON.parse>> {
-  for (let attempt = 0; attempt <= retries; attempt++) {
+  const NETWORK_RETRIES = 1
+  for (let attempt = 0; attempt <= NETWORK_RETRIES; attempt++) {
     try {
       const res = await fetch("/api/analyze", {
         method: "POST",
@@ -114,23 +126,13 @@ export async function callAI(
       const contentType = res.headers.get("content-type") || ""
       if (!res.ok || contentType.includes("application/json")) {
         const errBody = await res.json().catch(() => ({}))
-        const message = errBody.error?.message || `요청 실패 (${res.status})`
-        if (attempt < retries && (res.status >= 500 || res.status === 429)) {
-          await new Promise((r) => setTimeout(r, 800 * (attempt + 1)))
-          continue
-        }
-        throw new Error(message)
+        // 서버는 안전한 한국어 메시지를 보내도록 보장됨. 누락 시에만 fallback.
+        throw new Error(errBody.error?.message || ERROR_MESSAGES.GENERIC)
       }
 
       // SSE 본문을 토큰 단위로 누적 (onChunk가 있으면 UI에 실시간 전달)
       const { text, errorMessage } = await readAnthropicStream(res, onChunk)
-      if (errorMessage) {
-        if (attempt < retries) {
-          await new Promise((r) => setTimeout(r, 800 * (attempt + 1)))
-          continue
-        }
-        throw new Error(errorMessage)
-      }
+      if (errorMessage) throw new Error(errorMessage)
 
       // Claude가 ```json 코드펜스로 감싸는 경우가 있어 제거 후 파싱
       const raw = text.replace(/```json|```/g, "").trim()
@@ -142,36 +144,33 @@ export async function callAI(
         try {
           return JSON.parse(fixed)
         } catch {
-          if (attempt < retries) {
-            await new Promise((r) => setTimeout(r, 800))
-            continue
-          }
-          throw new Error("분석 결과를 처리하지 못했어요. 다시 시도해주세요.")
+          throw new Error(ERROR_MESSAGES.GENERIC)
         }
       }
     } catch (e) {
-      // 네트워크 오류만 재시도 (TypeError = fetch 자체 실패)
-      if (attempt < retries && e instanceof TypeError) {
-        await new Promise((r) => setTimeout(r, 800 * (attempt + 1)))
+      // fetch 자체가 터진 경우만 재시도 (네트워크 blip)
+      if (attempt < NETWORK_RETRIES && e instanceof TypeError) {
+        await new Promise((r) => setTimeout(r, 800))
         continue
       }
+      // TypeError가 끝까지 살아남으면 사용자에겐 네트워크 메시지로 변환
+      if (e instanceof TypeError) throw new Error(ERROR_MESSAGES.NETWORK)
       throw e
     }
   }
-  throw new Error("서버 연결에 실패했어요. 잠시 후 다시 시도해주세요.")
+  throw new Error(ERROR_MESSAGES.NETWORK)
 }
 
 /**
  * 분석 결과를 raw 텍스트로 받아오는 호출.
  * JSON 파싱이 필요 없는 곳(트렌드 성분 설명, 짧은 요약 등)에서 사용.
  * SSE를 끝까지 읽어 누적 텍스트만 반환합니다.
+ *
+ * 재시도 정책은 callAI와 동일 (네트워크 오류만 1회 재시도).
  */
-export async function callAIText(
-  sys: string,
-  usr: string,
-  retries = 2
-): Promise<string> {
-  for (let attempt = 0; attempt <= retries; attempt++) {
+export async function callAIText(sys: string, usr: string): Promise<string> {
+  const NETWORK_RETRIES = 1
+  for (let attempt = 0; attempt <= NETWORK_RETRIES; attempt++) {
     try {
       const res = await fetch("/api/analyze", {
         method: "POST",
@@ -182,30 +181,20 @@ export async function callAIText(
       const contentType = res.headers.get("content-type") || ""
       if (!res.ok || contentType.includes("application/json")) {
         const errBody = await res.json().catch(() => ({}))
-        const message = errBody.error?.message || `요청 실패 (${res.status})`
-        if (attempt < retries && (res.status >= 500 || res.status === 429)) {
-          await new Promise((r) => setTimeout(r, 800 * (attempt + 1)))
-          continue
-        }
-        throw new Error(message)
+        throw new Error(errBody.error?.message || ERROR_MESSAGES.GENERIC)
       }
 
       const { text, errorMessage } = await readAnthropicStream(res)
-      if (errorMessage) {
-        if (attempt < retries) {
-          await new Promise((r) => setTimeout(r, 800 * (attempt + 1)))
-          continue
-        }
-        throw new Error(errorMessage)
-      }
+      if (errorMessage) throw new Error(errorMessage)
       return text.trim()
     } catch (e) {
-      if (attempt < retries && e instanceof TypeError) {
-        await new Promise((r) => setTimeout(r, 800 * (attempt + 1)))
+      if (attempt < NETWORK_RETRIES && e instanceof TypeError) {
+        await new Promise((r) => setTimeout(r, 800))
         continue
       }
+      if (e instanceof TypeError) throw new Error(ERROR_MESSAGES.NETWORK)
       throw e
     }
   }
-  throw new Error("서버 연결에 실패했어요. 잠시 후 다시 시도해주세요.")
+  throw new Error(ERROR_MESSAGES.NETWORK)
 }

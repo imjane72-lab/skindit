@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { ALLOWED_ORIGINS } from "@/lib/constants"
+import { ERROR_MESSAGES } from "@/lib/error-messages"
 
 /* ── 요청 횟수 제한 (모든 API 라우트 공용) ── */
 const WINDOW_MS = 60 * 1000
@@ -18,7 +19,7 @@ export function rateLimit(ip: string): { ok: boolean; msg?: string } {
   } else {
     w.count++
     if (w.count > MAX_PER_WINDOW) {
-      return { ok: false, msg: "Too many requests. Please wait a minute." }
+      return { ok: false, msg: ERROR_MESSAGES.RATE_LIMIT_PER_MINUTE }
     }
   }
 
@@ -29,7 +30,7 @@ export function rateLimit(ip: string): { ok: boolean; msg?: string } {
   } else {
     d.count++
     if (d.count > DAILY_LIMIT) {
-      return { ok: false, msg: "Daily limit reached. Please try again tomorrow." }
+      return { ok: false, msg: ERROR_MESSAGES.RATE_LIMIT_PER_DAY }
     }
   }
 

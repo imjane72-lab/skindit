@@ -2,6 +2,7 @@ import { NextRequest } from "next/server"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { apiResponse, apiError, rateLimit, getIp } from "@/lib/api-utils"
+import { ERROR_MESSAGES, mapAnthropicError } from "@/lib/error-messages"
 import { TOOL_DEFINITIONS, executeTool } from "@/lib/chat-tools"
 
 export const dynamic = "force-dynamic"
@@ -50,7 +51,7 @@ export async function POST(req: NextRequest) {
   // 1. 인증 확인
   const session = await auth()
   if (!session?.user?.id) {
-    return apiError("Unauthorized", 401)
+    return apiError("로그인이 필요해요.", 401)
   }
 
   // 2. 요청 횟수 제한
@@ -63,7 +64,8 @@ export async function POST(req: NextRequest) {
   // 3. API 키 확인
   const apiKey = process.env.ANTHROPIC_API_KEY
   if (!apiKey) {
-    return apiError("ANTHROPIC_API_KEY is not configured", 500)
+    console.error("[chat/ai] ANTHROPIC_API_KEY is not configured")
+    return apiError(ERROR_MESSAGES.SERVICE_UNAVAILABLE, 500)
   }
 
   // 4. 요청 파싱
@@ -117,7 +119,11 @@ export async function POST(req: NextRequest) {
     const data = await res.json()
 
     if (data.error) {
-      return apiError(data.error.message || "AI 응답 실패", 500)
+      // 원본 에러는 서버 로그에만 남기고, 사용자에게는 안전한 한국어 메시지만 노출
+      console.error("[chat/ai] Anthropic error:", res.status, data.error)
+      const userMessage = mapAnthropicError(res.status, data.error)
+      const responseStatus = res.status >= 500 ? 503 : 502
+      return apiError(userMessage, responseStatus)
     }
 
     const content = data.content as ContentBlock[]

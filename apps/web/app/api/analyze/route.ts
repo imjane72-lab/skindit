@@ -17,6 +17,7 @@
  */
 import { NextRequest, NextResponse } from "next/server";
 import { getMfdsContext } from "@/lib/mfds-api";
+import { ERROR_MESSAGES, mapAnthropicError } from "@/lib/error-messages";
 
 export const dynamic = "force-dynamic"
 
@@ -43,7 +44,7 @@ function rateLimit(ip: string): { ok: boolean; msg?: string } {
   } else {
     w.count++;
     if (w.count > MAX_PER_WINDOW) {
-      return { ok: false, msg: "Too many requests. Please wait a minute." };
+      return { ok: false, msg: ERROR_MESSAGES.RATE_LIMIT_PER_MINUTE };
     }
   }
 
@@ -55,7 +56,7 @@ function rateLimit(ip: string): { ok: boolean; msg?: string } {
   } else {
     d.count++;
     if (d.count > DAILY_LIMIT) {
-      return { ok: false, msg: "Daily limit reached. Please try again tomorrow." };
+      return { ok: false, msg: ERROR_MESSAGES.RATE_LIMIT_PER_DAY };
     }
   }
 
@@ -74,8 +75,9 @@ export async function POST(req: NextRequest) {
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
+    console.error("[analyze] ANTHROPIC_API_KEY is not configured");
     return NextResponse.json(
-      { error: { message: "ANTHROPIC_API_KEY is not configured" } },
+      { error: { message: ERROR_MESSAGES.SERVICE_UNAVAILABLE } },
       { status: 500 }
     );
   }
@@ -142,9 +144,14 @@ export async function POST(req: NextRequest) {
         await new Promise(r => setTimeout(r, 800 * (attempt + 1)));
         continue;
       }
+      // 원본 Anthropic 에러는 서버 로그에만 남기고, 사용자에게는 안전한 한국어 메시지만 노출
+      console.error("[analyze] Anthropic error:", status, errBody);
+      const userMessage = mapAnthropicError(status, errBody.error);
+      // 5xx 계열은 503으로, 그 외는 502(Bad Gateway — 외부 의존성 문제)로 통일
+      const responseStatus = status >= 500 ? 503 : 502;
       return NextResponse.json(
-        { error: errBody.error || { message: `Anthropic API error: ${status}` } },
-        { status: 400 }
+        { error: { message: userMessage } },
+        { status: responseStatus }
       );
     }
 
@@ -161,5 +168,8 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  return NextResponse.json({ error: { message: "서버 연결 실패. 잠시 후 다시 시도해주세요." } }, { status: 500 });
+  return NextResponse.json(
+    { error: { message: ERROR_MESSAGES.SERVICE_OUTAGE } },
+    { status: 503 }
+  );
 }
