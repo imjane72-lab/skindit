@@ -38,6 +38,9 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#9bce26" />
+        {/* iOS Safari (apple-...)와 표준(mobile-web-app-capable) 둘 다 둠 — 최신 Chrome이
+            apple- prefix 단독 사용은 deprecated 경고를 내므로 표준 키 함께 명시. */}
+        <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="skindit" />

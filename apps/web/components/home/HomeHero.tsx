@@ -1,5 +1,12 @@
 "use client"
 
+import {
+  Microscope,
+  NotebookPen,
+  BarChart3,
+  MessageCircle,
+  type LucideIcon,
+} from "lucide-react"
 import ProfileDropdown from "@/components/home/ProfileDropdown"
 
 interface HomeHeroProps {
@@ -21,30 +28,36 @@ interface HomeHeroProps {
  *   다국어 처리만 부모에서 주입받고 나머지는 자체 완결.
  */
 export default function HomeHero({ t, lang }: HomeHeroProps) {
-  const steps = [
+  const steps: Array<{
+    Icon: LucideIcon
+    label: string
+    sub: string
+    href: string
+    scroll: boolean
+  }> = [
     {
-      icon: "🔬",
+      Icon: Microscope,
       label: t("분석", "Analyze"),
       sub: t("성분 바로 분석", "Instant analysis"),
       href: "#analyze",
       scroll: true,
     },
     {
-      icon: "📔",
+      Icon: NotebookPen,
       label: t("기록", "Record"),
       sub: t("피부 변화 기록", "Track changes"),
       href: "/diary",
       scroll: false,
     },
     {
-      icon: "📊",
+      Icon: BarChart3,
       label: t("발견", "Discover"),
       sub: t("트러블 원인 발견", "Find causes"),
       href: "/diary/report",
       scroll: false,
     },
     {
-      icon: "💬",
+      Icon: MessageCircle,
       label: t("상담", "Consult"),
       sub: t("1:1 AI 상담", "1:1 AI consult"),
       href: "/chat",
@@ -162,14 +175,16 @@ export default function HomeHero({ t, lang }: HomeHeroProps) {
                       }
                     : undefined
                 }
-                className="flex items-center gap-3 rounded-2xl border border-pastel-lime-dark/15 bg-pastel-lime-dark/5 p-4 no-underline transition-all hover:-translate-y-0.5 hover:border-pastel-lime-dark/30 hover:shadow-md"
+                className="border-rule bg-paper-card hover:border-ink-faint flex items-center gap-3 rounded-xl border p-4 no-underline transition-colors"
               >
-                <span className="text-3xl">{step.icon}</span>
+                <span className="bg-rule-soft text-brand-deep flex h-10 w-10 shrink-0 items-center justify-center rounded-lg">
+                  <step.Icon size={18} strokeWidth={1.6} />
+                </span>
                 <div>
-                  <p className="text-[15px] font-extrabold text-gray-900">
+                  <p className="text-ink text-[14px] font-semibold">
                     {step.label}
                   </p>
-                  <p className="text-sm text-gray-600">{step.sub}</p>
+                  <p className="text-ink-muted text-[12px]">{step.sub}</p>
                 </div>
               </a>
             ))}

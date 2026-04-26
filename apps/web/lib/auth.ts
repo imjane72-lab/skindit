@@ -32,6 +32,10 @@ const nextAuth = NextAuth({
       if (session?.user) {
         session.user.id = user.id
         session.user.role = user.role || "user"
+        // Kakao 프로필 이미지가 http로 내려와 Mixed Content 경고를 유발 — https로 보정.
+        if (typeof session.user.image === "string") {
+          session.user.image = session.user.image.replace(/^http:\/\//, "https://")
+        }
       }
       return session
     },
