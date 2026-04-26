@@ -6,49 +6,54 @@ interface ResultHeroProps {
   variant?: "single" | "list" | "versus"
 }
 
-/**
- * 분석 결과 상단 히어로.
- * Editorial Warm Minimal — 화이트 기반 + Playfair 제품명 + 파스텔 포인트.
- */
+const META_LABEL: Record<NonNullable<ResultHeroProps["variant"]>, string> = {
+  single: "single_analysis",
+  list: "routine_analysis",
+  versus: "compare_analysis",
+}
+
 export default function ResultHero({
   title,
   productNames,
   variant = "single",
 }: ResultHeroProps) {
-  const badgeLabel = (i: number) => `${i + 1}`
+  const showList =
+    (variant === "list" || variant === "versus") &&
+    !!productNames &&
+    productNames.length > 0
 
   return (
-    <div className="relative border-l-2 border-pastel-lime-dark/70 bg-white px-6 pt-7 pb-8">
-      <p className="font-display mb-4 text-[10px] font-bold tracking-[0.28em] text-pastel-olive/80 uppercase">
-        skindit
-      </p>
+    <header className="border-b border-gray-200 px-6 pt-9 pb-7">
+      <div className="mb-7 flex items-center gap-3">
+        <span className="font-mono text-[10.5px] tracking-tight text-gray-500 lowercase">
+          {META_LABEL[variant]}
+        </span>
+        <span className="h-px flex-1 bg-gray-200" />
+        {showList && (
+          <span className="font-mono text-[10.5px] tabular-nums text-gray-400">
+            {String(productNames!.length).padStart(2, "0")} items
+          </span>
+        )}
+      </div>
 
-      {(variant === "list" || variant === "versus") &&
-      productNames &&
-      productNames.length > 0 ? (
-        <div className="flex flex-col gap-5">
-          {productNames.map((n, i) => (
-            <div key={i} className="flex items-baseline gap-3">
-              <span className="font-display text-[11px] font-bold tracking-wider text-pastel-olive/60">
-                {badgeLabel(i)}
+      {showList ? (
+        <ol className="space-y-2.5">
+          {productNames!.map((n, i) => (
+            <li key={i} className="flex items-baseline gap-4">
+              <span className="pt-1 font-mono text-[11px] tabular-nums text-gray-400">
+                {String(i + 1).padStart(2, "0")}
               </span>
-              <span className="flex-1 font-accent text-[22px] leading-tight font-semibold break-keep text-gray-900">
+              <span className="font-accent flex-1 text-[24px] leading-[1.2] font-medium tracking-[-0.01em] break-keep text-gray-900">
                 {n}
               </span>
-            </div>
+            </li>
           ))}
-        </div>
+        </ol>
       ) : (
-        <h1 className="font-accent text-[28px] leading-tight font-semibold wrap-break-word text-gray-900">
+        <h1 className="font-accent text-[30px] leading-[1.15] font-medium tracking-[-0.01em] wrap-break-word text-gray-900">
           {title}
         </h1>
       )}
-
-      <div className="mt-5 flex items-center gap-1.5">
-        <span className="h-1.5 w-1.5 rounded-full bg-pastel-lime-dark" />
-        <span className="h-1 w-1 rounded-full bg-pastel-gold" />
-        <span className="h-1 w-1 rounded-full bg-pastel-blush" />
-      </div>
-    </div>
+    </header>
   )
 }
