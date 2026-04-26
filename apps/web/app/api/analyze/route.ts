@@ -130,9 +130,10 @@ export async function POST(req: NextRequest) {
       headers: reqHeaders,
       body: JSON.stringify({
         model: "claude-haiku-4-5-20251001",
-        // 분석 결과 JSON은 점수/주목/주의/안전/콤보/가이드 등으로 길어
-        // 3200이면 truncated → JSON 파싱 실패가 자주 나서 6000으로 상향.
-        max_tokens: 6000,
+        // 분석 결과 JSON은 점수/주목/주의/안전/콤보/가이드 등으로 길어 truncation
+        // 빈도 높음. Haiku 4.5 출력 한계 8192 가까이로 올려 1차 방어.
+        // 그래도 잘리는 경우는 클라이언트의 jsonrepair로 2차 복구.
+        max_tokens: 8000,
         system,
         stream: true,
         messages: [{ role: "user", content: user + mfdsContext }],

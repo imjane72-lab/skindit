@@ -15,6 +15,7 @@
  * - 네트워크 오류(TypeError = fetch 자체 실패)만 1회 재시도 — transient 회복용.
  * - SSE mid-stream 에러는 외부 원문이 사용자에게 노출되지 않도록 안전한 메시지로 치환.
  */
+import { jsonrepair } from "jsonrepair"
 import { ERROR_MESSAGES } from "@/lib/error-messages"
 
 export const API_HEADERS = {
@@ -149,10 +150,11 @@ export async function callAI(
       try {
         return JSON.parse(raw)
       } catch {
-        // max_tokens에 잘려 닫는 따옴표/괄호가 빠진 경우 보강 시도
-        const fixed = raw + (raw.includes('"verdict"') ? '"}' : '"}]}')
+        // max_tokens에 걸려 truncated/malformed인 경우 jsonrepair로 복구 시도.
+        // 예: 마지막 array element 중간에서 끊긴 경우, 중첩 객체 닫힘 누락 등.
         try {
-          return JSON.parse(fixed)
+          const repaired = jsonrepair(raw)
+          return JSON.parse(repaired)
         } catch {
           // 재시도 가능하도록 마커 에러로 외부 catch에 위임
           throw new JsonParseFailure(raw)
