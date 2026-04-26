@@ -130,7 +130,9 @@ export async function POST(req: NextRequest) {
       headers: reqHeaders,
       body: JSON.stringify({
         model: "claude-haiku-4-5-20251001",
-        max_tokens: 3200,
+        // 분석 결과 JSON은 점수/주목/주의/안전/콤보/가이드 등으로 길어
+        // 3200이면 truncated → JSON 파싱 실패가 자주 나서 6000으로 상향.
+        max_tokens: 6000,
         system,
         stream: true,
         messages: [{ role: "user", content: user + mfdsContext }],

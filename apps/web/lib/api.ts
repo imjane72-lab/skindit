@@ -90,19 +90,29 @@ async function readAnthropicStream(
 }
 
 /**
+ * JSON 파싱 실패만 따로 식별하기 위한 마커. 외부 catch에서 transient error로 간주하고
+ * 재시도하기 위해 일반 Error와 구분.
+ */
+class JsonParseFailure extends Error {
+  constructor(public readonly raw: string) {
+    super("Failed to parse Claude JSON response")
+  }
+}
+
+/**
  * 분석 결과를 JSON으로 받아오는 메인 호출.
  * Claude는 JSON 스키마에 맞춰 응답하지만, max_tokens 한도에 걸려
- * 끝부분이 잘리는 경우가 있어 2단계 복구 전략을 적용합니다.
+ * 끝부분이 잘리는 경우가 있어 복구 전략을 적용합니다.
  *
- * [JSON 파싱 복구]
+ * [JSON 파싱 복구 — 응답 1회 내]
  *   1) 정상 파싱 시도
  *   2) 잘린 위치를 추측해 닫는 괄호 보강 후 재파싱
- *   3) 그래도 실패하면 1회만 재시도 (서버가 다시 호출됨 = 비싼 작업이므로 최소화)
  *
- * [재시도 정책]
- *   - HTTP 상태 기반 재시도는 클라이언트에서 하지 않음.
- *     (서버가 외부 API에 대해 내부 재시도를 이미 수행 — 중복 대기 방지)
- *   - 네트워크 TypeError: fetch 자체 실패 시 1회만 재시도
+ * [재시도 정책 — 호출 자체를 다시]
+ *   - HTTP 상태 기반 재시도는 클라이언트에서 하지 않음
+ *     (서버가 외부 API에 내부 재시도를 이미 수행 — 중복 대기 방지)
+ *   - JSON 파싱 실패: Claude가 truncated/malformed 응답을 줬을 가능성. 1회 재시도.
+ *   - 네트워크 TypeError: fetch 자체 실패 시 1회 재시도
  *
  * @param sys     system prompt
  * @param usr     user message
@@ -113,8 +123,8 @@ export async function callAI(
   usr: string,
   onChunk?: (partial: string) => void
 ): Promise<ReturnType<typeof JSON.parse>> {
-  const NETWORK_RETRIES = 1
-  for (let attempt = 0; attempt <= NETWORK_RETRIES; attempt++) {
+  const RETRIES = 1
+  for (let attempt = 0; attempt <= RETRIES; attempt++) {
     try {
       const res = await fetch("/api/analyze", {
         method: "POST",
@@ -144,17 +154,26 @@ export async function callAI(
         try {
           return JSON.parse(fixed)
         } catch {
-          throw new Error(ERROR_MESSAGES.GENERIC)
+          // 재시도 가능하도록 마커 에러로 외부 catch에 위임
+          throw new JsonParseFailure(raw)
         }
       }
     } catch (e) {
-      // fetch 자체가 터진 경우만 재시도 (네트워크 blip)
-      if (attempt < NETWORK_RETRIES && e instanceof TypeError) {
+      // 재시도 대상 — 네트워크 blip이거나 모델 응답이 깨진 경우
+      const retryable = e instanceof TypeError || e instanceof JsonParseFailure
+      if (attempt < RETRIES && retryable) {
+        if (e instanceof JsonParseFailure) {
+          console.warn("[callAI] JSON parse failed, retrying. Raw:", e.raw.slice(0, 200))
+        }
         await new Promise((r) => setTimeout(r, 800))
         continue
       }
-      // TypeError가 끝까지 살아남으면 사용자에겐 네트워크 메시지로 변환
+      // 재시도 끝까지 실패 — 사용자에겐 분류된 메시지로
       if (e instanceof TypeError) throw new Error(ERROR_MESSAGES.NETWORK)
+      if (e instanceof JsonParseFailure) {
+        console.error("[callAI] Final JSON parse failure. Raw:", e.raw.slice(0, 500))
+        throw new Error(ERROR_MESSAGES.GENERIC)
+      }
       throw e
     }
   }
