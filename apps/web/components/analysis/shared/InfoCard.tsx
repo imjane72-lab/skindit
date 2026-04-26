@@ -3,28 +3,43 @@
 import type { ReactNode } from "react"
 import Md from "@/components/ui/Md"
 
-/**
- * 짧은 본문 카드 (예: 종합 의견).
- * 이전의 brand 그라디언트/이모지 헤더 제거. 라벨만 olive-tone으로 두어 정체성을 유지.
- */
 interface InfoCardProps {
   label?: string
-  /** @deprecated 이모지 아이콘 사용 안 함 — 라벨로 충분 */
   icon?: string
   children: string | ReactNode
-  /** @deprecated 모든 정보 카드는 동일한 톤으로 통일됨 */
   variant?: "light" | "brand"
 }
 
-export default function InfoCard({ label, children }: InfoCardProps) {
+export default function InfoCard({
+  label,
+  icon,
+  children,
+  variant = "light",
+}: InfoCardProps) {
+  const isBrand = variant === "brand"
   return (
-    <div className="border-rule bg-paper-card rounded-xl border p-5">
-      {label && (
-        <p className="text-brand-deep mb-2 text-[11px] font-medium tracking-[0.04em]">
-          {label}
-        </p>
+    <div
+      className={`rounded-2xl border p-4 ${
+        isBrand
+          ? "border-pastel-lime-dark/20 bg-linear-to-br from-pastel-lime/70 to-white"
+          : "border-gray-100 bg-white"
+      }`}
+    >
+      {(label || icon) && (
+        <div className="mb-1.5 flex items-center gap-1.5">
+          {icon && <span className="text-sm">{icon}</span>}
+          {label && (
+            <p
+              className={`text-[10px] font-bold tracking-wide uppercase ${
+                isBrand ? "text-[#6B8E23]" : "text-gray-500"
+              }`}
+            >
+              {label}
+            </p>
+          )}
+        </div>
       )}
-      <div className="text-ink-soft text-[13.5px] leading-relaxed">
+      <div className="text-[13px] leading-relaxed text-gray-700">
         {typeof children === "string" ? <Md>{children}</Md> : children}
       </div>
     </div>

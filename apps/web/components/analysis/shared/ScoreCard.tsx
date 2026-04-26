@@ -1,6 +1,7 @@
 "use client"
 
 import ScoreRing from "@/components/ui/ScoreRing"
+import { scoreColor } from "@/lib/score-utils"
 
 interface ScoreCardProps {
   score: number
@@ -8,19 +9,17 @@ interface ScoreCardProps {
   caption?: string
 }
 
-/**
- * Muji-tone 점수 영역 — 링 + 한국어 라벨 + 선택 캡션.
- * 라벨은 카테고리에 따라 색이 흔들리지 않고 항상 ink 톤. 색은 링이 이미 표현 중.
- */
 export default function ScoreCard({ score, label, caption }: ScoreCardProps) {
   return (
-    <div className="flex flex-col items-center py-6 text-center">
-      <ScoreRing score={score} size={172} />
-      <p className="text-ink mt-6 text-[18px] font-medium tracking-tight">
+    <div className="flex flex-col items-center py-2 text-center">
+      <ScoreRing score={score} size={180} />
+      <p
+        className={`mt-4 font-display text-2xl font-extrabold tracking-tight ${scoreColor(score)}`}
+      >
         {label}
       </p>
       {caption && (
-        <p className="text-ink-muted mt-2 max-w-80 text-[12px] leading-relaxed">
+        <p className="mt-2 max-w-80 text-[12px] leading-relaxed text-gray-600">
           {caption}
         </p>
       )}

@@ -20,22 +20,6 @@
   --color-pastel-sage: #e8f5e9;
   --color-pastel-sage-dark: #a5d6a7;
 
-  /* ── Muji-tone neutrals (분석 결과 페이지 베이스) ──
-     무인양품의 따뜻한 종이 톤에서 영감을 받아, 회색 대신 따뜻한 크림/베이지 계열로
-     중립색을 정의. 카테고리(좋음/주의/정보) 구분은 색이 아니라 타이포 위계로
-     처리하기 위해 회색 대비 단계를 5단계로 명시함. */
-  --color-paper: #FAF8EE;        /* 페이지 배경 — 따뜻한 크림 */
-  --color-paper-card: #FFFFFF;    /* 카드 배경 — 종이 위 종이 */
-  --color-ink: #1F1B16;           /* 본문 — 따뜻한 차콜 (검정 X) */
-  --color-ink-soft: #54504A;      /* 보조 본문 */
-  --color-ink-muted: #8C877E;     /* 라벨/캡션 */
-  --color-ink-faint: #B8B3A8;     /* 가장 옅은 텍스트 */
-  --color-rule: #EAE5D8;          /* 따뜻한 hairline divider */
-  --color-rule-soft: #F2EEE3;     /* 더 옅은 divider */
-  --color-brand-deep: #6B8E23;    /* 아보카도 올리브 — 강조 텍스트 */
-  --color-warn-deep: #B8564A;     /* 따뜻한 벽돌 — 주의 (rose 대신) */
-  --color-warn-soft: #F4E5E0;     /* 옅은 벽돌 — 주의 배경 */
-
   /* ── Fonts ── */
   --font-display: var(--font-dp), 'Plus Jakarta Sans', sans-serif;
   --font-accent: var(--font-accent), 'Playfair Display', Georgia, serif;

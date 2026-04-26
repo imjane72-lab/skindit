@@ -1,6 +1,5 @@
 "use client"
 
-import { Share2 } from "lucide-react"
 import { SITE_URL } from "@/lib/constants"
 
 interface ResultActionsProps {
@@ -35,17 +34,28 @@ export default function ResultActions({
   }
 
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-2 pt-1">
       <button
         onClick={handleShare}
-        className="bg-brand-deep flex flex-1 items-center justify-center gap-2 rounded-lg py-3.5 text-[13px] font-medium text-white transition-opacity hover:opacity-90 active:scale-[0.99]"
+        className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-pastel-lime-dark py-3.5 text-sm font-bold text-white shadow-sm transition-all hover:opacity-90 active:scale-[0.98]"
       >
-        <Share2 size={14} strokeWidth={1.8} />
+        <svg
+          width="15"
+          height="15"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13" />
+        </svg>
         {t("공유하기", "Share")}
       </button>
       <button
         onClick={reset}
-        className="border-rule text-ink-soft hover:border-ink-faint flex-1 rounded-lg border bg-paper-card py-3.5 text-[13px] font-medium transition-colors active:scale-[0.99]"
+        className="flex-1 rounded-2xl border border-gray-200 bg-white py-3.5 text-sm font-bold text-gray-500 transition-all hover:border-pastel-lime-dark/40 hover:text-[#6B8E23] active:scale-[0.98]"
       >
         {t(newLabelKo, newLabelEn)}
       </button>

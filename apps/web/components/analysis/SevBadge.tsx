@@ -1,35 +1,27 @@
 "use client"
 
-/**
- * 충돌 심각도 배지 — Muji-tone.
- * 풀 채도(rose/amber/emerald) 배경 대신 작은 dot + 일관된 ink 톤 텍스트로 대체.
- */
 export default function SevBadge({ sev, lang }: { sev: string; lang: string }) {
   const t = (ko: string, en: string) => (lang === "ko" ? ko : en)
-  const map: Record<string, { label: string; dot: string; text: string }> = {
+  const m: Record<string, { l: string; cls: string }> = {
     high: {
-      label: t("높음", "High"),
-      dot: "bg-warn-deep",
-      text: "text-warn-deep",
+      l: t("높음", "High"),
+      cls: "bg-rose-100 text-rose-700 border-rose-200",
     },
     medium: {
-      label: t("보통", "Medium"),
-      dot: "bg-pastel-olive",
-      text: "text-pastel-olive",
+      l: t("보통", "Medium"),
+      cls: "bg-amber-100 text-amber-700 border-amber-200",
     },
     low: {
-      label: t("낮음", "Low"),
-      dot: "bg-brand-deep",
-      text: "text-brand-deep",
+      l: t("낮음", "Low"),
+      cls: "bg-emerald-100 text-emerald-700 border-emerald-200",
     },
   }
-  const s = map[sev] ?? map.low!
+  const s = m[sev] ?? m.low!
   return (
     <span
-      className={`inline-flex items-center gap-1.5 text-[11px] font-medium ${s.text}`}
+      className={`text-[10px] font-bold tracking-wide ${s.cls} rounded-full border px-2.5 py-1`}
     >
-      <span className={`h-1.5 w-1.5 rounded-full ${s.dot}`} />
-      {s.label}
+      {s.l}
     </span>
   )
 }

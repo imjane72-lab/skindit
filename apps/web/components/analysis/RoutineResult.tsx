@@ -1,14 +1,5 @@
 "use client"
 
-import {
-  AlertTriangle,
-  Sparkles,
-  Compass,
-  Clock,
-  Lightbulb,
-  Sun,
-  Moon,
-} from "lucide-react"
 import ResultHero from "@/components/analysis/shared/ResultHero"
 import ScoreCard from "@/components/analysis/shared/ScoreCard"
 import ResultSection from "@/components/analysis/shared/ResultSection"
@@ -37,22 +28,24 @@ export default function RoutineResult({
   const names = (rRes.productNames || []).filter(Boolean)
 
   return (
-    <div className="anim-scale-in space-y-5">
+    <div className="anim-scale-in space-y-8">
       {names.length > 0 ? (
         <ResultHero variant="list" productNames={names} />
       ) : (
         <ResultHero title={t("내 루틴 궁합 분석", "My Routine Analysis")} />
       )}
 
-      <div className="px-1">
-        <ScoreCard
-          score={rRes.routine_score}
-          label={scoreLabel(rRes.routine_score, lang)}
-        />
-      </div>
+      <ScoreCard
+        score={rRes.routine_score}
+        label={scoreLabel(rRes.routine_score, lang)}
+      />
 
       {rRes.routine_comment && (
-        <InfoCard label={t("종합 의견", "Summary")}>
+        <InfoCard
+          variant="brand"
+          icon="🤎"
+          label={t("종합 의견", "Summary")}
+        >
           {rRes.routine_comment}
         </InfoCard>
       )}
@@ -60,28 +53,28 @@ export default function RoutineResult({
       {rRes.conflicts && rRes.conflicts.length > 0 && (
         <ResultSection
           tone="warn"
-          icon={<AlertTriangle size={14} strokeWidth={1.6} />}
+          icon="⚠️"
           title={t("성분 충돌", "Conflicts")}
           subtitle={t("함께 사용 시 주의가 필요해요", "Use with caution")}
         >
-          <div className="space-y-2">
+          <div className="space-y-3">
             {rRes.conflicts.map((c, i) => (
               <div
                 key={i}
-                className="border-rule rounded-lg border px-3.5 py-3"
+                className="rounded-xl border border-rose-100 bg-white/70 p-3.5"
               >
                 <div className="mb-2 flex flex-wrap items-center gap-2">
                   <SevBadge sev={c.severity} lang={lang} />
-                  <span className="text-ink text-[13px] font-semibold">
+                  <span className="text-[13px] font-bold text-gray-900">
                     {c.ingredients?.join(" × ")}
                   </span>
                 </div>
                 {c.products && c.products.length > 0 && (
-                  <p className="text-warn-deep mb-1 text-[11px] font-medium">
+                  <p className="mb-1 text-[11px] font-medium text-rose-500">
                     {c.products.join(" + ")}
                   </p>
                 )}
-                <p className="text-ink-soft text-[12px] leading-relaxed">
+                <p className="text-[12px] leading-relaxed text-gray-600">
                   <Md>{c.reason}</Md>
                 </p>
               </div>
@@ -92,25 +85,26 @@ export default function RoutineResult({
 
       {rRes.synergies && rRes.synergies.length > 0 && (
         <ResultSection
-          icon={<Sparkles size={14} strokeWidth={1.6} />}
+          tone="good"
+          icon="✨"
           title={t("시너지", "Synergies")}
           subtitle={t("함께 쓰면 더 좋아요", "Better together")}
         >
-          <div className="space-y-2">
+          <div className="space-y-3">
             {rRes.synergies.map((s, i) => (
               <div
                 key={i}
-                className="border-rule rounded-lg border px-3.5 py-3"
+                className="rounded-xl border border-emerald-100 bg-white/70 p-3.5"
               >
-                <p className="text-brand-deep mb-1 text-[13px] font-semibold">
+                <p className="mb-1 text-[13px] font-bold text-emerald-700">
                   {s.ingredients?.join(" + ")}
                 </p>
                 {s.products && s.products.length > 0 && (
-                  <p className="text-ink-muted mb-1 text-[11px] font-medium">
+                  <p className="mb-1 text-[11px] font-medium text-emerald-500/90">
                     {s.products.join(" + ")}
                   </p>
                 )}
-                <p className="text-ink-soft text-[12px] leading-relaxed">
+                <p className="text-[12px] leading-relaxed text-gray-600">
                   <Md>{s.reason}</Md>
                 </p>
               </div>
@@ -121,17 +115,18 @@ export default function RoutineResult({
 
       {rRes.order_suggestion && rRes.order_suggestion.length > 0 && (
         <ResultSection
-          icon={<Compass size={14} strokeWidth={1.6} />}
+          tone="info"
+          icon="🧭"
           title={t("추천 순서", "Suggested Order")}
           subtitle={t("이 순서로 바르면 좋아요", "Apply in this order")}
         >
-          <ol className="space-y-2.5">
+          <ol className="space-y-2">
             {rRes.order_suggestion.map((name, i) => (
-              <li key={i} className="flex items-baseline gap-3">
-                <span className="text-ink-faint w-5 shrink-0 font-mono text-[12px] tabular-nums">
-                  {String(i + 1).padStart(2, "0")}
+              <li key={i} className="flex items-center gap-3">
+                <span className="font-display flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-sky-500 to-sky-400 text-xs font-extrabold text-white shadow-sm">
+                  {i + 1}
                 </span>
-                <span className="text-ink text-[13px] font-medium">
+                <span className="text-[13px] font-semibold text-gray-800">
                   {name}
                 </span>
               </li>
@@ -142,15 +137,16 @@ export default function RoutineResult({
 
       {rRes.timeline && rRes.timeline.length > 0 && (
         <ResultSection
-          icon={<Clock size={14} strokeWidth={1.6} />}
+          tone="brand"
+          icon="⏰"
           title={t("루틴 타임라인", "Routine Timeline")}
           subtitle={t("아침/저녁 추천", "AM/PM plan")}
         >
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <div className="mb-3 flex items-center gap-1.5">
-                <Sun size={12} strokeWidth={1.6} className="text-brand-deep" />
-                <span className="text-brand-deep text-[11px] font-medium tracking-tight">
+              <div className="mb-2 flex items-center gap-1.5">
+                <span className="text-base">🌅</span>
+                <span className="text-[11px] font-bold tracking-wide text-amber-700 uppercase">
                   {t("아침", "Morning")}
                 </span>
               </div>
@@ -160,17 +156,17 @@ export default function RoutineResult({
                   .map((ti, i) => (
                     <div
                       key={i}
-                      className="anim-fade-up border-rule rounded-lg border px-3 py-2.5"
+                      className="anim-fade-up rounded-xl border border-amber-100 bg-amber-50/70 p-3"
                       style={{ animationDelay: `${i * 60}ms` }}
                     >
-                      <p className="text-ink mb-0.5 text-[12px] font-semibold">
+                      <p className="mb-0.5 text-[12px] font-bold text-gray-800">
                         {ti.product}
                       </p>
-                      <p className="text-ink-soft text-[11px] leading-relaxed">
+                      <p className="text-[11px] leading-relaxed text-gray-600">
                         <Md>{ti.reason}</Md>
                       </p>
                       {ti.timing === "both" && (
-                        <span className="text-brand-deep mt-1 inline-block text-[10px] font-medium">
+                        <span className="mt-1 inline-block rounded-full bg-pastel-lime-dark/20 px-2 py-0.5 text-[9px] font-bold text-[#6B8E23]">
                           {t("아침/저녁", "AM/PM")}
                         </span>
                       )}
@@ -179,9 +175,9 @@ export default function RoutineResult({
               </div>
             </div>
             <div>
-              <div className="mb-3 flex items-center gap-1.5">
-                <Moon size={12} strokeWidth={1.6} className="text-pastel-olive" />
-                <span className="text-pastel-olive text-[11px] font-medium tracking-tight">
+              <div className="mb-2 flex items-center gap-1.5">
+                <span className="text-base">🌙</span>
+                <span className="text-[11px] font-bold tracking-wide text-indigo-700 uppercase">
                   {t("저녁", "Evening")}
                 </span>
               </div>
@@ -191,17 +187,17 @@ export default function RoutineResult({
                   .map((ti, i) => (
                     <div
                       key={i}
-                      className="anim-fade-up border-rule rounded-lg border px-3 py-2.5"
+                      className="anim-fade-up rounded-xl border border-indigo-100 bg-indigo-50/70 p-3"
                       style={{ animationDelay: `${i * 60}ms` }}
                     >
-                      <p className="text-ink mb-0.5 text-[12px] font-semibold">
+                      <p className="mb-0.5 text-[12px] font-bold text-gray-800">
                         {ti.product}
                       </p>
-                      <p className="text-ink-soft text-[11px] leading-relaxed">
+                      <p className="text-[11px] leading-relaxed text-gray-600">
                         <Md>{ti.reason}</Md>
                       </p>
                       {ti.timing === "both" && (
-                        <span className="text-brand-deep mt-1 inline-block text-[10px] font-medium">
+                        <span className="mt-1 inline-block rounded-full bg-pastel-lime-dark/20 px-2 py-0.5 text-[9px] font-bold text-[#6B8E23]">
                           {t("아침/저녁", "AM/PM")}
                         </span>
                       )}
@@ -215,17 +211,18 @@ export default function RoutineResult({
 
       {rRes.recommendations && rRes.recommendations.length > 0 && (
         <ResultSection
-          icon={<Lightbulb size={14} strokeWidth={1.6} />}
+          tone="tip"
+          icon="💡"
           title={t("개선 팁", "Tips")}
           subtitle={t("이렇게 하면 더 좋아요", "Try these")}
         >
           <div className="space-y-2.5">
             {rRes.recommendations.map((tip, i) => (
-              <div key={i} className="flex items-baseline gap-3">
-                <span className="text-ink-faint w-5 shrink-0 font-mono text-[11px] tabular-nums">
-                  {String(i + 1).padStart(2, "0")}
+              <div key={i} className="flex items-start gap-3">
+                <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-amber-200 text-[10px] font-bold text-amber-800">
+                  {i + 1}
                 </span>
-                <span className="text-ink-soft text-[13px] leading-relaxed">
+                <span className="text-[13px] leading-relaxed text-gray-700">
                   <Md>{tip}</Md>
                 </span>
               </div>
@@ -236,31 +233,32 @@ export default function RoutineResult({
 
       {rRes.usage_guide && (
         <ResultSection
-          icon={<Clock size={14} strokeWidth={1.6} />}
+          tone="info"
+          icon="📋"
           title={t("사용 가이드", "Usage Guide")}
         >
-          <div className="divide-rule-soft divide-y">
+          <div className="divide-y divide-sky-100/70">
             {rRes.usage_guide.effect_timeline && (
-              <div className="py-3 first:pt-0">
-                <p className="text-brand-deep mb-1 text-[11.5px] font-medium tracking-tight">
+              <div className="py-2.5 first:pt-0">
+                <p className="mb-1 text-[13px] font-bold text-sky-700">
                   {t("효과 체감 시기", "Effect Timeline")}
                 </p>
-                <p className="text-ink-soft text-[12.5px] leading-relaxed">
+                <p className="text-xs leading-relaxed text-gray-600">
                   {rRes.usage_guide.effect_timeline}
                 </p>
               </div>
             )}
             {rRes.usage_guide.beginner_tips &&
               rRes.usage_guide.beginner_tips.length > 0 && (
-                <div className="py-3 first:pt-0 last:pb-0">
-                  <p className="text-brand-deep mb-1 text-[11.5px] font-medium tracking-tight">
+                <div className="py-2.5 first:pt-0 last:pb-0">
+                  <p className="mb-1 text-[13px] font-bold text-sky-700">
                     {t("초보자 주의사항", "Beginner Tips")}
                   </p>
-                  <div className="space-y-0.5">
+                  <div>
                     {rRes.usage_guide.beginner_tips.map((tip, i) => (
                       <p
                         key={i}
-                        className="text-ink-soft text-[12.5px] leading-relaxed"
+                        className="mb-0.5 text-xs leading-relaxed text-gray-600"
                       >
                         · {tip}
                       </p>
@@ -272,7 +270,7 @@ export default function RoutineResult({
         </ResultSection>
       )}
 
-      <div className="pt-8">
+      <div className="pt-12">
         <ResultActions
           t={t}
           reset={reset}

@@ -4,20 +4,9 @@ import { useState, useEffect, useCallback } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { SITE_URL } from "@/lib/constants"
-import {
-  Sparkles,
-  AlertTriangle,
-  Ban,
-  Clock,
-  Lightbulb,
-  Compass,
-  Handshake,
-  Droplets,
-} from "lucide-react"
 import NavBar from "@/components/ui/NavBar"
 import Md from "@/components/ui/Md"
 import ResultSection from "@/components/analysis/shared/ResultSection"
-import InfoCard from "@/components/analysis/shared/InfoCard"
 import ConcernCard from "@/components/analysis/ConcernCard"
 import IngredientPill from "@/components/analysis/shared/IngredientPill"
 import SafetyChart from "@/components/analysis/SafetyChart"
@@ -39,19 +28,22 @@ function FullResultView({ item, displayType }: { item: HistoryItem; displayType:
     const concernAnalysis = (rj.concern_analysis as Array<{concern: string; score: number; comment: string}>) || []
 
     return (
-      <div className="space-y-5">
+      <div className="space-y-8">
         {Boolean(rj.overall_comment) && (
-          <InfoCard label="종합 의견">{String(rj.overall_comment)}</InfoCard>
+          <ResultSection tone="brand" icon="🌿" title="종합 의견">
+            <p className="text-sm leading-relaxed text-gray-700"><Md>{String(rj.overall_comment)}</Md></p>
+          </ResultSection>
         )}
 
         {concernAnalysis.length > 0 && (
           <ResultSection
-            icon={<Droplets size={14} strokeWidth={1.6} />}
+            tone="neutral"
+            icon="🫧"
             title="피부 고민별 분석"
             subtitle="내 피부에 맞는 성분인지 점수로"
-            right={<span className="text-ink-faint text-[10px]">← 밀어서 보기</span>}
+            right={<span className="text-[10px] text-gray-400">← 밀어서 보기</span>}
           >
-            <div className="hide-scrollbar -mx-1 flex gap-3 overflow-x-auto px-1 pb-1">
+            <div className="hide-scrollbar -mx-1 flex gap-2.5 overflow-x-auto px-1 pb-1">
               {concernAnalysis.map((c, i) => (
                 <ConcernCard
                   key={i}
@@ -60,6 +52,7 @@ function FullResultView({ item, displayType }: { item: HistoryItem; displayType:
                   comment={c.comment}
                   lang="ko"
                   delay={i * 55}
+                  index={i}
                 />
               ))}
             </div>
@@ -67,16 +60,13 @@ function FullResultView({ item, displayType }: { item: HistoryItem; displayType:
         )}
 
         {starIngs.length > 0 && (
-          <ResultSection
-            icon={<Sparkles size={14} strokeWidth={1.6} />}
-            title="주목 성분"
-          >
+          <ResultSection tone="good" icon="✨" title="주목 성분">
             <div className="space-y-2">
               {starIngs.map((ing, i) => {
                 const parts = [
                   ing.benefit || "",
-                  ing.best_time ? `사용 시간: ${ing.best_time}` : "",
-                  ing.synergy?.length ? `시너지: ${ing.synergy.join(", ")}` : "",
+                  ing.best_time ? `⏰ 사용 시간: ${ing.best_time}` : "",
+                  ing.synergy?.length ? `🌿 시너지: ${ing.synergy.join(", ")}` : "",
                 ].filter(Boolean)
                 return (
                   <IngredientPill
@@ -92,17 +82,13 @@ function FullResultView({ item, displayType }: { item: HistoryItem; displayType:
         )}
 
         {watchOut.length > 0 && (
-          <ResultSection
-            tone="warn"
-            icon={<AlertTriangle size={14} strokeWidth={1.6} />}
-            title="주의 성분"
-          >
+          <ResultSection tone="warn" icon="⚠️" title="주의 성분">
             <div className="space-y-2">
               {watchOut.map((ing, i) => (
                 <IngredientPill
                   key={i}
                   name={ing.name}
-                  detail={`${ing.reason || ""}${ing.alternative ? `\n\n대안: ${ing.alternative}` : ""}`}
+                  detail={`${ing.reason || ""}${ing.alternative ? `\n\n💡 대안: ${ing.alternative}` : ""}`}
                   good={false}
                 />
               ))}
@@ -118,16 +104,12 @@ function FullResultView({ item, displayType }: { item: HistoryItem; displayType:
         )}
 
         {forbiddenCombos.length > 0 && (
-          <ResultSection
-            tone="warn"
-            icon={<Ban size={14} strokeWidth={1.6} />}
-            title="주의 콤보"
-          >
+          <ResultSection tone="warn" icon="🚫" title="주의 콤보">
             <div className="space-y-2">
               {forbiddenCombos.map((c, i) => (
-                <div key={i} className="border-rule rounded-lg border px-3.5 py-3">
-                  <p className="text-warn-deep mb-1 text-[12px] font-semibold">{c.ingredients}</p>
-                  <p className="text-ink-soft text-[12px] leading-relaxed"><Md>{c.reason}</Md></p>
+                <div key={i} className="rounded-xl border border-rose-100 bg-white/60 p-3.5">
+                  <p className="mb-1 text-xs font-bold text-rose-600">{c.ingredients}</p>
+                  <p className="text-[12px] leading-relaxed text-gray-600"><Md>{c.reason}</Md></p>
                 </div>
               ))}
             </div>
@@ -135,32 +117,26 @@ function FullResultView({ item, displayType }: { item: HistoryItem; displayType:
         )}
 
         {usageGuide && (
-          <ResultSection
-            icon={<Clock size={14} strokeWidth={1.6} />}
-            title="사용 가이드"
-            subtitle="이렇게 쓰면 더 좋아요"
-          >
-            <div className="divide-rule-soft divide-y">
+          <ResultSection tone="info" icon="📋" title="사용 가이드" subtitle="이렇게 쓰면 더 좋아요">
+            <div className="divide-y divide-sky-100/70">
               {usageGuide.best_time && (
-                <div className="py-3 first:pt-0">
-                  <p className="text-brand-deep mb-1 text-[11.5px] font-medium tracking-tight">최적 사용 시간</p>
-                  <p className="text-ink-soft text-[12.5px] leading-relaxed">{usageGuide.best_time}</p>
+                <div className="py-2.5 first:pt-0">
+                  <p className="mb-1 text-[13px] font-bold text-sky-700">최적 사용 시간</p>
+                  <p className="text-xs leading-relaxed text-gray-600">{usageGuide.best_time}</p>
                 </div>
               )}
               {usageGuide.effect_timeline && (
-                <div className="py-3 first:pt-0">
-                  <p className="text-brand-deep mb-1 text-[11.5px] font-medium tracking-tight">효과 체감 시기</p>
-                  <p className="text-ink-soft text-[12.5px] leading-relaxed">{usageGuide.effect_timeline}</p>
+                <div className="py-2.5 first:pt-0">
+                  <p className="mb-1 text-[13px] font-bold text-sky-700">효과 체감 시기</p>
+                  <p className="text-xs leading-relaxed text-gray-600">{usageGuide.effect_timeline}</p>
                 </div>
               )}
               {usageGuide.beginner_tips && usageGuide.beginner_tips.length > 0 && (
-                <div className="py-3 first:pt-0 last:pb-0">
-                  <p className="text-brand-deep mb-1 text-[11.5px] font-medium tracking-tight">초보자 주의사항</p>
-                  <div className="space-y-0.5">
-                    {usageGuide.beginner_tips.map((tip, i) => (
-                      <p key={i} className="text-ink-soft text-[12.5px] leading-relaxed">· {tip.replace(/\*\*/g, "")}</p>
-                    ))}
-                  </div>
+                <div className="py-2.5 first:pt-0 last:pb-0">
+                  <p className="mb-1 text-[13px] font-bold text-sky-700">초보자 주의사항</p>
+                  {usageGuide.beginner_tips.map((tip, i) => (
+                    <p key={i} className="mb-0.5 text-xs leading-relaxed font-medium text-gray-600">· {tip.replace(/\*\*/g, "")}</p>
+                  ))}
                 </div>
               )}
             </div>
@@ -179,23 +155,21 @@ function FullResultView({ item, displayType }: { item: HistoryItem; displayType:
     const usageGuide = rj.usage_guide as {effect_timeline?: string; beginner_tips?: string[]} | undefined
 
     return (
-      <div className="space-y-5">
+      <div className="space-y-8">
         {Boolean(rj.routine_comment) && (
-          <InfoCard label="종합 의견">{String(rj.routine_comment)}</InfoCard>
+          <ResultSection tone="brand" icon="🌿" title="종합 의견">
+            <p className="text-sm leading-relaxed text-gray-700"><Md>{String(rj.routine_comment)}</Md></p>
+          </ResultSection>
         )}
 
         {conflicts.length > 0 && (
-          <ResultSection
-            tone="warn"
-            icon={<AlertTriangle size={14} strokeWidth={1.6} />}
-            title="성분 충돌"
-          >
+          <ResultSection tone="warn" icon="⚠️" title="성분 충돌">
             <div className="space-y-2">
               {conflicts.map((c, i) => (
-                <div key={i} className="border-rule rounded-lg border px-3.5 py-3">
-                  <p className="text-ink text-[13px] font-semibold">{c.ingredients?.join(" × ")}</p>
-                  <p className="text-warn-deep mb-1 text-[11px]">{c.products?.join(" + ")}</p>
-                  <p className="text-ink-soft text-[12px] leading-relaxed"><Md>{c.reason}</Md></p>
+                <div key={i} className="rounded-xl border border-rose-100 bg-white/60 p-3">
+                  <p className="text-sm font-bold text-rose-600">{c.ingredients?.join(" × ")}</p>
+                  <p className="mb-1 text-xs text-rose-400">{c.products?.join(" + ")}</p>
+                  <p className="text-sm leading-relaxed text-gray-600"><Md>{c.reason}</Md></p>
                 </div>
               ))}
             </div>
@@ -203,15 +177,12 @@ function FullResultView({ item, displayType }: { item: HistoryItem; displayType:
         )}
 
         {synergies.length > 0 && (
-          <ResultSection
-            icon={<Sparkles size={14} strokeWidth={1.6} />}
-            title="시너지"
-          >
+          <ResultSection tone="good" icon="✨" title="시너지">
             <div className="space-y-2">
               {synergies.map((s, i) => (
-                <div key={i} className="border-rule rounded-lg border px-3.5 py-3">
-                  <p className="text-brand-deep mb-1 text-[13px] font-semibold">{s.ingredients?.join(" + ")}</p>
-                  <p className="text-ink-soft text-[12px] leading-relaxed"><Md>{s.reason}</Md></p>
+                <div key={i} className="rounded-xl border border-emerald-100 bg-white/60 p-3">
+                  <p className="mb-1 text-sm font-bold text-emerald-600">{s.ingredients?.join(" + ")}</p>
+                  <p className="text-sm leading-relaxed text-gray-600"><Md>{s.reason}</Md></p>
                 </div>
               ))}
             </div>
@@ -219,36 +190,23 @@ function FullResultView({ item, displayType }: { item: HistoryItem; displayType:
         )}
 
         {orderSuggestion.length > 0 && (
-          <ResultSection
-            icon={<Compass size={14} strokeWidth={1.6} />}
-            title="추천 순서"
-          >
-            <ol className="space-y-2.5">
-              {orderSuggestion.map((name, i) => (
-                <li key={i} className="flex items-baseline gap-3">
-                  <span className="text-ink-faint w-5 shrink-0 font-mono text-[12px] tabular-nums">{String(i + 1).padStart(2, "0")}</span>
-                  <span className="text-ink text-[13px] font-medium">{name}</span>
-                </li>
-              ))}
-            </ol>
+          <ResultSection tone="info" icon="#️⃣" title="추천 순서">
+            {orderSuggestion.map((name, i) => (
+              <div key={i} className="mb-1.5 flex items-center gap-2">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-sky-500 text-xs font-bold text-white">{i + 1}</span>
+                <span className="text-sm font-medium text-gray-700">{name}</span>
+              </div>
+            ))}
           </ResultSection>
         )}
 
         {timeline.length > 0 && (
-          <ResultSection
-            icon={<Clock size={14} strokeWidth={1.6} />}
-            title="루틴 타임라인"
-          >
-            <div className="grid grid-cols-2 gap-3">
+          <ResultSection tone="brand" icon="⏰" title="루틴 타임라인">
+            <div className="grid grid-cols-2 gap-2">
               {timeline.map((t, i) => (
-                <div key={i} className="border-rule rounded-lg border px-3 py-2.5">
-                  <p className="text-ink mb-0.5 text-[12px] font-semibold">
-                    <span className="text-brand-deep mr-1.5 text-[10px] font-medium">
-                      {t.timing === "morning" ? "아침" : t.timing === "evening" ? "저녁" : "아침/저녁"}
-                    </span>
-                    {t.product}
-                  </p>
-                  <p className="text-ink-soft text-[11px] leading-relaxed">{t.reason}</p>
+                <div key={i} className={`rounded-xl p-3 ${t.timing === "morning" || t.timing === "both" ? "bg-amber-50 border border-amber-100" : "bg-indigo-50 border border-indigo-100"}`}>
+                  <p className="mb-0.5 text-xs font-bold text-gray-700">{t.timing === "morning" ? "🌅" : t.timing === "evening" ? "🌙" : "🌅🌙"} {t.product}</p>
+                  <p className="text-xs leading-relaxed text-gray-500">{t.reason}</p>
                 </div>
               ))}
             </div>
@@ -256,41 +214,31 @@ function FullResultView({ item, displayType }: { item: HistoryItem; displayType:
         )}
 
         {recommendations.length > 0 && (
-          <ResultSection
-            icon={<Lightbulb size={14} strokeWidth={1.6} />}
-            title="개선 팁"
-          >
-            <div className="space-y-2.5">
-              {recommendations.map((tip, i) => (
-                <div key={i} className="flex items-baseline gap-3">
-                  <span className="text-ink-faint w-5 shrink-0 font-mono text-[11px] tabular-nums">{String(i + 1).padStart(2, "0")}</span>
-                  <span className="text-ink-soft text-[13px] leading-relaxed">{tip}</span>
-                </div>
-              ))}
-            </div>
+          <ResultSection tone="tip" icon="💡" title="개선 팁">
+            {recommendations.map((tip, i) => (
+              <div key={i} className="mb-1.5 flex items-start gap-2">
+                <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-amber-200 text-[10px] font-bold text-amber-700">{i + 1}</span>
+                <span className="text-sm leading-relaxed text-gray-700">{tip}</span>
+              </div>
+            ))}
           </ResultSection>
         )}
 
         {usageGuide && (
-          <ResultSection
-            icon={<Clock size={14} strokeWidth={1.6} />}
-            title="사용 가이드"
-          >
-            <div className="divide-rule-soft divide-y">
+          <ResultSection tone="info" icon="📋" title="사용 가이드">
+            <div className="divide-y divide-sky-100/70">
               {usageGuide.effect_timeline && (
-                <div className="py-3 first:pt-0">
-                  <p className="text-brand-deep mb-1 text-[11.5px] font-medium tracking-tight">효과 체감 시기</p>
-                  <p className="text-ink-soft text-[12.5px] leading-relaxed">{usageGuide.effect_timeline}</p>
+                <div className="py-2.5 first:pt-0">
+                  <p className="mb-1 text-[13px] font-bold text-sky-700">효과 체감 시기</p>
+                  <p className="text-xs leading-relaxed text-gray-600">{usageGuide.effect_timeline}</p>
                 </div>
               )}
               {usageGuide.beginner_tips && usageGuide.beginner_tips.length > 0 && (
-                <div className="py-3 first:pt-0 last:pb-0">
-                  <p className="text-brand-deep mb-1 text-[11.5px] font-medium tracking-tight">초보자 주의사항</p>
-                  <div className="space-y-0.5">
-                    {usageGuide.beginner_tips.map((tip, i) => (
-                      <p key={i} className="text-ink-soft text-[12.5px] leading-relaxed">· {tip}</p>
-                    ))}
-                  </div>
+                <div className="py-2.5 first:pt-0 last:pb-0">
+                  <p className="mb-1 text-[13px] font-bold text-sky-700">초보자 주의사항</p>
+                  {usageGuide.beginner_tips.map((tip, i) => (
+                    <p key={i} className="mb-0.5 text-xs leading-relaxed text-gray-600">· {tip}</p>
+                  ))}
                 </div>
               )}
             </div>
@@ -308,19 +256,18 @@ function FullResultView({ item, displayType }: { item: HistoryItem; displayType:
   const usageGuide = rj.usage_guide as {best_time?: string; effect_timeline?: string; beginner_tips?: string[]} | undefined
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-8">
       {Boolean(rj.summary) && (
-        <InfoCard label="비교 요약">{String(rj.summary)}</InfoCard>
+        <ResultSection tone="brand" icon="🌿" title="비교 요약">
+          <p className="text-sm leading-relaxed text-gray-700"><Md>{String(rj.summary)}</Md></p>
+        </ResultSection>
       )}
 
       {shared.length > 0 && (
-        <ResultSection
-          icon={<Handshake size={14} strokeWidth={1.6} />}
-          title="공통 성분"
-        >
+        <ResultSection tone="good" icon="🤝" title="공통 성분">
           <div className="flex flex-wrap gap-1.5">
             {shared.map((s, i) => (
-              <span key={i} className="border-rule text-ink-soft rounded-full border px-3 py-1.5 text-[12px] font-medium">
+              <span key={i} className="rounded-full border border-emerald-200 bg-emerald-100 px-2.5 py-1 text-xs font-medium text-emerald-700">
                 {s.name}
               </span>
             ))}
@@ -328,54 +275,32 @@ function FullResultView({ item, displayType }: { item: HistoryItem; displayType:
         </ResultSection>
       )}
 
-      <div className="grid grid-cols-1 gap-3">
-        <ResultSection
-          icon={<span className="font-mono text-[11px] tabular-nums">01</span>}
-          title={names.a}
-        >
-          {onlyA.length > 0 ? (
-            <div className="space-y-1.5">
-              {onlyA.map((s, i) => (
-                <div key={i}>
-                  <span className="text-ink text-[13px] font-medium">{s.name}</span>
-                  {s.note && <p className="text-ink-muted mt-0.5 text-[11px]">{s.note}</p>}
-                </div>
-              ))}
+      <div className="grid grid-cols-1 gap-2">
+        <ResultSection tone="brand" icon="1" title={names.a}>
+          {onlyA.length > 0 ? onlyA.map((s, i) => (
+            <div key={i} className="mb-1.5 last:mb-0">
+              <span className="text-sm font-medium text-gray-700">{s.name}</span>
+              {s.note && <p className="mt-0.5 text-xs text-gray-500">{s.note}</p>}
             </div>
-          ) : (
-            <p className="text-ink-faint text-[12px]">고유 성분 없음</p>
-          )}
+          )) : <p className="text-xs text-gray-400">고유 성분 없음</p>}
         </ResultSection>
-        <ResultSection
-          icon={<span className="font-mono text-[11px] tabular-nums">02</span>}
-          title={names.b}
-        >
-          {onlyB.length > 0 ? (
-            <div className="space-y-1.5">
-              {onlyB.map((s, i) => (
-                <div key={i}>
-                  <span className="text-ink text-[13px] font-medium">{s.name}</span>
-                  {s.note && <p className="text-ink-muted mt-0.5 text-[11px]">{s.note}</p>}
-                </div>
-              ))}
+        <ResultSection tone="accent" icon="2" title={names.b}>
+          {onlyB.length > 0 ? onlyB.map((s, i) => (
+            <div key={i} className="mb-1.5 last:mb-0">
+              <span className="text-sm font-medium text-gray-700">{s.name}</span>
+              {s.note && <p className="mt-0.5 text-xs text-gray-500">{s.note}</p>}
             </div>
-          ) : (
-            <p className="text-ink-faint text-[12px]">고유 성분 없음</p>
-          )}
+          )) : <p className="text-xs text-gray-400">고유 성분 없음</p>}
         </ResultSection>
       </div>
 
       {forbiddenCombos.length > 0 && (
-        <ResultSection
-          tone="warn"
-          icon={<Ban size={14} strokeWidth={1.6} />}
-          title="주의 콤보"
-        >
+        <ResultSection tone="warn" icon="🚫" title="주의 콤보">
           <div className="space-y-2">
             {forbiddenCombos.map((c, i) => (
-              <div key={i} className="border-rule rounded-lg border px-3.5 py-3">
-                <p className="text-warn-deep mb-1 text-[12px] font-semibold">{c.ingredients}</p>
-                <p className="text-ink-soft text-[12px] leading-relaxed"><Md>{c.reason}</Md></p>
+              <div key={i} className="rounded-xl border border-rose-100 bg-white/60 p-3">
+                <p className="mb-1 text-sm font-bold text-rose-600">{c.ingredients}</p>
+                <p className="text-xs leading-relaxed text-gray-600"><Md>{c.reason}</Md></p>
               </div>
             ))}
           </div>
@@ -383,31 +308,26 @@ function FullResultView({ item, displayType }: { item: HistoryItem; displayType:
       )}
 
       {usageGuide && (
-        <ResultSection
-          icon={<Clock size={14} strokeWidth={1.6} />}
-          title="사용 가이드"
-        >
-          <div className="divide-rule-soft divide-y">
+        <ResultSection tone="info" icon="📋" title="사용 가이드">
+          <div className="divide-y divide-sky-100/70">
             {usageGuide.best_time && (
-              <div className="py-3 first:pt-0">
-                <p className="text-brand-deep mb-1 text-[11.5px] font-medium tracking-tight">사용 시간</p>
-                <p className="text-ink-soft text-[12.5px] leading-relaxed">{usageGuide.best_time}</p>
+              <div className="py-2.5 first:pt-0">
+                <p className="mb-1 text-[13px] font-bold text-sky-700">사용 시간</p>
+                <p className="text-xs leading-relaxed text-gray-600">{usageGuide.best_time}</p>
               </div>
             )}
             {usageGuide.effect_timeline && (
-              <div className="py-3 first:pt-0">
-                <p className="text-brand-deep mb-1 text-[11.5px] font-medium tracking-tight">효과 시기</p>
-                <p className="text-ink-soft text-[12.5px] leading-relaxed">{usageGuide.effect_timeline}</p>
+              <div className="py-2.5 first:pt-0">
+                <p className="mb-1 text-[13px] font-bold text-sky-700">효과 시기</p>
+                <p className="text-xs leading-relaxed text-gray-600">{usageGuide.effect_timeline}</p>
               </div>
             )}
             {usageGuide.beginner_tips && usageGuide.beginner_tips.length > 0 && (
-              <div className="py-3 first:pt-0 last:pb-0">
-                <p className="text-brand-deep mb-1 text-[11.5px] font-medium tracking-tight">초보자 주의사항</p>
-                <div className="space-y-0.5">
-                  {usageGuide.beginner_tips.map((tip, i) => (
-                    <p key={i} className="text-ink-soft text-[12.5px] leading-relaxed">· {tip}</p>
-                  ))}
-                </div>
+              <div className="py-2.5 first:pt-0 last:pb-0">
+                <p className="mb-1 text-[13px] font-bold text-sky-700">초보자 주의사항</p>
+                {usageGuide.beginner_tips.map((tip, i) => (
+                  <p key={i} className="mb-0.5 text-xs leading-relaxed text-gray-600">· {tip}</p>
+                ))}
               </div>
             )}
           </div>
@@ -415,7 +335,9 @@ function FullResultView({ item, displayType }: { item: HistoryItem; displayType:
       )}
 
       {Boolean(rj.recommendation) && (
-        <InfoCard label="추천">{String(rj.recommendation)}</InfoCard>
+        <ResultSection tone="good" icon="💡" title="추천">
+          <p className="text-sm leading-relaxed text-gray-700"><Md>{String(rj.recommendation)}</Md></p>
+        </ResultSection>
       )}
     </div>
   )
