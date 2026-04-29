@@ -33,7 +33,6 @@ import { NextRequest, NextResponse } from "next/server"
 import { PrismaClient } from "@prisma/client"
 
 const prisma = new PrismaClient()
-const CACHE_DAYS = 30
 
 export const maxDuration = 60
 export const dynamic = "force-dynamic"
@@ -224,12 +223,10 @@ export async function POST(req: NextRequest) {
   const normalizedKeyword = keyword.trim().toLowerCase()
 
   try {
-    // ── 0단계: 캐시 확인 (DB에 저장된 이전 크롤링 결과) ──
-    const cutoff = new Date(Date.now() - CACHE_DAYS * 24 * 60 * 60 * 1000)
+    // ── 0단계: 캐시 확인 (DB에 저장된 이전 크롤링 결과 — 영구 캐시) ──
     const cached = await prisma.productCache.findFirst({
       where: {
         keyword: normalizedKeyword,
-        createdAt: { gte: cutoff },
       },
       orderBy: { createdAt: "desc" },
     })
