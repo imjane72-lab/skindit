@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server"
 import { z } from "zod"
+import { waitUntil } from "@vercel/functions"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { apiResponse, apiError } from "@/lib/api-utils"
@@ -150,9 +151,13 @@ export async function POST(req: NextRequest) {
     },
   })
 
-  // Fire-and-forget: 임베딩 생성 (벡터 유사도 검색용)
-  generateAndSaveEmbedding(entry.id, rest.ingredients, rest.concerns, rest.score)
-    .catch(err => console.error("Embedding generation failed:", err))
+  // 응답 후 백그라운드에서 임베딩 생성. waitUntil로 Vercel 인스턴스가
+  // 작업 완료 전에 종료되지 않도록 보장 (이전 fire-and-forget 패턴은
+  // 응답 후 함수가 즉시 죽으면서 OpenAI 호출이 잘려 누락이 발생했음).
+  waitUntil(
+    generateAndSaveEmbedding(entry.id, rest.ingredients, rest.concerns, rest.score)
+      .catch(err => console.error("Embedding generation failed:", err))
+  )
 
   return apiResponse(entry, 201)
 }
