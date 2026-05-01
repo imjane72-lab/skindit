@@ -1,7 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { PrismaClient } from "@prisma/client";
-import puppeteer from "puppeteer";
 import { z } from "zod";
 
 // ─── Prisma Client (싱글톤) ───
@@ -10,6 +9,114 @@ const prisma = new PrismaClient();
 // ─── 식약처 API 설정 ───
 const MFDS_KEY = process.env.MFDS_API_KEY || "";
 const MFDS_BASE = "https://apis.data.go.kr/1471000";
+
+// ─── 올리브영 크롤링 (ScrapingBee 위임) ───
+// 웹 서비스(/api/oliveyoung)와 동일한 ScrapingBee + ProductCache 전략을 그대로 사용.
+// 같은 ProductCache 테이블을 공유하므로, 웹에서 캐시된 제품을 데스크톱에서 조회하면
+// ScrapingBee 호출 없이 DB에서 즉시 반환되어 외부 API 비용이 0이 됨.
+const SCRAPINGBEE_KEY = process.env.SCRAPINGBEE_API_KEY || "";
+
+const INGREDIENT_LABELS = [
+  "모든 성분",
+  "전성분",
+  "화장품법에 따라 기재해야 하는 모든 성분",
+  "주요성분",
+] as const;
+
+const END_PATTERNS =
+  /내용물의 용량|사용기한|사용방법|화장품제조|제조국|사용할 때|품질보증|기능성 화장품|소비자상담|주의사항/;
+
+async function scrapeHtml(
+  targetUrl: string,
+  options?: { jsScenario?: object; premiumProxy?: boolean },
+): Promise<string> {
+  const params = new URLSearchParams({
+    api_key: SCRAPINGBEE_KEY,
+    url: targetUrl,
+    render_js: "true",
+    country_code: "kr",
+    block_resources: "false",
+  });
+  if (options?.premiumProxy !== false) {
+    params.set("premium_proxy", "true");
+  }
+  if (options?.jsScenario) {
+    params.set("js_scenario", JSON.stringify(options.jsScenario));
+  }
+  const maxAttempts = 3;
+  let lastError = "";
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    const res = await fetch(`https://app.scrapingbee.com/api/v1/?${params}`);
+    if (res.ok) return await res.text();
+    lastError = `ScrapingBee error ${res.status}: ${await res.text()}`;
+    if (res.status < 500 || attempt === maxAttempts) break;
+    await new Promise((r) => setTimeout(r, 1000 * attempt));
+  }
+  throw new Error(lastError);
+}
+
+function extractFirstProduct(html: string): {
+  url: string;
+  name: string;
+  brand: string;
+} | null {
+  const thumbMatch = html.match(
+    /<a[^>]*class="[^"]*prd_thumb[^"]*"[^>]*href="([^"]+)"/i,
+  );
+  if (!thumbMatch || !thumbMatch[1]) return null;
+
+  let url = thumbMatch[1];
+  if (url.startsWith("/")) url = "https://www.oliveyoung.co.kr" + url;
+  else if (!url.startsWith("http")) {
+    url = "https://www.oliveyoung.co.kr/store/" + url;
+  }
+
+  const cardScope = html.slice(
+    Math.max(0, thumbMatch.index! - 1500),
+    thumbMatch.index! + 1500,
+  );
+  const nameMatch = cardScope.match(
+    /<[^>]*class="[^"]*prd_name[^"]*"[^>]*>([\s\S]*?)<\//i,
+  );
+  const brandMatch = cardScope.match(
+    /<[^>]*class="[^"]*tx_brand[^"]*"[^>]*>([\s\S]*?)<\//i,
+  );
+
+  const stripTags = (s: string) =>
+    s
+      .replace(/<[^>]+>/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
+
+  return {
+    url,
+    name: nameMatch?.[1] ? stripTags(nameMatch[1]) : "",
+    brand: brandMatch?.[1] ? stripTags(brandMatch[1]) : "",
+  };
+}
+
+function extractIngredients(html: string): string | null {
+  const text = html
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/\s+/g, " ");
+
+  for (const label of INGREDIENT_LABELS) {
+    const idx = text.indexOf(label);
+    if (idx === -1) continue;
+    const after = text.substring(idx + label.length).trim();
+    const endIdx = after.search(END_PATTERNS);
+    const raw =
+      endIdx > -1
+        ? after.substring(0, endIdx).trim()
+        : after.substring(0, 3000).trim();
+    if (raw.length > 10) return raw;
+  }
+  return null;
+}
 
 // ─── MCP 서버 생성 ───
 const server = new McpServer({
@@ -440,41 +547,50 @@ server.tool(
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 server.tool(
   "search_oliveyoung",
-  "올리브영에서 제품을 검색하고 전성분 목록을 가져옵니다. 제품 이름으로 검색하면 해당 제품의 전성분을 추출합니다. (Puppeteer 기반, 로컬 Chrome 필요)",
+  "올리브영에서 제품을 검색하고 전성분 목록을 가져옵니다. ProductCache(웹 서비스와 공유) → 캐시 히트 시 즉시 반환, 캐시 미스 시 ScrapingBee로 크롤링 후 캐시에 저장합니다.",
   {
     keyword: z.string().describe("검색할 제품명. 예: 메디힐 PDRN 모공 탄력 세럼"),
   },
   async ({ keyword }) => {
-    let browser;
+    if (!SCRAPINGBEE_KEY) {
+      return {
+        content: [{
+          type: "text" as const,
+          text: "SCRAPINGBEE_API_KEY 환경변수가 설정되지 않았습니다. claude-desktop-config.json의 env에 추가해주세요.",
+        }],
+      };
+    }
+
+    const normalizedKeyword = keyword.trim().toLowerCase();
+
     try {
-      browser = await puppeteer.launch({
-        headless: true,
-        args: [
-          "--no-sandbox",
-          "--disable-setuid-sandbox",
-          "--disable-dev-shm-usage",
-          "--disable-gpu",
-        ],
+      // 0단계: 캐시 확인 (웹 서비스와 공유하는 ProductCache 테이블, 영구 캐시)
+      const cached = await prisma.productCache.findFirst({
+        where: { keyword: normalizedKeyword },
+        orderBy: { createdAt: "desc" },
       });
 
-      const page = await browser.newPage();
-      await page.setUserAgent(
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-      );
-      await page.setViewport({ width: 1280, height: 800 });
+      if (cached) {
+        return {
+          content: [{
+            type: "text" as const,
+            text: JSON.stringify({
+              productName: cached.productName,
+              brand: cached.brand,
+              url: cached.url,
+              ingredients: cached.ingredients,
+              cached: true,
+            }, null, 2),
+          }],
+        };
+      }
 
-      // 1단계: 올리브영 검색
+      // 1단계: 검색 결과 페이지 (premium_proxy 없이 → 5크레딧 절약)
       const searchUrl = `https://www.oliveyoung.co.kr/store/search/getSearchMain.do?query=${encodeURIComponent(keyword.trim())}`;
-      await page.goto(searchUrl, { waitUntil: "networkidle2", timeout: 20000 });
+      const searchHtml = await scrapeHtml(searchUrl, { premiumProxy: false });
 
-      // 2단계: 첫 번째 제품 정보 추출
-      const productInfo = await page.evaluate(() => {
-        const link = document.querySelector(".prd_info a.prd_name") as HTMLAnchorElement | null;
-        if (!link) return null;
-        const brand = (document.querySelector(".prd_info .tx_brand") as HTMLElement | null)?.textContent?.trim() || "";
-        return { url: link.href, name: link.textContent?.trim() || "", brand };
-      });
-
+      // 2단계: 첫 번째 제품 카드 추출
+      const productInfo = extractFirstProduct(searchHtml);
       if (!productInfo) {
         return {
           content: [{
@@ -484,44 +600,24 @@ server.tool(
         };
       }
 
-      // 3단계: 제품 상세 페이지 이동
-      await page.goto(productInfo.url, { waitUntil: "networkidle2", timeout: 20000 });
-
-      // 4단계: 상세정보 탭 클릭
-      try {
-        await page.click('a[href="#prdDetail"]');
-        await new Promise((r) => setTimeout(r, 2000));
-      } catch {
-        // 탭이 없으면 이미 펼쳐져 있을 수 있음
-      }
-
-      // 5단계: 전성분 텍스트 추출
-      const ingredients = await page.evaluate(() => {
-        const bodyText = document.body.innerText;
-
-        const patterns = [
-          /전성분\s*[:\s]\s*([^\n]+(?:\n[^\n]+)*?)(?=\n{2,}|사용\s*(?:방법|법|시)|주의|보관|$)/i,
-          /(?:전체\s*)?성분\s*[:\s]\s*([^\n]+(?:\n[^\n]+)*?)(?=\n{2,}|사용\s*(?:방법|법|시)|주의|보관|$)/i,
-        ];
-
-        for (const pattern of patterns) {
-          const match = bodyText.match(pattern);
-          if (match?.[1]) {
-            const text = match[1].replace(/\n/g, " ").replace(/\s+/g, " ").trim();
-            if (text.length > 20) return text;
-          }
-        }
-
-        // 대안: "정제수" 또는 "WATER"로 시작하는 블록
-        const waterBlock = bodyText.match(
-          /(?:정제수|워터|WATER)[,\s][\s\S]{50,1500}?(?=\n{2,}|사용|주의|$)/i
-        );
-        if (waterBlock) {
-          return waterBlock[0].replace(/\n/g, " ").replace(/\s+/g, " ").trim();
-        }
-
-        return null;
+      // 3단계: 상세 페이지 (premium_proxy + js_scenario로 "상품정보 제공고시" 클릭)
+      const detailHtml = await scrapeHtml(productInfo.url, {
+        premiumProxy: true,
+        jsScenario: {
+          instructions: [
+            { scroll_y: 3000 },
+            { wait: 1000 },
+            {
+              evaluate:
+                "document.querySelectorAll('button, a, dt, div, [class*=\"toggle\"], [class*=\"artc\"]').forEach(el => { if (el.textContent && el.textContent.includes('상품정보 제공고시')) el.click() })",
+            },
+            { wait: 2000 },
+          ],
+        },
       });
+
+      // 4단계: 전성분 텍스트 추출
+      const ingredients = extractIngredients(detailHtml);
 
       if (!ingredients) {
         return {
@@ -532,11 +628,24 @@ server.tool(
               brand: productInfo.brand,
               url: productInfo.url,
               ingredients: null,
-              message: "제품은 찾았지만 전성분을 텍스트로 추출하지 못했습니다. 상세 이미지에만 전성분이 있을 수 있습니다.",
+              message: "제품은 찾았지만 전성분을 추출하지 못했어요.",
             }, null, 2),
           }],
         };
       }
+
+      // 5단계: 캐시 저장 (다음 호출 시 ScrapingBee 호출 0)
+      prisma.productCache
+        .create({
+          data: {
+            keyword: normalizedKeyword,
+            productName: productInfo.name,
+            brand: productInfo.brand,
+            url: productInfo.url,
+            ingredients,
+          },
+        })
+        .catch(() => {});
 
       return {
         content: [{
@@ -556,8 +665,6 @@ server.tool(
           text: `검색 실패: ${err instanceof Error ? err.message : "Unknown error"}`,
         }],
       };
-    } finally {
-      if (browser) await browser.close();
     }
   }
 );

@@ -6,7 +6,8 @@
       "cwd": "/Users/jane/Desktop/skin/apps/mcp-server",
       "env": {
         "DATABASE_URL": "your-database-url-here",
-        "MFDS_API_KEY": "your-mfds-api-key-here"
+        "MFDS_API_KEY": "your-mfds-api-key-here",
+        "SCRAPINGBEE_API_KEY": "your-scrapingbee-api-key-here"
       }
     }
   }
