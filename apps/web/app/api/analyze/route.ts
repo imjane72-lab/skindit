@@ -121,7 +121,12 @@ export async function POST(req: NextRequest) {
   const mfdsContext = await mfdsPromise;
 
   /* 최대 3회 시도(초기 1회 + 재시도 2회) · 500/429에만 재시도.
-   * 백오프는 800ms · 1600ms 선형 — 짧은 transient 에러 회복 + 사용자 대기 최소화 균형.
+   * 백오프는 지수(2^n초) + equal jitter 적용:
+   *   - 지수: Anthropic overloaded_error는 30초~1분 지속될 수 있어 단순 선형보다
+   *     마지막 대기를 길게 가져가는 게 회복 시점에 시도할 확률이 높음
+   *     (Anthropic 공식 권장 패턴).
+   *   - equal jitter: base의 50%~100% 랜덤 적용. 향후 다중 클라이언트가 동시
+   *     retry할 때 thundering herd로 외부 API 부하가 몰리는 걸 방지.
    * 응답은 Anthropic SSE 본문을 Response에 그대로 실어 반환(pass-through).
    * 서버가 가공하지 않으므로 추가 latency 없음. */
   for (let attempt = 0; attempt < 3; attempt++) {
@@ -144,7 +149,10 @@ export async function POST(req: NextRequest) {
       const errBody = await res.json().catch(() => ({}));
       const status = res.status;
       if ((status >= 500 || status === 429) && attempt < 2) {
-        await new Promise(r => setTimeout(r, 800 * (attempt + 1)));
+        // 지수 백오프 + equal jitter: 1~2초(attempt 0), 2~4초(attempt 1)
+        const baseMs = 1000 * Math.pow(2, attempt);
+        const delay = baseMs / 2 + Math.random() * (baseMs / 2);
+        await new Promise(r => setTimeout(r, delay));
         continue;
       }
       // 원본 Anthropic 에러는 서버 로그에만 남기고, 사용자에게는 안전한 한국어 메시지만 노출
