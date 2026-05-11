@@ -345,6 +345,18 @@ export const INGREDIENT_DB: Record<string, IngredientInfo> = {
     rating: 4,
     bestFor: "여드름, 지성 피부",
   },
+  egf: {
+    name: "EGF",
+    nameEn: "Epidermal Growth Factor (sh-Oligopeptide-1)",
+    action: "표피 세포 수용체(EGFR)에 결합하여 세포 분열과 콜라겐 합성을 촉진합니다. 상처 치유와 주름 개선에 효과적인 성장인자예요.",
+    timing: "아침/저녁 모두 가능. 자극이 거의 없습니다.",
+    cautionCombos: ["고농도 산(AHA/BHA, 고농도 비타민C) — 산성 환경에서 단백질이 변성될 수 있어 시간 간격을 두세요"],
+    synergy: ["PDRN (세포 재생 시너지)", "펩타이드 (콜라겐 합성 시너지)", "히알루론산 (수분 + 재생)"],
+    tips: ["1986년 노벨 생리의학상을 받은 성분이에요(Stanley Cohen).", "ppm 단위 미량으로 표기되는 경우가 많아서 함량보다 안정화 기술이 더 중요해요."],
+    effectTimeline: "재생 효과 2~4주, 주름 개선 8~12주",
+    rating: 4,
+    bestFor: "노화, 시술 후 회복, 손상된 장벽, 전 피부 타입",
+  },
 }
 
 /**
